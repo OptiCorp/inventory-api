@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace turbine.sikker.core.Model
+namespace TodoApi.Models
 {
     public enum Type
     {
