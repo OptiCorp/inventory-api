@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace turbin.sikker.core.Model
+namespace TodoApi.Models
 {
     public class User
     {

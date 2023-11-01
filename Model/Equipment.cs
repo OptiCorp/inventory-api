@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace turbin.sikker.core.Model
+namespace TodoApi.Models
 {
     public enum Status
     {
@@ -14,7 +14,7 @@ namespace turbin.sikker.core.Model
         [Display(Name = "Broken")]
         Broken
     }
-    public enum Type
+    public enum EquipmentType
     {
         [Display(Name = "Machine")]
         Machine,
@@ -29,7 +29,7 @@ namespace turbin.sikker.core.Model
         public Status? Status { get; set; }
         public DateTime? LastInspected { get; set; }
         public DateTime? NextInspected { get; set; }
-        [EnumDataType(typeof(Type))]
-        public Type? Type { get; set; }
+        [EnumDataType(typeof(EquipmentType))]
+        public EquipmentType? EquipmentType { get; set; }
     }
 }
