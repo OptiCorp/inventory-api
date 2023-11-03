@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
+using Inventory.Models;
 
 namespace inventory_api.Controllers
 {
@@ -13,9 +13,9 @@ namespace inventory_api.Controllers
     [ApiController]
     public class EquipmentController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly InventoryDbContext _context;
 
-        public EquipmentController(TodoContext context)
+        public EquipmentController(InventoryDbContext context)
         {
             _context = context;
         }
@@ -24,10 +24,10 @@ namespace inventory_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipment()
         {
-          if (_context.Equipment == null)
-          {
-              return NotFound();
-          }
+            if (_context.Equipment == null)
+            {
+                return NotFound();
+            }
             return await _context.Equipment.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace inventory_api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Equipment>> GetEquipment(string id)
         {
-          if (_context.Equipment == null)
-          {
-              return NotFound();
-          }
+            if (_context.Equipment == null)
+            {
+                return NotFound();
+            }
             var equipment = await _context.Equipment.FindAsync(id);
 
             if (equipment == null)
@@ -85,10 +85,10 @@ namespace inventory_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
         {
-          if (_context.Equipment == null)
-          {
-              return Problem("Entity set 'TodoContext.Equipment'  is null.");
-          }
+            if (_context.Equipment == null)
+            {
+                return Problem("Entity set 'InventoryDbContext.Equipment'  is null.");
+            }
             _context.Equipment.Add(equipment);
             try
             {

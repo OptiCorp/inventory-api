@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
+using Inventory.Models;
 
 namespace inventory_api.Controllers
 {
@@ -13,9 +13,9 @@ namespace inventory_api.Controllers
     [ApiController]
     public class AssignedController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly InventoryDbContext _context;
 
-        public AssignedController(TodoContext context)
+        public AssignedController(InventoryDbContext context)
         {
             _context = context;
         }
@@ -24,10 +24,10 @@ namespace inventory_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Assigned>>> GetAssigned()
         {
-          if (_context.Assigned == null)
-          {
-              return NotFound();
-          }
+            if (_context.Assigned == null)
+            {
+                return NotFound();
+            }
             return await _context.Assigned.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace inventory_api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Assigned>> GetAssigned(string id)
         {
-          if (_context.Assigned == null)
-          {
-              return NotFound();
-          }
+            if (_context.Assigned == null)
+            {
+                return NotFound();
+            }
             var assigned = await _context.Assigned.FindAsync(id);
 
             if (assigned == null)
@@ -85,10 +85,10 @@ namespace inventory_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Assigned>> PostAssigned(Assigned assigned)
         {
-          if (_context.Assigned == null)
-          {
-              return Problem("Entity set 'TodoContext.Assigned'  is null.");
-          }
+            if (_context.Assigned == null)
+            {
+                return Problem("Entity set 'InventoryDbContext.Assigned'  is null.");
+            }
             _context.Assigned.Add(assigned);
             try
             {

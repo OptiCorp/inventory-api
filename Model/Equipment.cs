@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TodoApi.Models
+namespace Inventory.Models
 {
     public enum Status
     {

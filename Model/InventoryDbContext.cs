@@ -1,15 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace TodoApi.Models;
+namespace Inventory.Models;
 
-public class TodoContext : DbContext
+public class InventoryDbContext : DbContext
 {
-    public TodoContext(DbContextOptions<TodoContext> options)
+    public InventoryDbContext(DbContextOptions<InventoryDbContext> options)
         : base(options)
     {
     }
 
-    public DbSet<TodoItem> TodoItems { get; set; } = null!;
     public DbSet<Material> Materials { get; set; } = null!;
     public DbSet<Assigned> Assigned { get; set; } = null!;
     public DbSet<Equipment> Equipment { get; set; } = null!;

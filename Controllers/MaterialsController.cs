@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
+using Inventory.Models;
 
 namespace inventory_api.Controllers
 {
@@ -13,9 +13,9 @@ namespace inventory_api.Controllers
     [ApiController]
     public class MaterialsController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly InventoryDbContext _context;
 
-        public MaterialsController(TodoContext context)
+        public MaterialsController(InventoryDbContext context)
         {
             _context = context;
         }
@@ -24,10 +24,10 @@ namespace inventory_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Material>>> GetMaterials()
         {
-          if (_context.Materials == null)
-          {
-              return NotFound();
-          }
+            if (_context.Materials == null)
+            {
+                return NotFound();
+            }
             return await _context.Materials.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace inventory_api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Material>> GetMaterial(string id)
         {
-          if (_context.Materials == null)
-          {
-              return NotFound();
-          }
+            if (_context.Materials == null)
+            {
+                return NotFound();
+            }
             var material = await _context.Materials.FindAsync(id);
 
             if (material == null)
@@ -85,10 +85,10 @@ namespace inventory_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Material>> PostMaterial(Material material)
         {
-          if (_context.Materials == null)
-          {
-              return Problem("Entity set 'TodoContext.Materials'  is null.");
-          }
+            if (_context.Materials == null)
+            {
+                return Problem("Entity set 'InventoryDbContext.Materials'  is null.");
+            }
             _context.Materials.Add(material);
             try
             {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
+using Inventory.Models;
 
 namespace inventory_api.Controllers
 {
@@ -13,9 +13,9 @@ namespace inventory_api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly InventoryDbContext _context;
 
-        public UserController(TodoContext context)
+        public UserController(InventoryDbContext context)
         {
             _context = context;
         }
@@ -24,10 +24,10 @@ namespace inventory_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
+            if (_context.User == null)
+            {
+                return NotFound();
+            }
             return await _context.User.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace inventory_api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(string id)
         {
-          if (_context.User == null)
-          {
-              return NotFound();
-          }
+            if (_context.User == null)
+            {
+                return NotFound();
+            }
             var user = await _context.User.FindAsync(id);
 
             if (user == null)
@@ -85,10 +85,10 @@ namespace inventory_api.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-          if (_context.User == null)
-          {
-              return Problem("Entity set 'TodoContext.User'  is null.");
-          }
+            if (_context.User == null)
+            {
+                return Problem("Entity set 'InventoryDbContext.User'  is null.");
+            }
             _context.User.Add(user);
             try
             {
