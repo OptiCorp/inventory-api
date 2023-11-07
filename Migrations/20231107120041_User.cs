@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace inventoryapi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class User : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,19 +57,6 @@ namespace inventoryapi.Migrations
                 {
                     table.PrimaryKey("PK_Materials", x => x.Id);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                });
         }
 
         /// <inheritdoc />
@@ -83,9 +70,6 @@ namespace inventoryapi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Materials");
-
-            migrationBuilder.DropTable(
-                name: "User");
         }
     }
 }
