@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.Identity.Web;
 using Serilog;
 using Inventory.Models;
+using Inventory.Services;
 
 namespace inventory
 
@@ -43,6 +44,10 @@ namespace inventory
             {
                 c.EnableAnnotations();
             });
+
+            services.AddHostedService<UserCreateHandler>();
+            services.AddHostedService<UserUpdateHandler>();
+            services.AddHostedService<UserDeleteHandler>();
 
             services.AddControllers();
 
