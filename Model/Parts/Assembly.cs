@@ -6,7 +6,9 @@ namespace Inventory.Models
 {
     public class Assembly
     {
-        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string? Id { get; set; }
+
         public string? WPId { get; set; }
 
         public string? SerialNumber { get; set; }
