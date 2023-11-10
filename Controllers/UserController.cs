@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
+using Inventory.Services;
+using Swashbuckle.AspNetCore.Annotations;
+using Inventory.Models.DTO;
 
 namespace inventory_api.Controllers
 {
@@ -14,124 +17,36 @@ namespace inventory_api.Controllers
     public class UserController : ControllerBase
     {
         private readonly InventoryDbContext _context;
+        private readonly IUserService _userService;
 
-        public UserController(InventoryDbContext context)
+        public UserController(InventoryDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
-        // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        [SwaggerOperation(Summary = "Get all users", Description = "Retrieves a list of all users.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<UserDto>))]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUser()
         {
-            if (_context.User == null)
-            {
-                return NotFound();
-            }
-            return await _context.User.ToListAsync();
+            return Ok(await _userService.GetAllUsersAsync());
         }
 
-        // GET: api/User/5
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get user", Description = "Retrieves a user.")]
+        [SwaggerResponse(200, "Success", typeof(UserDto))]
+        [SwaggerResponse(404, "User not found")]
         public async Task<ActionResult<User>> GetUser(string id)
         {
-            if (_context.User == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.User.FindAsync(id);
+            var user = await _userService.GetUserByIdAsync(id);
 
             if (user == null)
             {
-                return NotFound();
+                return NotFound("User not found");
             }
 
-            return user;
-        }
-
-        // PUT: api/User/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, User user)
-        {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/User
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-            if (_context.User == null)
-            {
-                return Problem("Entity set 'InventoryDbContext.User'  is null.");
-            }
-            _context.User.Add(user);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (UserExists(user.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
-        }
-
-        // DELETE: api/User/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
-        {
-            if (_context.User == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.User.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserExists(string id)
-        {
-            return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
+            return Ok(user);
         }
     }
 }
