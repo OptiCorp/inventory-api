@@ -6,6 +6,6 @@ namespace Inventory.Utilities
 {
     public interface IItemUtilities
     {
-        public ItemResponseDto ItemToResponseDto(Item? punch);
+        public ItemResponseDto ItemToResponseDto(Item item);
     }
 }

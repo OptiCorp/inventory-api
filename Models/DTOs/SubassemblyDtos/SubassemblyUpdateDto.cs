@@ -17,5 +17,7 @@ namespace Inventory.Models.DTO
         public string? Description { get; set; }
 
         public string? AssemblyId { get; set; }
+
+        public string? SubassemblyId { get; set; }
     }
 }

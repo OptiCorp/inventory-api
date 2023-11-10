@@ -15,7 +15,5 @@ namespace Inventory.Models.DTO
         public string? Location { get; set; }
 
         public string? Description { get; set; }
-
-        public ICollection<AssemblyResponseDto>? Assemblies { get; set; }
     }
 }

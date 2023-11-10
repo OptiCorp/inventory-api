@@ -16,6 +16,6 @@ namespace Inventory.Models.DTO
 
         public string? Description { get; set; }
 
-        public SubassemblyResponseDto? Subassembly { get; set; }
+        public string? SubassemblyId { get; set; }
     }
 }

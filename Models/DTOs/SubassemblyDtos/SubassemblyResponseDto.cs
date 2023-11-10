@@ -16,10 +16,8 @@ namespace Inventory.Models.DTO
 
         public string? Description { get; set; }
 
-        public AssemblyResponseDto? Unit { get; set; }
+        public string? AssemblyId { get; set; }
 
-        public ICollection<SubassemblyResponseDto>? Subassemblies { get; set; }
-
-        public ICollection<ItemResponseDto>? Items { get; set; }
+        public string? SubassemblyId { get; set; }
     }
 }

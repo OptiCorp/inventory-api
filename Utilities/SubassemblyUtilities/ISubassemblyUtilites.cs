@@ -6,6 +6,6 @@ namespace Inventory.Utilities
 {
     public interface ISubassemblyUtilities
     {
-        public SubassemblyResponseDto SubassemblyToResponseDto(Subassembly? punch);
+        public SubassemblyResponseDto SubassemblyToResponseDto(Subassembly subassembly);
     }
 }
