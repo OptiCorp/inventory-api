@@ -4,9 +4,11 @@ using System.Reflection;
 
 namespace Inventory.Models
 {
-    public class Unit
+    public class Assembly
     {
-        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string? Id { get; set; }
+
         public string? WPId { get; set; }
 
         public string? SerialNumber { get; set; }
@@ -19,6 +21,14 @@ namespace Inventory.Models
 
         public string? Description { get; set; }
 
-        public ICollection<Assembly>? Assemblies { get; }
+        public string? UnitId { get; set; }
+
+        public Unit? Unit { get; }
+
+        public ICollection<Subassembly>? Subassemblies { get; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
     }
 }

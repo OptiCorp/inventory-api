@@ -1,11 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 
 namespace Inventory.Models
 {
-    public class Item
+    public class Unit
     {
-        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string? Id { get; set; }
+
         public string? WPId { get; set; }
 
         public string? SerialNumber { get; set; }
@@ -18,6 +21,10 @@ namespace Inventory.Models
 
         public string? Description { get; set; }
 
-        public string? SubassemblyId { get; set; }
+        public ICollection<Assembly>? Assemblies { get; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
     }
 }
