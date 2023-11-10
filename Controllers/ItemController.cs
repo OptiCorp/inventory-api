@@ -6,132 +6,101 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
+using Swashbuckle.AspNetCore.Annotations;
+using Inventory.Models.DTO;
+using Inventory.Services;
+using inventoryapi.Migrations;
 
 namespace Inventory.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EquipmentController : ControllerBase
+    public class ItemController : ControllerBase
     {
         private readonly InventoryDbContext _context;
 
-        public EquipmentController(InventoryDbContext context)
+        private readonly IItemService _itemService;
+
+        public ItemController(InventoryDbContext context, IItemService itemService)
         {
             _context = context;
+            _itemService = itemService;
         }
 
-        // GET: api/Equipment
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Equipment>>> GetEquipment()
+        [SwaggerOperation(Summary = "Get all items", Description = "Retrieves a list of all items.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItem()
         {
-            if (_context.Equipment == null)
-            {
-                return NotFound();
-            }
-            return await _context.Equipment.ToListAsync();
+            return Ok(await _itemService.GetAllItemsAsync());
         }
 
-        // GET: api/Equipment/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Equipment>> GetEquipment(string id)
+        [SwaggerOperation(Summary = "Get item", Description = "Retrieves an item.")]
+        [SwaggerResponse(200, "Success", typeof(ItemResponseDto))]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<ActionResult<Equipment>> GetItem(string id)
         {
-            if (_context.Equipment == null)
+            var item = await _itemService.GetItemByIdAsync(id);
+            if (item == null)
             {
-                return NotFound();
-            }
-            var equipment = await _context.Equipment.FindAsync(id);
-
-            if (equipment == null)
-            {
-                return NotFound();
+                return NotFound("Item not found");
             }
 
-            return equipment;
+            return Ok(item);
         }
 
-        // PUT: api/Equipment/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEquipment(string id, Equipment equipment)
-        {
-            if (id != equipment.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(equipment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EquipmentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Equipment
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Equipment>> PostEquipment(Equipment equipment)
+        [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
+        [SwaggerResponse(201, "item created", typeof(ItemResponseDto))]
+        [SwaggerResponse(400, "Invalid request")]
+        public async Task<ActionResult<ItemResponseDto>> PostItem(ItemCreateDto itemCreateDto)
         {
-            if (_context.Equipment == null)
-            {
-                return Problem("Entity set 'InventoryDbContext.Equipment'  is null.");
-            }
-            _context.Equipment.Add(equipment);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (EquipmentExists(equipment.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var itemId = await _itemService.CreateItemAsync(itemCreateDto);
 
-            return CreatedAtAction("GetEquipment", new { id = equipment.Id }, equipment);
+            var item = await _itemService.GetItemByIdAsync(itemId);
+
+            return CreatedAtAction(nameof(GetItem), new { id = itemId }, item);
         }
 
-        // DELETE: api/Equipment/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEquipment(string id)
+        [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Update item", Description = "Updates an item.")]
+        [SwaggerResponse(200, "Item updated")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<IActionResult> PutItem(string id, ItemUpdateDto itemUpdateDto)
         {
-            if (_context.Equipment == null)
+            if (id != itemUpdateDto.Id)
             {
-                return NotFound();
-            }
-            var equipment = await _context.Equipment.FindAsync(id);
-            if (equipment == null)
-            {
-                return NotFound();
+                return BadRequest("Id does not match");
             }
 
-            _context.Equipment.Remove(equipment);
-            await _context.SaveChangesAsync();
+            var item = await _itemService.GetItemByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            await _itemService.UpdateItemAsync(itemUpdateDto);
 
             return NoContent();
         }
 
-        private bool EquipmentExists(string id)
+        [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete item", Description = "Deletes an item.")]
+        [SwaggerResponse(200, "Item deleted")]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<IActionResult> DeleteItem(string id)
         {
-            return (_context.Equipment?.Any(e => e.Id == id)).GetValueOrDefault();
+            var item = _itemService.GetItemByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            await _itemService.DeleteItemAsync(id);
+
+            return NoContent();
         }
     }
 }
