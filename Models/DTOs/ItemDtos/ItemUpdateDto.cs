@@ -4,6 +4,8 @@ namespace Inventory.Models.DTO
 {
     public class ItemUpdateDto
     {
+        public string? Id { get; set; }
+
         public string? WPId { get; set; }
 
         public string? SerialNumber { get; set; }

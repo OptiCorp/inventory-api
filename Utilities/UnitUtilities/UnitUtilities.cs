@@ -15,6 +15,8 @@ namespace Inventory.Utilities
                 ProductNumber = unit.ProductNumber,
                 Location = unit.Location,
                 Description = unit.Description,
+                CreatedDate = unit.CreatedDate,
+                UpdatedDate = unit.UpdatedDate
             };
         }
     }

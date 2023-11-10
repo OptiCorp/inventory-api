@@ -16,7 +16,9 @@ namespace Inventory.Utilities
                 Location = subassembly.Location,
                 Description = subassembly.Description,
                 AssemblyId = subassembly.AssemblyId,
-                SubassemblyId = subassembly.SubassemblyId
+                SubassemblyId = subassembly.SubassemblyId,
+                CreatedDate = subassembly.CreatedDate,
+                UpdatedDate = subassembly.UpdatedDate
             };
         }
     }

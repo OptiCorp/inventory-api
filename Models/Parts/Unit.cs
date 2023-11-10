@@ -22,5 +22,9 @@ namespace Inventory.Models
         public string? Description { get; set; }
 
         public ICollection<Assembly>? Assemblies { get; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
     }
 }

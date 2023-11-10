@@ -30,5 +30,9 @@ namespace Inventory.Models
         public ICollection<Subassembly>? Subassemblies { get; }
 
         public ICollection<Item>? Items { get; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
     }
 }

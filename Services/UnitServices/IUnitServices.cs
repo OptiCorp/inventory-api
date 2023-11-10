@@ -2,7 +2,7 @@ using Inventory.Models.DTO;
 
 namespace Inventory.Services
 {
-    public interface IUnitServices
+    public interface IUnitService
     {
         Task<IEnumerable<UnitResponseDto>> GetAllUnitsAsync();
         Task<UnitResponseDto> GetUnitByIdAsync(string id);

@@ -15,7 +15,9 @@ namespace Inventory.Utilities
                 ProductNumber = assembly.ProductNumber,
                 Location = assembly.Location,
                 Description = assembly.Description,
-                UnitId = assembly.UnitId
+                UnitId = assembly.UnitId,
+                CreatedDate = assembly.CreatedDate,
+                UpdatedDate = assembly.UpdatedDate
             };
         }
     }

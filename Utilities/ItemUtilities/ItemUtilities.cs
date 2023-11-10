@@ -15,7 +15,9 @@ namespace Inventory.Utilities
                 ProductNumber = item.ProductNumber,
                 Location = item.Location,
                 Description = item.Description,
-                SubassemblyId = item.SubassemblyId
+                SubassemblyId = item.SubassemblyId,
+                CreatedDate = item.CreatedDate,
+                UpdatedDate = item.UpdatedDate
             };
         }
     }

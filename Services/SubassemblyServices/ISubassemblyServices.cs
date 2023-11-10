@@ -2,7 +2,7 @@ using Inventory.Models.DTO;
 
 namespace Inventory.Services
 {
-    public interface ISubassemblyServices
+    public interface ISubassemblyService
     {
         Task<IEnumerable<SubassemblyResponseDto>> GetAllSubassembliesAsync();
         Task<SubassemblyResponseDto> GetSubassemblyByIdAsync(string id);
