@@ -7,6 +7,7 @@ using Microsoft.Identity.Web;
 using Serilog;
 using Inventory.Models;
 using Inventory.Services;
+using Inventory.Utilities;
 
 namespace inventory
 
@@ -44,6 +45,18 @@ namespace inventory
             {
                 c.EnableAnnotations();
             });
+
+            services.AddScoped<IAssemblyService, AssemblyService>();
+            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<ISubassemblyService, SubassemblyService>();
+            services.AddScoped<IUnitService, UnitService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IAssemblyUtilities, AssemblyUtilities>();
+            services.AddScoped<IItemUtilities, ItemUtilities>();
+            services.AddScoped<ISubassemblyUtilities, SubassemblyUtilities>();
+            services.AddScoped<IUnitUtilities, UnitUtilities>();
+            services.AddScoped<IUserUtilities, UserUtilities>();
 
             services.AddHostedService<UserCreateHandler>();
             services.AddHostedService<UserUpdateHandler>();

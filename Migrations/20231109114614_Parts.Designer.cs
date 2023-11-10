@@ -4,6 +4,7 @@ using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace inventoryapi.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231109114614_Parts")]
+    partial class Parts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,8 +27,7 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.Assembly", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("WPId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -46,10 +48,7 @@ namespace inventoryapi.Migrations
                     b.Property<string>("UnitId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("WPId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("WPId");
 
                     b.HasIndex("UnitId");
 
@@ -111,8 +110,7 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("WPId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -133,10 +131,7 @@ namespace inventoryapi.Migrations
                     b.Property<string>("SubassemblyId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("WPId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("WPId");
 
                     b.HasIndex("SubassemblyId");
 
@@ -164,8 +159,7 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.Subassembly", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("WPId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AssemblyId")
@@ -189,10 +183,7 @@ namespace inventoryapi.Migrations
                     b.Property<string>("SubassemblyId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("WPId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("WPId");
 
                     b.HasIndex("AssemblyId");
 
@@ -203,8 +194,7 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.Unit", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("WPId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -222,10 +212,7 @@ namespace inventoryapi.Migrations
                     b.Property<string>("SerialNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WPId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("WPId");
 
                     b.ToTable("Units");
                 });

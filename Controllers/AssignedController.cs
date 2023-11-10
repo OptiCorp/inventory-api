@@ -1,137 +1,137 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Inventory.Models;
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using System.Threading.Tasks;
+// using Microsoft.AspNetCore.Http;
+// using Microsoft.AspNetCore.Mvc;
+// using Microsoft.EntityFrameworkCore;
+// using Inventory.Models;
 
-namespace inventory_api.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AssignedController : ControllerBase
-    {
-        private readonly InventoryDbContext _context;
+// namespace inventory_api.Controllers
+// {
+//     [Route("api/[controller]")]
+//     [ApiController]
+//     public class AssignedController : ControllerBase
+//     {
+//         private readonly InventoryDbContext _context;
 
-        public AssignedController(InventoryDbContext context)
-        {
-            _context = context;
-        }
+//         public AssignedController(InventoryDbContext context)
+//         {
+//             _context = context;
+//         }
 
-        // GET: api/Assigned
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Assigned>>> GetAssigned()
-        {
-            if (_context.Assigned == null)
-            {
-                return NotFound();
-            }
-            return await _context.Assigned.ToListAsync();
-        }
+//         // GET: api/Assigned
+//         [HttpGet]
+//         public async Task<ActionResult<IEnumerable<Assigned>>> GetAssigned()
+//         {
+//             if (_context.Assigned == null)
+//             {
+//                 return NotFound();
+//             }
+//             return await _context.Assigned.ToListAsync();
+//         }
 
-        // GET: api/Assigned/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Assigned>> GetAssigned(string id)
-        {
-            if (_context.Assigned == null)
-            {
-                return NotFound();
-            }
-            var assigned = await _context.Assigned.FindAsync(id);
+//         // GET: api/Assigned/5
+//         [HttpGet("{id}")]
+//         public async Task<ActionResult<Assigned>> GetAssigned(string id)
+//         {
+//             if (_context.Assigned == null)
+//             {
+//                 return NotFound();
+//             }
+//             var assigned = await _context.Assigned.FindAsync(id);
 
-            if (assigned == null)
-            {
-                return NotFound();
-            }
+//             if (assigned == null)
+//             {
+//                 return NotFound();
+//             }
 
-            return assigned;
-        }
+//             return assigned;
+//         }
 
-        // PUT: api/Assigned/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAssigned(string id, Assigned assigned)
-        {
-            if (id != assigned.Id)
-            {
-                return BadRequest();
-            }
+//         // PUT: api/Assigned/5
+//         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+//         [HttpPut("{id}")]
+//         public async Task<IActionResult> PutAssigned(string id, Assigned assigned)
+//         {
+//             if (id != assigned.Id)
+//             {
+//                 return BadRequest();
+//             }
 
-            _context.Entry(assigned).State = EntityState.Modified;
+//             _context.Entry(assigned).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AssignedExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+//             try
+//             {
+//                 await _context.SaveChangesAsync();
+//             }
+//             catch (DbUpdateConcurrencyException)
+//             {
+//                 if (!AssignedExists(id))
+//                 {
+//                     return NotFound();
+//                 }
+//                 else
+//                 {
+//                     throw;
+//                 }
+//             }
 
-            return NoContent();
-        }
+//             return NoContent();
+//         }
 
-        // POST: api/Assigned
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Assigned>> PostAssigned(Assigned assigned)
-        {
-            if (_context.Assigned == null)
-            {
-                return Problem("Entity set 'InventoryDbContext.Assigned'  is null.");
-            }
-            _context.Assigned.Add(assigned);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (AssignedExists(assigned.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+//         // POST: api/Assigned
+//         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+//         [HttpPost]
+//         public async Task<ActionResult<Assigned>> PostAssigned(Assigned assigned)
+//         {
+//             if (_context.Assigned == null)
+//             {
+//                 return Problem("Entity set 'InventoryDbContext.Assigned'  is null.");
+//             }
+//             _context.Assigned.Add(assigned);
+//             try
+//             {
+//                 await _context.SaveChangesAsync();
+//             }
+//             catch (DbUpdateException)
+//             {
+//                 if (AssignedExists(assigned.Id))
+//                 {
+//                     return Conflict();
+//                 }
+//                 else
+//                 {
+//                     throw;
+//                 }
+//             }
 
-            return CreatedAtAction("GetAssigned", new { id = assigned.Id }, assigned);
-        }
+//             return CreatedAtAction("GetAssigned", new { id = assigned.Id }, assigned);
+//         }
 
-        // DELETE: api/Assigned/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAssigned(string id)
-        {
-            if (_context.Assigned == null)
-            {
-                return NotFound();
-            }
-            var assigned = await _context.Assigned.FindAsync(id);
-            if (assigned == null)
-            {
-                return NotFound();
-            }
+//         // DELETE: api/Assigned/5
+//         [HttpDelete("{id}")]
+//         public async Task<IActionResult> DeleteAssigned(string id)
+//         {
+//             if (_context.Assigned == null)
+//             {
+//                 return NotFound();
+//             }
+//             var assigned = await _context.Assigned.FindAsync(id);
+//             if (assigned == null)
+//             {
+//                 return NotFound();
+//             }
 
-            _context.Assigned.Remove(assigned);
-            await _context.SaveChangesAsync();
+//             _context.Assigned.Remove(assigned);
+//             await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+//             return NoContent();
+//         }
 
-        private bool AssignedExists(string id)
-        {
-            return (_context.Assigned?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-    }
-}
+//         private bool AssignedExists(string id)
+//         {
+//             return (_context.Assigned?.Any(e => e.Id == id)).GetValueOrDefault();
+//         }
+//     }
+// }
