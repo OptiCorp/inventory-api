@@ -5,7 +5,7 @@ namespace Inventory.Services
     public interface IAssemblyService
     {
         Task<IEnumerable<AssemblyResponseDto>> GetAllAssembliesAsync();
-        Task<IEnumerable<AssemblyResponseDto>> GetAllAssembliesByUnitIdAsync();
+        Task<IEnumerable<AssemblyResponseDto>> GetAllAssembliesByUnitIdAsync(string unitId);
         Task<AssemblyResponseDto> GetAssemblyByIdAsync(string id);
         Task UpdateAssemblyAsync(AssemblyUpdateDto Assembly);
         Task<string> CreateAssemblyAsync(AssemblyCreateDto Assembly);
