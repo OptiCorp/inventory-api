@@ -15,7 +15,7 @@ namespace Inventory.Utilities
                 ProductNumber = assembly.ProductNumber,
                 Location = assembly.Location,
                 Description = assembly.Description,
-                UnitId = assembly.UnitId,
+                ParentUnitId = assembly.UnitId,
                 Vendor = assembly.Vendor,
                 AddedById = assembly.UserId,
                 Comment = assembly.Comment,

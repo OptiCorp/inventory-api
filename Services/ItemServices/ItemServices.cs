@@ -40,7 +40,7 @@ namespace Inventory.Services
                 ProductNumber = itemDto.ProductNumber,
                 Location = itemDto.Location,
                 Description = itemDto.Description,
-                SubassemblyId = itemDto.SubassemblyId,
+                SubassemblyId = itemDto.ParentSubassemblyId,
                 Vendor = itemDto.Vendor,
                 UserId = itemDto.AddedById,
                 Comment = itemDto.Comment,
@@ -82,9 +82,9 @@ namespace Inventory.Services
                 {
                     item.Description = updatedItem.Description;
                 }
-                if (updatedItem.SubassemblyId != null)
+                if (updatedItem.ParentSubassemblyId != null)
                 {
-                    item.SubassemblyId = updatedItem.SubassemblyId;
+                    item.SubassemblyId = updatedItem.ParentSubassemblyId;
                 }
                 if (updatedItem.Vendor != null)
                 {

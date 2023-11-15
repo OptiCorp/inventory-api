@@ -40,7 +40,7 @@ namespace Inventory.Services
                 ProductNumber = assemblyDto.ProductNumber,
                 Location = assemblyDto.Location,
                 Description = assemblyDto.Description,
-                UnitId = assemblyDto.UnitId,
+                UnitId = assemblyDto.ParentUnitId,
                 Vendor = assemblyDto.Vendor,
                 UserId = assemblyDto.AddedById,
                 Comment = assemblyDto.Comment,
@@ -82,9 +82,9 @@ namespace Inventory.Services
                 {
                     assembly.Description = updatedAssembly.Description;
                 }
-                if (updatedAssembly.UnitId != null)
+                if (updatedAssembly.ParentUnitId != null)
                 {
-                    assembly.UnitId = updatedAssembly.UnitId;
+                    assembly.UnitId = updatedAssembly.ParentUnitId;
                 }
                 if (updatedAssembly.Vendor != null)
                 {
