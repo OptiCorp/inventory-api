@@ -17,6 +17,9 @@ namespace Inventory.Utilities
                 Description = subassembly.Description,
                 AssemblyId = subassembly.AssemblyId,
                 SubassemblyId = subassembly.SubassemblyId,
+                Vendor = subassembly.Vendor,
+                AddedById = subassembly.UserId,
+                Comment = subassembly.Comment,
                 CreatedDate = subassembly.CreatedDate,
                 UpdatedDate = subassembly.UpdatedDate
             };

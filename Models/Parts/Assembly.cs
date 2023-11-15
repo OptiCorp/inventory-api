@@ -23,12 +23,18 @@ namespace Inventory.Models
 
         public string? UnitId { get; set; }
 
-        public Unit? Unit { get; }
+        public string? Vendor { get; set; }
 
-        public ICollection<Subassembly>? Subassemblies { get; }
+        public string? UserId { get; set; }
+
+        public string? Comment { get; set; }
 
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
+
+        public Unit? Unit { get; }
+
+        public ICollection<Subassembly>? Subassemblies { get; }
     }
 }
