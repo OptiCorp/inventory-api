@@ -21,10 +21,16 @@ namespace Inventory.Models
 
         public string? Description { get; set; }
 
-        public ICollection<Assembly>? Assemblies { get; }
+        public string? Vendor { get; set; }
+
+        public string? UserId { get; set; }
+
+        public string? Comment { get; set; }
 
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
+
+        public ICollection<Assembly>? Assemblies { get; }
     }
 }

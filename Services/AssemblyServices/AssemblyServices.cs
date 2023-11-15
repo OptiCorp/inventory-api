@@ -41,6 +41,9 @@ namespace Inventory.Services
                 Location = assemblyDto.Location,
                 Description = assemblyDto.Description,
                 UnitId = assemblyDto.UnitId,
+                Vendor = assemblyDto.Vendor,
+                UserId = assemblyDto.AddedById,
+                Comment = assemblyDto.Comment,
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -82,6 +85,18 @@ namespace Inventory.Services
                 if (updatedAssembly.UnitId != null)
                 {
                     assembly.UnitId = updatedAssembly.UnitId;
+                }
+                if (updatedAssembly.Vendor != null)
+                {
+                    assembly.Vendor = updatedAssembly.Vendor;
+                }
+                if (updatedAssembly.AddedById != null)
+                {
+                    assembly.UserId = updatedAssembly.AddedById;
+                }
+                if (updatedAssembly.Comment != null)
+                {
+                    assembly.Comment = updatedAssembly.Comment;
                 }
 
                 assembly.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));

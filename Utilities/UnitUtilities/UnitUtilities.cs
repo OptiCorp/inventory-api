@@ -15,6 +15,9 @@ namespace Inventory.Utilities
                 ProductNumber = unit.ProductNumber,
                 Location = unit.Location,
                 Description = unit.Description,
+                Vendor = unit.Vendor,
+                AddedById = unit.UserId,
+                Comment = unit.Comment,
                 CreatedDate = unit.CreatedDate,
                 UpdatedDate = unit.UpdatedDate
             };

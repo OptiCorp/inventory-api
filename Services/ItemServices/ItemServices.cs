@@ -31,16 +31,19 @@ namespace Inventory.Services
             return _itemUtilities.ItemToResponseDto(item);
         }
 
-        public async Task<string> CreateItemAsync(ItemCreateDto ItemDto)
+        public async Task<string> CreateItemAsync(ItemCreateDto itemDto)
         {
             var item = new Item
             {
-                WPId = ItemDto.WPId,
-                SerialNumber = ItemDto.SerialNumber,
-                ProductNumber = ItemDto.ProductNumber,
-                Location = ItemDto.Location,
-                Description = ItemDto.Description,
-                SubassemblyId = ItemDto.SubassemblyId,
+                WPId = itemDto.WPId,
+                SerialNumber = itemDto.SerialNumber,
+                ProductNumber = itemDto.ProductNumber,
+                Location = itemDto.Location,
+                Description = itemDto.Description,
+                SubassemblyId = itemDto.SubassemblyId,
+                Vendor = itemDto.Vendor,
+                UserId = itemDto.AddedById,
+                Comment = itemDto.Comment,
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -82,6 +85,18 @@ namespace Inventory.Services
                 if (updatedItem.SubassemblyId != null)
                 {
                     item.SubassemblyId = updatedItem.SubassemblyId;
+                }
+                if (updatedItem.Vendor != null)
+                {
+                    item.Vendor = updatedItem.Vendor;
+                }
+                if (updatedItem.AddedById != null)
+                {
+                    item.UserId = updatedItem.AddedById;
+                }
+                if (updatedItem.Comment != null)
+                {
+                    item.Comment = updatedItem.Comment;
                 }
 
                 item.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));

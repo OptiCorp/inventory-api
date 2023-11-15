@@ -16,6 +16,9 @@ namespace Inventory.Utilities
                 Location = assembly.Location,
                 Description = assembly.Description,
                 UnitId = assembly.UnitId,
+                Vendor = assembly.Vendor,
+                AddedById = assembly.UserId,
+                Comment = assembly.Comment,
                 CreatedDate = assembly.CreatedDate,
                 UpdatedDate = assembly.UpdatedDate
             };

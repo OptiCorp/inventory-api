@@ -13,5 +13,11 @@ namespace Inventory.Models.DTO
         public string? Location { get; set; }
 
         public string? Description { get; set; }
+
+        public string? Vendor { get; set; }
+
+        public string? AddedById { get; set; }
+
+        public string? Comment { get; set; }
     }
 }

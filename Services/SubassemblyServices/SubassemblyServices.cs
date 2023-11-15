@@ -42,6 +42,9 @@ namespace Inventory.Services
                 Description = subassemblyDto.Description,
                 AssemblyId = subassemblyDto.AssemblyId,
                 SubassemblyId = subassemblyDto.SubassemblyId,
+                Vendor = subassemblyDto.Vendor,
+                UserId = subassemblyDto.AddedById,
+                Comment = subassemblyDto.Comment,
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -87,6 +90,18 @@ namespace Inventory.Services
                 if (updatedSubassembly.SubassemblyId != null)
                 {
                     subassembly.SubassemblyId = updatedSubassembly.SubassemblyId;
+                }
+                if (updatedSubassembly.Vendor != null)
+                {
+                    subassembly.Vendor = updatedSubassembly.Vendor;
+                }
+                if (updatedSubassembly.AddedById != null)
+                {
+                    subassembly.UserId = updatedSubassembly.AddedById;
+                }
+                if (updatedSubassembly.Comment != null)
+                {
+                    subassembly.Comment = updatedSubassembly.Comment;
                 }
 
                 subassembly.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
