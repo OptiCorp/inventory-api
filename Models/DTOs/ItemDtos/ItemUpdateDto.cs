@@ -4,6 +4,7 @@ namespace Inventory.Models.DTO
 {
     public class ItemUpdateDto
     {
+        [Required]
         public string? Id { get; set; }
 
         public string? WPId { get; set; }
@@ -18,7 +19,7 @@ namespace Inventory.Models.DTO
 
         public string? Description { get; set; }
 
-        public string? SubassemblyId { get; set; }
+        public string? ParentSubassemblyId { get; set; }
 
         public string? Vendor { get; set; }
 

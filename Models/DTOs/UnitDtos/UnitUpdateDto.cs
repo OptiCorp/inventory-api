@@ -4,6 +4,7 @@ namespace Inventory.Models.DTO
 {
     public class UnitUpdateDto
     {
+        [Required]
         public string? Id { get; set; }
 
         public string? WPId { get; set; }

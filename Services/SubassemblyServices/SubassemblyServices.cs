@@ -40,8 +40,8 @@ namespace Inventory.Services
                 ProductNumber = subassemblyDto.ProductNumber,
                 Location = subassemblyDto.Location,
                 Description = subassemblyDto.Description,
-                AssemblyId = subassemblyDto.AssemblyId,
-                SubassemblyId = subassemblyDto.SubassemblyId,
+                AssemblyId = subassemblyDto.ParentAssemblyId,
+                SubassemblyId = subassemblyDto.ParentSubassemblyId,
                 Vendor = subassemblyDto.Vendor,
                 UserId = subassemblyDto.AddedById,
                 Comment = subassemblyDto.Comment,
@@ -83,13 +83,13 @@ namespace Inventory.Services
                 {
                     subassembly.Description = updatedSubassembly.Description;
                 }
-                if (updatedSubassembly.AssemblyId != null)
+                if (updatedSubassembly.ParentAssemblyId != null)
                 {
-                    subassembly.AssemblyId = updatedSubassembly.AssemblyId;
+                    subassembly.AssemblyId = updatedSubassembly.ParentAssemblyId;
                 }
-                if (updatedSubassembly.SubassemblyId != null)
+                if (updatedSubassembly.ParentSubassemblyId != null)
                 {
-                    subassembly.SubassemblyId = updatedSubassembly.SubassemblyId;
+                    subassembly.SubassemblyId = updatedSubassembly.ParentSubassemblyId;
                 }
                 if (updatedSubassembly.Vendor != null)
                 {
