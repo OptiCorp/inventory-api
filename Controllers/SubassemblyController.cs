@@ -21,10 +21,13 @@ namespace Inventory.Controllers
 
         private readonly ISubassemblyService _subassemblyService;
 
-        public SubassemblyController(InventoryDbContext context, ISubassemblyService subassemblyService)
+        private readonly IAssemblyService _assemblyService;
+
+        public SubassemblyController(InventoryDbContext context, ISubassemblyService subassemblyService, IAssemblyService assemblyService)
         {
             _context = context;
             _subassemblyService = subassemblyService;
+            _assemblyService = assemblyService;
         }
 
         [HttpGet]
@@ -39,7 +42,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Get subassembly", Description = "Retrieves a subassembly.")]
         [SwaggerResponse(200, "Success", typeof(SubassemblyResponseDto))]
         [SwaggerResponse(404, "Subassembly not found")]
-        public async Task<ActionResult<Equipment>> GetSubassembly(string id)
+        public async Task<ActionResult<SubassemblyResponseDto>> GetSubassembly(string id)
         {
             var subassembly = await _subassemblyService.GetSubassemblyByIdAsync(id);
             if (subassembly == null)
@@ -48,6 +51,36 @@ namespace Inventory.Controllers
             }
 
             return Ok(subassembly);
+        }
+
+        [HttpGet("ByAssembly/{id}")]
+        [SwaggerOperation(Summary = "Get subassemblies", Description = "Retrieves subassemblies by assembly Id.")]
+        [SwaggerResponse(200, "Success", typeof(SubassemblyResponseDto))]
+        [SwaggerResponse(404, "Assembly not found")]
+        public async Task<ActionResult<SubassemblyResponseDto>> GetSubAssemblyByAssembly(string assemblyId)
+        {
+            var assembly = await _assemblyService.GetAssemblyByIdAsync(assemblyId);
+            if (assembly == null)
+            {
+                return NotFound("Assembly not found");
+            }
+
+            return Ok(await _subassemblyService.GetAllSubassembliesByAssemblyIdAsync(assemblyId));
+        }
+
+        [HttpGet("BySubassembly/{id}")]
+        [SwaggerOperation(Summary = "Get subassemblies", Description = "Retrieves subassemblies by subassembly Id.")]
+        [SwaggerResponse(200, "Success", typeof(SubassemblyResponseDto))]
+        [SwaggerResponse(404, "Subassembly not found")]
+        public async Task<ActionResult<SubassemblyResponseDto>> GetSubassemblyBySubassembly(string subassemblyId)
+        {
+            var subassembly = await _subassemblyService.GetSubassemblyByIdAsync(subassemblyId);
+            if (subassembly == null)
+            {
+                return NotFound("Subassembly not found");
+            }
+
+            return Ok(await _subassemblyService.GetAllSubassembliesBySubassemblyIdAsync(subassemblyId));
         }
 
         [HttpPost]

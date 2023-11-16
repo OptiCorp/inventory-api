@@ -21,10 +21,13 @@ namespace Inventory.Controllers
 
         private readonly IItemService _itemService;
 
-        public ItemController(InventoryDbContext context, IItemService itemService)
+        private readonly ISubassemblyService _subassemblyService;
+
+        public ItemController(InventoryDbContext context, IItemService itemService, ISubassemblyService subassemblyService)
         {
             _context = context;
             _itemService = itemService;
+            _subassemblyService = subassemblyService;
         }
 
         [HttpGet]
@@ -39,7 +42,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Get item", Description = "Retrieves an item.")]
         [SwaggerResponse(200, "Success", typeof(ItemResponseDto))]
         [SwaggerResponse(404, "Item not found")]
-        public async Task<ActionResult<Equipment>> GetItem(string id)
+        public async Task<ActionResult<ItemResponseDto>> GetItem(string id)
         {
             var item = await _itemService.GetItemByIdAsync(id);
             if (item == null)
@@ -48,6 +51,21 @@ namespace Inventory.Controllers
             }
 
             return Ok(item);
+        }
+
+        [HttpGet("BySubassembly/{id}")]
+        [SwaggerOperation(Summary = "Get items", Description = "Retrieves items by subassembly Id.")]
+        [SwaggerResponse(200, "Success", typeof(ItemResponseDto))]
+        [SwaggerResponse(404, "Subassembly not found")]
+        public async Task<ActionResult<ItemResponseDto>> GetItemBySubassembly(string subassemblyId)
+        {
+            var subassembly = await _subassemblyService.GetSubassemblyByIdAsync(subassemblyId);
+            if (subassembly == null)
+            {
+                return NotFound("Subassembly not found");
+            }
+
+            return Ok(await _itemService.GetAllItemsBySubassemblyIdAsync(subassemblyId));
         }
 
         [HttpPost]

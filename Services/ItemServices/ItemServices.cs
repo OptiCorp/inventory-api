@@ -22,6 +22,13 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySubassemblyIdAsync(string subassemblyId)
+        {
+            return await _context.Items.Where(c => c.SubassemblyId == subassemblyId)
+                                            .Select(c => _itemUtilities.ItemToResponseDto(c))
+                                            .ToListAsync();
+        }
+
         public async Task<ItemResponseDto> GetItemByIdAsync(string id)
         {
             var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == id);

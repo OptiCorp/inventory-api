@@ -22,6 +22,20 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<SubassemblyResponseDto>> GetAllSubassembliesByAssemblyIdAsync(string assemblyId)
+        {
+            return await _context.Subassemblies.Where(c => c.AssemblyId == assemblyId)
+                                            .Select(c => _subassemblyUtilities.SubassemblyToResponseDto(c))
+                                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<SubassemblyResponseDto>> GetAllSubassembliesBySubassemblyIdAsync(string subassemblyId)
+        {
+            return await _context.Subassemblies.Where(c => c.SubassemblyId == subassemblyId)
+                                            .Select(c => _subassemblyUtilities.SubassemblyToResponseDto(c))
+                                            .ToListAsync();
+        }
+
         public async Task<SubassemblyResponseDto> GetSubassemblyByIdAsync(string id)
         {
             var subassembly = await _context.Subassemblies.FirstOrDefaultAsync(c => c.Id == id);

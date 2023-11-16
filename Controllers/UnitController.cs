@@ -39,7 +39,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Get unit", Description = "Retrieves a unit.")]
         [SwaggerResponse(200, "Success", typeof(UnitResponseDto))]
         [SwaggerResponse(404, "Unit not found")]
-        public async Task<ActionResult<Equipment>> GetUnit(string id)
+        public async Task<ActionResult<UnitResponseDto>> GetUnit(string id)
         {
             var unit = await _unitService.GetUnitByIdAsync(id);
             if (unit == null)
