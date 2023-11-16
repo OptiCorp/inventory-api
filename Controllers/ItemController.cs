@@ -67,6 +67,14 @@ namespace Inventory.Controllers
             return Ok(await _itemService.GetAllItemsBySubassemblyIdAsync(subassemblyId));
         }
 
+        [HttpGet("BySearchString/{searchString}")]
+        [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WPId, serial number or description.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemBySearchString(string searchString)
+        {
+            return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString));
+        }
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
         [SwaggerResponse(201, "item created", typeof(ItemResponseDto))]

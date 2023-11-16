@@ -49,6 +49,14 @@ namespace Inventory.Controllers
             return Ok(unit);
         }
 
+        [HttpGet("BySearchString/{searchString}")]
+        [SwaggerOperation(Summary = "Get units containing search string", Description = "Retrieves units containing search string in WPId, serial number or description.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<UnitResponseDto>))]
+        public async Task<ActionResult<IEnumerable<UnitResponseDto>>> GetUnitBySearchString(string searchString)
+        {
+            return Ok(await _unitService.GetAllUnitsBySearchStringAsync(searchString));
+        }
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new unit", Description = "Creates a new unit.")]
         [SwaggerResponse(201, "Unit created", typeof(UnitResponseDto))]
