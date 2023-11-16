@@ -28,6 +28,15 @@ namespace Inventory.Configuration
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.UserId);
+
+            modelBuilder.Entity<Assembly>()
+                .HasIndex(c => c.WPId);
+
+            modelBuilder.Entity<Assembly>()
+                .HasIndex(c => c.SerialNumber);
+
+            modelBuilder.Entity<Assembly>()
+                .HasIndex(c => c.Description);
         }
     }
 
@@ -47,6 +56,15 @@ namespace Inventory.Configuration
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.UserId);
+
+            modelBuilder.Entity<Item>()
+                .HasIndex(c => c.WPId);
+
+            modelBuilder.Entity<Item>()
+                .HasIndex(c => c.SerialNumber);
+
+            modelBuilder.Entity<Item>()
+                .HasIndex(c => c.Description);
         }
     }
 
@@ -71,6 +89,15 @@ namespace Inventory.Configuration
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.UserId);
+
+            modelBuilder.Entity<Subassembly>()
+                .HasIndex(c => c.WPId);
+
+            modelBuilder.Entity<Subassembly>()
+                .HasIndex(c => c.SerialNumber);
+
+            modelBuilder.Entity<Subassembly>()
+                .HasIndex(c => c.Description);
         }
     }
 
@@ -81,10 +108,19 @@ namespace Inventory.Configuration
             modelBuilder.Entity<Unit>()
                 .HasKey(c => c.Id);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Unit>()
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.UserId);
+
+            modelBuilder.Entity<Unit>()
+                .HasIndex(c => c.WPId);
+
+            modelBuilder.Entity<Unit>()
+                .HasIndex(c => c.SerialNumber);
+
+            modelBuilder.Entity<Unit>()
+                .HasIndex(c => c.Description);
         }
     }
 }
