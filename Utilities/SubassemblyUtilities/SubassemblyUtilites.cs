@@ -16,7 +16,7 @@ namespace Inventory.Utilities
                 Location = subassembly.Location,
                 Description = subassembly.Description,
                 ParentAssemblyId = subassembly.AssemblyId,
-                ParentSubassemblyId = subassembly.SubassemblyId,
+                ParentSubassemblyId = subassembly.ParentSubassemblyId,
                 Vendor = subassembly.Vendor,
                 AddedById = subassembly.UserId,
                 Comment = subassembly.Comment,

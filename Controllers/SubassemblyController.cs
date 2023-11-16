@@ -9,7 +9,6 @@ using Inventory.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTO;
 using Inventory.Services;
-using inventoryapi.Migrations;
 
 namespace Inventory.Controllers
 {
@@ -81,6 +80,14 @@ namespace Inventory.Controllers
             }
 
             return Ok(await _subassemblyService.GetAllSubassembliesBySubassemblyIdAsync(subassemblyId));
+        }
+
+        [HttpGet("BySearchString/{searchString}")]
+        [SwaggerOperation(Summary = "Get subassemblies containing search string", Description = "Retrieves subassemblies containing search string in WPId, serial number or description.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<SubassemblyResponseDto>))]
+        public async Task<ActionResult<IEnumerable<SubassemblyResponseDto>>> GetSubassemblyBySearchString(string searchString)
+        {
+            return Ok(await _subassemblyService.GetAllSubassembliesBySearchStringAsync(searchString));
         }
 
         [HttpPost]

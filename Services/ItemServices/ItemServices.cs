@@ -29,6 +29,13 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString)
+        {
+            return await _context.Items.Where(c => c.WPId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+                                            .Select(c => _itemUtilities.ItemToResponseDto(c))
+                                            .ToListAsync();
+        }
+
         public async Task<ItemResponseDto> GetItemByIdAsync(string id)
         {
             var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == id);

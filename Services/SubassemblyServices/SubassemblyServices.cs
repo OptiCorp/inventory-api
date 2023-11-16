@@ -31,7 +31,14 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<SubassemblyResponseDto>> GetAllSubassembliesBySubassemblyIdAsync(string subassemblyId)
         {
-            return await _context.Subassemblies.Where(c => c.SubassemblyId == subassemblyId)
+            return await _context.Subassemblies.Where(c => c.ParentSubassemblyId == subassemblyId)
+                                            .Select(c => _subassemblyUtilities.SubassemblyToResponseDto(c))
+                                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<SubassemblyResponseDto>> GetAllSubassembliesBySearchStringAsync(string searchString)
+        {
+            return await _context.Subassemblies.Where(c => c.WPId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
                                             .Select(c => _subassemblyUtilities.SubassemblyToResponseDto(c))
                                             .ToListAsync();
         }
@@ -55,7 +62,7 @@ namespace Inventory.Services
                 Location = subassemblyDto.Location,
                 Description = subassemblyDto.Description,
                 AssemblyId = subassemblyDto.ParentAssemblyId,
-                SubassemblyId = subassemblyDto.ParentSubassemblyId,
+                ParentSubassemblyId = subassemblyDto.ParentSubassemblyId,
                 Vendor = subassemblyDto.Vendor,
                 UserId = subassemblyDto.AddedById,
                 Comment = subassemblyDto.Comment,
@@ -103,7 +110,7 @@ namespace Inventory.Services
                 }
                 if (updatedSubassembly.ParentSubassemblyId != null)
                 {
-                    subassembly.SubassemblyId = updatedSubassembly.ParentSubassemblyId;
+                    subassembly.ParentSubassemblyId = updatedSubassembly.ParentSubassemblyId;
                 }
                 if (updatedSubassembly.Vendor != null)
                 {

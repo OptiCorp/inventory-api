@@ -29,7 +29,6 @@ namespace Inventory.Models
         [Required]
         public string? Vendor { get; set; }
 
-        [Required]
         public string? UserId { get; set; }
 
         public string? Comment { get; set; }
@@ -38,6 +37,8 @@ namespace Inventory.Models
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
+
+        public Subassembly? Subassembly { get; }
 
         public User? User { get; }
     }

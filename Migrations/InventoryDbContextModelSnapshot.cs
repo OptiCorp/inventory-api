@@ -37,7 +37,7 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DocumentationId")
                         .HasColumnType("nvarchar(max)");
@@ -51,7 +51,7 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UnitId")
                         .HasColumnType("nvarchar(450)");
@@ -60,8 +60,7 @@ namespace inventoryapi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Vendor")
                         .IsRequired()
@@ -69,66 +68,21 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("WPId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Description");
+
+                    b.HasIndex("SerialNumber");
 
                     b.HasIndex("UnitId");
 
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WPId");
+
                     b.ToTable("Assemblies");
-                });
-
-            modelBuilder.Entity("Inventory.Models.Assigned", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("AssignedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CompletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EquipmentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MaterialId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Assigned");
-                });
-
-            modelBuilder.Entity("Inventory.Models.Equipment", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("EquipmentType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("LastInspected")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("NextInspected")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Equipment");
                 });
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
@@ -146,7 +100,7 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DocumentationId")
                         .HasColumnType("nvarchar(max)");
@@ -160,7 +114,7 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SubassemblyId")
                         .HasColumnType("nvarchar(450)");
@@ -169,8 +123,7 @@ namespace inventoryapi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Vendor")
                         .IsRequired()
@@ -178,32 +131,21 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("WPId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Description");
+
+                    b.HasIndex("SerialNumber");
 
                     b.HasIndex("SubassemblyId");
 
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WPId");
+
                     b.ToTable("Items");
-                });
-
-            modelBuilder.Entity("Inventory.Models.Material", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("StockCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Materials");
                 });
 
             modelBuilder.Entity("Inventory.Models.Subassembly", b =>
@@ -224,7 +166,7 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DocumentationId")
                         .HasColumnType("nvarchar(max)");
@@ -232,23 +174,22 @@ namespace inventoryapi.Migrations
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ParentSubassemblyId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ProductNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubassemblyId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Vendor")
                         .IsRequired()
@@ -256,13 +197,21 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("WPId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AssemblyId");
 
-                    b.HasIndex("SubassemblyId");
+                    b.HasIndex("Description");
+
+                    b.HasIndex("ParentSubassemblyId");
+
+                    b.HasIndex("SerialNumber");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WPId");
 
                     b.ToTable("Subassemblies");
                 });
@@ -282,7 +231,7 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DocumentationId")
                         .HasColumnType("nvarchar(max)");
@@ -296,14 +245,13 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Vendor")
                         .IsRequired()
@@ -311,9 +259,17 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("WPId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Description");
+
+                    b.HasIndex("SerialNumber");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WPId");
 
                     b.ToTable("Units");
                 });
@@ -372,27 +328,62 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.Assembly", b =>
                 {
-                    b.HasOne("Inventory.Models.Unit", null)
+                    b.HasOne("Inventory.Models.Unit", "Unit")
                         .WithMany("Assemblies")
                         .HasForeignKey("UnitId");
+
+                    b.HasOne("Inventory.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Unit");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
                 {
-                    b.HasOne("Inventory.Models.Subassembly", null)
+                    b.HasOne("Inventory.Models.Subassembly", "Subassembly")
                         .WithMany("Items")
                         .HasForeignKey("SubassemblyId");
+
+                    b.HasOne("Inventory.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Subassembly");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Inventory.Models.Subassembly", b =>
                 {
-                    b.HasOne("Inventory.Models.Assembly", null)
+                    b.HasOne("Inventory.Models.Assembly", "Assembly")
                         .WithMany("Subassemblies")
                         .HasForeignKey("AssemblyId");
 
-                    b.HasOne("Inventory.Models.Subassembly", null)
+                    b.HasOne("Inventory.Models.Subassembly", "ParentSubassembly")
                         .WithMany("Subassemblies")
-                        .HasForeignKey("SubassemblyId");
+                        .HasForeignKey("ParentSubassemblyId");
+
+                    b.HasOne("Inventory.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Assembly");
+
+                    b.Navigation("ParentSubassembly");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Inventory.Models.Unit", b =>
+                {
+                    b.HasOne("Inventory.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Inventory.Models.Assembly", b =>

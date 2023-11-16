@@ -27,12 +27,11 @@ namespace Inventory.Models
 
         public string? AssemblyId { get; set; }
 
-        public string? SubassemblyId { get; set; }
+        public string? ParentSubassemblyId { get; set; }
 
         [Required]
         public string? Vendor { get; set; }
 
-        [Required]
         public string? UserId { get; set; }
 
         public string? Comment { get; set; }
@@ -43,6 +42,8 @@ namespace Inventory.Models
         public DateTime? UpdatedDate { get; set; }
 
         public Assembly? Assembly { get; }
+
+        public Subassembly? ParentSubassembly { get; }
 
         public ICollection<Subassembly>? Subassemblies { get; }
 
