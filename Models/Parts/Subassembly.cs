@@ -32,7 +32,6 @@ namespace Inventory.Models
         [Required]
         public string? Vendor { get; set; }
 
-        [Required]
         public string? UserId { get; set; }
 
         public string? Comment { get; set; }
