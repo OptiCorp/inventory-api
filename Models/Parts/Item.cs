@@ -39,6 +39,8 @@ namespace Inventory.Models
 
         public DateTime? UpdatedDate { get; set; }
 
+        public Subassembly? Subassembly { get; }
+
         public User? User { get; }
     }
 }
