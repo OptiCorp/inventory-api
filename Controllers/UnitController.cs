@@ -9,7 +9,6 @@ using Inventory.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTO;
 using Inventory.Services;
-using inventoryapi.Migrations;
 
 namespace Inventory.Controllers
 {
