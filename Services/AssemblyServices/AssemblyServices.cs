@@ -22,6 +22,20 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<AssemblyResponseDto>> GetAllAssembliesByUnitIdAsync(string unitId)
+        {
+            return await _context.Assemblies.Where(c => c.UnitId == unitId)
+                                            .Select(c => _assemblyUtilities.AssemblyToResponseDto(c))
+                                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<AssemblyResponseDto>> GetAllAssembliesBySearchStringAsync(string searchString)
+        {
+            return await _context.Assemblies.Where(c => c.WPId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+                                            .Select(c => _assemblyUtilities.AssemblyToResponseDto(c))
+                                            .ToListAsync();
+        }
+
         public async Task<AssemblyResponseDto> GetAssemblyByIdAsync(string id)
         {
             var assembly = await _context.Assemblies.FirstOrDefaultAsync(c => c.Id == id);
@@ -40,7 +54,10 @@ namespace Inventory.Services
                 ProductNumber = assemblyDto.ProductNumber,
                 Location = assemblyDto.Location,
                 Description = assemblyDto.Description,
-                UnitId = assemblyDto.UnitId,
+                UnitId = assemblyDto.ParentUnitId,
+                Vendor = assemblyDto.Vendor,
+                UserId = assemblyDto.AddedById,
+                Comment = assemblyDto.Comment,
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -79,9 +96,21 @@ namespace Inventory.Services
                 {
                     assembly.Description = updatedAssembly.Description;
                 }
-                if (updatedAssembly.UnitId != null)
+                if (updatedAssembly.ParentUnitId != null)
                 {
-                    assembly.UnitId = updatedAssembly.UnitId;
+                    assembly.UnitId = updatedAssembly.ParentUnitId;
+                }
+                if (updatedAssembly.Vendor != null)
+                {
+                    assembly.Vendor = updatedAssembly.Vendor;
+                }
+                if (updatedAssembly.AddedById != null)
+                {
+                    assembly.UserId = updatedAssembly.AddedById;
+                }
+                if (updatedAssembly.Comment != null)
+                {
+                    assembly.Comment = updatedAssembly.Comment;
                 }
 
                 assembly.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));

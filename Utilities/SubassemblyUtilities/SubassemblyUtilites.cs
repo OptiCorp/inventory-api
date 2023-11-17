@@ -15,8 +15,11 @@ namespace Inventory.Utilities
                 ProductNumber = subassembly.ProductNumber,
                 Location = subassembly.Location,
                 Description = subassembly.Description,
-                AssemblyId = subassembly.AssemblyId,
-                SubassemblyId = subassembly.SubassemblyId,
+                ParentAssemblyId = subassembly.AssemblyId,
+                ParentSubassemblyId = subassembly.ParentSubassemblyId,
+                Vendor = subassembly.Vendor,
+                AddedById = subassembly.UserId,
+                Comment = subassembly.Comment,
                 CreatedDate = subassembly.CreatedDate,
                 UpdatedDate = subassembly.UpdatedDate
             };

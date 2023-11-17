@@ -9,7 +9,6 @@ using Inventory.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTO;
 using Inventory.Services;
-using inventoryapi.Migrations;
 
 namespace Inventory.Controllers
 {
@@ -21,10 +20,13 @@ namespace Inventory.Controllers
 
         private readonly IItemService _itemService;
 
-        public ItemController(InventoryDbContext context, IItemService itemService)
+        private readonly ISubassemblyService _subassemblyService;
+
+        public ItemController(InventoryDbContext context, IItemService itemService, ISubassemblyService subassemblyService)
         {
             _context = context;
             _itemService = itemService;
+            _subassemblyService = subassemblyService;
         }
 
         [HttpGet]
@@ -39,7 +41,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Get item", Description = "Retrieves an item.")]
         [SwaggerResponse(200, "Success", typeof(ItemResponseDto))]
         [SwaggerResponse(404, "Item not found")]
-        public async Task<ActionResult<Equipment>> GetItem(string id)
+        public async Task<ActionResult<ItemResponseDto>> GetItem(string id)
         {
             var item = await _itemService.GetItemByIdAsync(id);
             if (item == null)
@@ -48,6 +50,29 @@ namespace Inventory.Controllers
             }
 
             return Ok(item);
+        }
+
+        [HttpGet("BySubassembly/{id}")]
+        [SwaggerOperation(Summary = "Get items", Description = "Retrieves items by subassembly Id.")]
+        [SwaggerResponse(200, "Success", typeof(ItemResponseDto))]
+        [SwaggerResponse(404, "Subassembly not found")]
+        public async Task<ActionResult<ItemResponseDto>> GetItemBySubassembly(string subassemblyId)
+        {
+            var subassembly = await _subassemblyService.GetSubassemblyByIdAsync(subassemblyId);
+            if (subassembly == null)
+            {
+                return NotFound("Subassembly not found");
+            }
+
+            return Ok(await _itemService.GetAllItemsBySubassemblyIdAsync(subassemblyId));
+        }
+
+        [HttpGet("BySearchString/{searchString}")]
+        [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WPId, serial number or description.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemBySearchString(string searchString)
+        {
+            return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString));
         }
 
         [HttpPost]

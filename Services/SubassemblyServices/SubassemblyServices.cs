@@ -22,6 +22,27 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<SubassemblyResponseDto>> GetAllSubassembliesByAssemblyIdAsync(string assemblyId)
+        {
+            return await _context.Subassemblies.Where(c => c.AssemblyId == assemblyId)
+                                            .Select(c => _subassemblyUtilities.SubassemblyToResponseDto(c))
+                                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<SubassemblyResponseDto>> GetAllSubassembliesBySubassemblyIdAsync(string subassemblyId)
+        {
+            return await _context.Subassemblies.Where(c => c.ParentSubassemblyId == subassemblyId)
+                                            .Select(c => _subassemblyUtilities.SubassemblyToResponseDto(c))
+                                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<SubassemblyResponseDto>> GetAllSubassembliesBySearchStringAsync(string searchString)
+        {
+            return await _context.Subassemblies.Where(c => c.WPId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+                                            .Select(c => _subassemblyUtilities.SubassemblyToResponseDto(c))
+                                            .ToListAsync();
+        }
+
         public async Task<SubassemblyResponseDto> GetSubassemblyByIdAsync(string id)
         {
             var subassembly = await _context.Subassemblies.FirstOrDefaultAsync(c => c.Id == id);
@@ -40,8 +61,11 @@ namespace Inventory.Services
                 ProductNumber = subassemblyDto.ProductNumber,
                 Location = subassemblyDto.Location,
                 Description = subassemblyDto.Description,
-                AssemblyId = subassemblyDto.AssemblyId,
-                SubassemblyId = subassemblyDto.SubassemblyId,
+                AssemblyId = subassemblyDto.ParentAssemblyId,
+                ParentSubassemblyId = subassemblyDto.ParentSubassemblyId,
+                Vendor = subassemblyDto.Vendor,
+                UserId = subassemblyDto.AddedById,
+                Comment = subassemblyDto.Comment,
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -80,13 +104,25 @@ namespace Inventory.Services
                 {
                     subassembly.Description = updatedSubassembly.Description;
                 }
-                if (updatedSubassembly.AssemblyId != null)
+                if (updatedSubassembly.ParentAssemblyId != null)
                 {
-                    subassembly.AssemblyId = updatedSubassembly.AssemblyId;
+                    subassembly.AssemblyId = updatedSubassembly.ParentAssemblyId;
                 }
-                if (updatedSubassembly.SubassemblyId != null)
+                if (updatedSubassembly.ParentSubassemblyId != null)
                 {
-                    subassembly.SubassemblyId = updatedSubassembly.SubassemblyId;
+                    subassembly.ParentSubassemblyId = updatedSubassembly.ParentSubassemblyId;
+                }
+                if (updatedSubassembly.Vendor != null)
+                {
+                    subassembly.Vendor = updatedSubassembly.Vendor;
+                }
+                if (updatedSubassembly.AddedById != null)
+                {
+                    subassembly.UserId = updatedSubassembly.AddedById;
+                }
+                if (updatedSubassembly.Comment != null)
+                {
+                    subassembly.Comment = updatedSubassembly.Comment;
                 }
 
                 subassembly.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));

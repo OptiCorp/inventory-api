@@ -22,6 +22,20 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySubassemblyIdAsync(string subassemblyId)
+        {
+            return await _context.Items.Where(c => c.SubassemblyId == subassemblyId)
+                                            .Select(c => _itemUtilities.ItemToResponseDto(c))
+                                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString)
+        {
+            return await _context.Items.Where(c => c.WPId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+                                            .Select(c => _itemUtilities.ItemToResponseDto(c))
+                                            .ToListAsync();
+        }
+
         public async Task<ItemResponseDto> GetItemByIdAsync(string id)
         {
             var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == id);
@@ -31,16 +45,19 @@ namespace Inventory.Services
             return _itemUtilities.ItemToResponseDto(item);
         }
 
-        public async Task<string> CreateItemAsync(ItemCreateDto ItemDto)
+        public async Task<string> CreateItemAsync(ItemCreateDto itemDto)
         {
             var item = new Item
             {
-                WPId = ItemDto.WPId,
-                SerialNumber = ItemDto.SerialNumber,
-                ProductNumber = ItemDto.ProductNumber,
-                Location = ItemDto.Location,
-                Description = ItemDto.Description,
-                SubassemblyId = ItemDto.SubassemblyId,
+                WPId = itemDto.WPId,
+                SerialNumber = itemDto.SerialNumber,
+                ProductNumber = itemDto.ProductNumber,
+                Location = itemDto.Location,
+                Description = itemDto.Description,
+                SubassemblyId = itemDto.ParentSubassemblyId,
+                Vendor = itemDto.Vendor,
+                UserId = itemDto.AddedById,
+                Comment = itemDto.Comment,
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -79,9 +96,21 @@ namespace Inventory.Services
                 {
                     item.Description = updatedItem.Description;
                 }
-                if (updatedItem.SubassemblyId != null)
+                if (updatedItem.ParentSubassemblyId != null)
                 {
-                    item.SubassemblyId = updatedItem.SubassemblyId;
+                    item.SubassemblyId = updatedItem.ParentSubassemblyId;
+                }
+                if (updatedItem.Vendor != null)
+                {
+                    item.Vendor = updatedItem.Vendor;
+                }
+                if (updatedItem.AddedById != null)
+                {
+                    item.UserId = updatedItem.AddedById;
+                }
+                if (updatedItem.Comment != null)
+                {
+                    item.Comment = updatedItem.Comment;
                 }
 
                 item.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));

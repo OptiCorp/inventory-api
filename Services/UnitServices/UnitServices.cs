@@ -22,6 +22,13 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
+        public async Task<IEnumerable<UnitResponseDto>> GetAllUnitsBySearchStringAsync(string searchString)
+        {
+            return await _context.Units.Where(c => c.WPId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+                                            .Select(c => _unitUtilities.UnitToResponseDto(c))
+                                            .ToListAsync();
+        }
+
         public async Task<UnitResponseDto> GetUnitByIdAsync(string id)
         {
             var unit = await _context.Units.FirstOrDefaultAsync(c => c.Id == id);
@@ -40,6 +47,9 @@ namespace Inventory.Services
                 ProductNumber = unitDto.ProductNumber,
                 Location = unitDto.Location,
                 Description = unitDto.Description,
+                Vendor = unitDto.Vendor,
+                UserId = unitDto.AddedById,
+                Comment = unitDto.Comment,
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -77,6 +87,18 @@ namespace Inventory.Services
                 if (updatedUnit.Description != null)
                 {
                     unit.Description = updatedUnit.Description;
+                }
+                if (updatedUnit.Vendor != null)
+                {
+                    unit.Vendor = updatedUnit.Vendor;
+                }
+                if (updatedUnit.AddedById != null)
+                {
+                    unit.UserId = updatedUnit.AddedById;
+                }
+                if (updatedUnit.Comment != null)
+                {
+                    unit.Comment = updatedUnit.Comment;
                 }
 
                 unit.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));

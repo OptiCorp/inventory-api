@@ -9,7 +9,6 @@ using Inventory.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTO;
 using Inventory.Services;
-using inventoryapi.Migrations;
 
 namespace Inventory.Controllers
 {
@@ -21,10 +20,13 @@ namespace Inventory.Controllers
 
         private readonly IAssemblyService _assemblyService;
 
-        public AssemblyController(InventoryDbContext context, IAssemblyService assemblyService)
+        private readonly IUnitService _unitService;
+
+        public AssemblyController(InventoryDbContext context, IAssemblyService assemblyService, IUnitService unitService)
         {
             _context = context;
             _assemblyService = assemblyService;
+            _unitService = unitService;
         }
 
         [HttpGet]
@@ -39,7 +41,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Get assembly", Description = "Retrieves an assembly.")]
         [SwaggerResponse(200, "Success", typeof(AssemblyResponseDto))]
         [SwaggerResponse(404, "Assembly not found")]
-        public async Task<ActionResult<Equipment>> GetAssembly(string id)
+        public async Task<ActionResult<AssemblyResponseDto>> GetAssembly(string id)
         {
             var assembly = await _assemblyService.GetAssemblyByIdAsync(id);
             if (assembly == null)
@@ -48,6 +50,29 @@ namespace Inventory.Controllers
             }
 
             return Ok(assembly);
+        }
+
+        [HttpGet("ByUnit/{id}")]
+        [SwaggerOperation(Summary = "Get assemblies", Description = "Retrieves assemblies by unit Id.")]
+        [SwaggerResponse(200, "Success", typeof(AssemblyResponseDto))]
+        [SwaggerResponse(404, "Unit not found")]
+        public async Task<ActionResult<AssemblyResponseDto>> GetAssemblyByUnit(string unitId)
+        {
+            var unit = await _unitService.GetUnitByIdAsync(unitId);
+            if (unit == null)
+            {
+                return NotFound("Unit not found");
+            }
+
+            return Ok(await _assemblyService.GetAllAssembliesByUnitIdAsync(unitId));
+        }
+
+        [HttpGet("BySearchString/{searchString}")]
+        [SwaggerOperation(Summary = "Get assemblies containing search string", Description = "Retrieves assemblies containing search string in WPId, serial number or description.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<AssemblyResponseDto>))]
+        public async Task<ActionResult<IEnumerable<AssemblyResponseDto>>> GetAssemblyBySearchString(string searchString)
+        {
+            return Ok(await _assemblyService.GetAllAssembliesBySearchStringAsync(searchString));
         }
 
         [HttpPost]
