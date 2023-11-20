@@ -36,11 +36,11 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Success", typeof(IEnumerable<object>))]
         public async Task<ActionResult<List<object>>> GetPartBySearchString(string searchString)
         {
-            var parts = new List<object>();
-            parts.Append(await _unitService.GetAllUnitsBySearchStringAsync(searchString));
-            parts.Append(await _assemblyService.GetAllAssembliesBySearchStringAsync(searchString));
-            parts.Append(await _subassemblyService.GetAllSubassembliesBySearchStringAsync(searchString));
-            parts.Append(await _itemService.GetAllItemsBySearchStringAsync(searchString));
+            var parts = new List<IEnumerable<object>>();
+            parts.Add(await _unitService.GetAllUnitsBySearchStringAsync(searchString));
+            parts.Add(await _assemblyService.GetAllAssembliesBySearchStringAsync(searchString));
+            parts.Add(await _subassemblyService.GetAllSubassembliesBySearchStringAsync(searchString));
+            parts.Add(await _itemService.GetAllItemsBySearchStringAsync(searchString));
 
             return Ok(parts);
         }
