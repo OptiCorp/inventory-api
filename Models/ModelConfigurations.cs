@@ -40,30 +40,30 @@ namespace Inventory.Configuration
         }
     }
 
-    public static class ItemConfigurations
+    public static class PartConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasKey(c => c.Id);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasOne(c => c.Subassembly)
-                .WithMany(c => c.Items)
+                .WithMany(c => c.Parts)
                 .HasForeignKey(c => c.SubassemblyId);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.UserId);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasIndex(c => c.WPId);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasIndex(c => c.SerialNumber);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasIndex(c => c.Description);
         }
     }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Inventory.Models.DTO
 {
-    public class ItemCreateDto
+    public class PartCreateDto
     {
         [Required]
         public string? WPId { get; set; }

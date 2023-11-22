@@ -17,32 +17,115 @@ namespace Inventory.Controllers
     public class PartController : ControllerBase
     {
         private readonly InventoryDbContext _context;
-        private readonly IItemService _itemService;
-        private readonly IAssemblyService _assemblyService;
-        private readonly IUnitService _unitService;
+
+        private readonly IPartService _partService;
+
         private readonly ISubassemblyService _subassemblyService;
 
-        public PartController(InventoryDbContext context, IItemService itemService, ISubassemblyService subassemblyService, IUnitService unitService, IAssemblyService assemblyService)
+        public PartController(InventoryDbContext context, IPartService partService, ISubassemblyService subassemblyService)
         {
             _context = context;
-            _itemService = itemService;
+            _partService = partService;
             _subassemblyService = subassemblyService;
-            _assemblyService = assemblyService;
-            _unitService = unitService;
+        }
+
+        [HttpGet]
+        [SwaggerOperation(Summary = "Get all parts", Description = "Retrieves a list of all parts.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<PartResponseDto>))]
+        public async Task<ActionResult<IEnumerable<PartResponseDto>>> GetPart()
+        {
+            return Ok(await _partService.GetAllPartsAsync());
+        }
+
+        [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get part", Description = "Retrieves a part.")]
+        [SwaggerResponse(200, "Success", typeof(PartResponseDto))]
+        [SwaggerResponse(404, "Part not found")]
+        public async Task<ActionResult<PartResponseDto>> GetPart(string id)
+        {
+            var part = await _partService.GetPartByIdAsync(id);
+            if (part == null)
+            {
+                return NotFound("Part not found");
+            }
+
+            return Ok(part);
+        }
+
+        [HttpGet("BySubassembly/{id}")]
+        [SwaggerOperation(Summary = "Get parts", Description = "Retrieves parts by subassembly Id.")]
+        [SwaggerResponse(200, "Success", typeof(PartResponseDto))]
+        [SwaggerResponse(404, "Subassembly not found")]
+        public async Task<ActionResult<PartResponseDto>> GetPartBySubassembly(string subassemblyId)
+        {
+            var subassembly = await _subassemblyService.GetSubassemblyByIdAsync(subassemblyId);
+            if (subassembly == null)
+            {
+                return NotFound("Subassembly not found");
+            }
+
+            return Ok(await _partService.GetAllPartsBySubassemblyIdAsync(subassemblyId));
         }
 
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get parts containing search string", Description = "Retrieves parts containing search string in WPId, serial number or description.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<object>))]
-        public async Task<ActionResult<List<object>>> GetPartBySearchString(string searchString)
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<PartResponseDto>))]
+        public async Task<ActionResult<IEnumerable<PartResponseDto>>> GetPartBySearchString(string searchString)
         {
-            var parts = new List<IEnumerable<object>>();
-            parts.Add(await _unitService.GetAllUnitsBySearchStringAsync(searchString));
-            parts.Add(await _assemblyService.GetAllAssembliesBySearchStringAsync(searchString));
-            parts.Add(await _subassemblyService.GetAllSubassembliesBySearchStringAsync(searchString));
-            parts.Add(await _itemService.GetAllItemsBySearchStringAsync(searchString));
+            return Ok(await _partService.GetAllPartsBySearchStringAsync(searchString));
+        }
 
-            return Ok(parts);
+        [HttpPost]
+        [SwaggerOperation(Summary = "Create a new part", Description = "Creates a new part.")]
+        [SwaggerResponse(201, "Part created", typeof(PartResponseDto))]
+        [SwaggerResponse(400, "Invalid request")]
+        public async Task<ActionResult<PartResponseDto>> PostPart(PartCreateDto partCreateDto)
+        {
+            var partId = await _partService.CreatePartAsync(partCreateDto);
+
+            var part = await _partService.GetPartByIdAsync(partId);
+
+            return CreatedAtAction(nameof(GetPart), new { id = partId }, part);
+        }
+
+        [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Update part", Description = "Updates a part.")]
+        [SwaggerResponse(200, "Part updated")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Part not found")]
+        public async Task<IActionResult> PutPart(string id, PartUpdateDto partUpdateDto)
+        {
+            if (id != partUpdateDto.Id)
+            {
+                return BadRequest("Id does not match");
+            }
+
+            var part = await _partService.GetPartByIdAsync(id);
+            if (part == null)
+            {
+                return NotFound("Part not found");
+            }
+
+            await _partService.UpdatePartAsync(partUpdateDto);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete part", Description = "Deletes a part.")]
+        [SwaggerResponse(200, "Part deleted")]
+        [SwaggerResponse(404, "Part not found")]
+        public async Task<IActionResult> DeletePart(string id)
+        {
+            var part = _partService.GetPartByIdAsync(id);
+            if (part == null)
+            {
+                return NotFound("Part not found");
+            }
+
+            await _partService.DeletePartAsync(id);
+
+            return NoContent();
         }
     }
 }

@@ -47,13 +47,13 @@ namespace inventory
             });
 
             services.AddScoped<IAssemblyService, AssemblyService>();
-            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IPartService, PartService>();
             services.AddScoped<ISubassemblyService, SubassemblyService>();
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IAssemblyUtilities, AssemblyUtilities>();
-            services.AddScoped<IItemUtilities, ItemUtilities>();
+            services.AddScoped<IPartUtilities, PartUtilities>();
             services.AddScoped<ISubassemblyUtilities, SubassemblyUtilities>();
             services.AddScoped<IUnitUtilities, UnitUtilities>();
             services.AddScoped<IUserUtilities, UserUtilities>();

@@ -4,8 +4,8 @@ using Inventory.Models.DTO;
 
 namespace Inventory.Utilities
 {
-    public interface IItemUtilities
+    public interface IPartUtilities
     {
-        public ItemResponseDto ItemToResponseDto(Item item);
+        public PartResponseDto PartToResponseDto(Part part);
     }
 }

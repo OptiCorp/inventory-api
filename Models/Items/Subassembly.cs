@@ -47,7 +47,7 @@ namespace Inventory.Models
 
         public ICollection<Subassembly>? Subassemblies { get; }
 
-        public ICollection<Item>? Items { get; }
+        public ICollection<Part>? Parts { get; }
 
         public User? User { get; }
     }
