@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,32 +18,51 @@ namespace Inventory.Controllers
     public class ItemController : ControllerBase
     {
         private readonly InventoryDbContext _context;
-        private readonly IPartService _partService;
-        private readonly IAssemblyService _assemblyService;
-        private readonly IUnitService _unitService;
-        private readonly ISubassemblyService _subassemblyService;
+        private readonly IItemService _itemService;
 
-        public ItemController(InventoryDbContext context, IPartService partService, ISubassemblyService subassemblyService, IUnitService unitService, IAssemblyService assemblyService)
+        public ItemController(InventoryDbContext context, IItemService itemService)
         {
             _context = context;
-            _partService = partService;
-            _subassemblyService = subassemblyService;
-            _assemblyService = assemblyService;
-            _unitService = unitService;
+            _itemService = itemService;
+        }
+        
+        [HttpGet]
+        [SwaggerOperation(Summary = "Get all items", Description = "Retrieves a list of all items.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItem()
+        {
+            return Ok(await _itemService.GetAllItemsAsync());
+        }
+        
+        [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get item", Description = "Retrieves an item.")]
+        [SwaggerResponse(200, "Success", typeof(ItemResponseDto))]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<ActionResult<ItemResponseDto>> GetItem(string id)
+        {
+            var item = await _itemService.GetItemByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            return Ok(item);
+        }
+        
+        [HttpGet("Children/{id}")]
+        [SwaggerOperation(Summary = "Get an item's children", Description = "Retrieves a list of an item's children.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetChildren(string id)
+        {
+            return Ok(await _itemService.GetChildrenAsync(id));
         }
 
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WPId, serial number or description.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<object>))]
-        public async Task<ActionResult<List<object>>> GetItemBySearchString(string searchString)
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemBySearchString(string searchString)
         {
-            var items = new List<IEnumerable<object>>();
-            items.Add(await _unitService.GetAllUnitsBySearchStringAsync(searchString));
-            items.Add(await _assemblyService.GetAllAssembliesBySearchStringAsync(searchString));
-            items.Add(await _subassemblyService.GetAllSubassembliesBySearchStringAsync(searchString));
-            items.Add(await _partService.GetAllPartsBySearchStringAsync(searchString));
-
-            return Ok(items);
+            return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString));
         }
     }
 }
