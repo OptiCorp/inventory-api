@@ -22,12 +22,15 @@ namespace Inventory.Configuration
             modelBuilder.Entity<Assembly>()
                 .HasOne(c => c.Unit)
                 .WithMany(c => c.Assemblies)
-                .HasForeignKey(c => c.UnitId);
+                .HasForeignKey(c => c.UnitId)
+                .OnDelete(DeleteBehavior.NoAction);
+                
 
             modelBuilder.Entity<Assembly>()
                 .HasOne(c => c.User)
                 .WithMany()
-                .HasForeignKey(c => c.UserId);
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Assembly>()
                 .HasIndex(c => c.WPId);
@@ -50,12 +53,14 @@ namespace Inventory.Configuration
             modelBuilder.Entity<Part>()
                 .HasOne(c => c.Subassembly)
                 .WithMany(c => c.Parts)
-                .HasForeignKey(c => c.SubassemblyId);
+                .HasForeignKey(c => c.SubassemblyId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Part>()
                 .HasOne(c => c.User)
                 .WithMany()
-                .HasForeignKey(c => c.UserId);
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Part>()
                 .HasIndex(c => c.WPId);
@@ -78,17 +83,20 @@ namespace Inventory.Configuration
             modelBuilder.Entity<Subassembly>()
                 .HasOne(c => c.ParentSubassembly)
                 .WithMany(c => c.Subassemblies)
-                .HasForeignKey(c => c.ParentSubassemblyId);
+                .HasForeignKey(c => c.ParentSubassemblyId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Subassembly>()
                 .HasOne(c => c.Assembly)
                 .WithMany(c => c.Subassemblies)
-                .HasForeignKey(c => c.AssemblyId);
+                .HasForeignKey(c => c.AssemblyId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Subassembly>()
                 .HasOne(c => c.User)
                 .WithMany()
-                .HasForeignKey(c => c.UserId);
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Subassembly>()
                 .HasIndex(c => c.WPId);
@@ -133,9 +141,16 @@ namespace Inventory.Configuration
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Item>()
-                .HasOne(c => c.ParentItem)
+                .HasOne(c => c.Parent)
+                .WithMany(c => c.Children)
+                .HasForeignKey(c => c.ParentId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<Item>()
+                .HasOne(c => c.User)
                 .WithMany()
-                .HasForeignKey(c => c.ParentId);
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Item>()
                 .HasIndex(c => c.WpId);
