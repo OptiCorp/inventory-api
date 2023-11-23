@@ -40,10 +40,10 @@ namespace Inventory.Services
             return _userUtilities.UserToDto(user);
         }
 
-        public async Task<User> GetUserByAzureAdUserIdAsync(string azureAdUserId)
+        public async Task<User> GetUserByAzureAdUserIdAsync(string id)
         {
             return await _context.User
-                            .FirstOrDefaultAsync(u => u.AzureAdUserId == azureAdUserId);
+                            .FirstOrDefaultAsync(u => u.AzureAdUserId == id);
         }
         public async Task<UserDto> GetUserByUsernameAsync(string username)
         {
