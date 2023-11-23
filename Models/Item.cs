@@ -1,3 +1,4 @@
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
@@ -26,7 +27,7 @@ namespace Inventory.Models
 
         [Required]
         public string? Description { get; set; }
-
+        
         public string? ParentId { get; set; }
 
         [Required]
@@ -41,8 +42,10 @@ namespace Inventory.Models
 
         public DateTime? UpdatedDate { get; set; }
         
-        public Item? ParentItem { get; }
+        public Item? Parent { get; set; }
+        
+        public IEnumerable<Item>? Children { get; set; }
 
-        public User? User { get; }
+        public User? User { get; set; }
     }
 }
