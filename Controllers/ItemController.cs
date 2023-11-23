@@ -49,6 +49,19 @@ namespace Inventory.Controllers
             return Ok(item);
         }
         
+        [HttpPost]
+        [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
+        [SwaggerResponse(201, "Item created", typeof(ItemResponseDto))]
+        [SwaggerResponse(400, "Invalid request")]
+        public async Task<ActionResult<ItemResponseDto>> PostItem(ItemCreateDto itemCreateDto)
+        {
+            var itemId = await _itemService.CreateItemAsync(itemCreateDto);
+
+            var item = await _itemService.GetItemByIdAsync(itemId);
+
+            return CreatedAtAction(nameof(GetItem), new { id = itemId }, item);
+        }
+        
         [HttpGet("Children/{id}")]
         [SwaggerOperation(Summary = "Get an item's children", Description = "Retrieves a list of an item's children.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
@@ -63,6 +76,14 @@ namespace Inventory.Controllers
         public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemBySearchString(string searchString)
         {
             return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString));
+        }
+        
+        [HttpGet("ByUserId/{id}")]
+        [SwaggerOperation(Summary = "Get items added by user", Description = "Retrieves items added by the user.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemByUserId(string id)
+        {
+            return Ok(await _itemService.GetAllItemsByUserIdAsync(id));
         }
     }
 }
