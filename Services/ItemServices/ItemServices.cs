@@ -28,6 +28,13 @@ namespace Inventory.Services
                                             .Select(c => _itemUtilities.ItemToResponseDto(c))
                                             .ToListAsync();
         }
+        
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id)
+        {
+            return await _context.Items.Where(c => c.UserId == id)
+                .Select(c => _itemUtilities.ItemToResponseDto(c))
+                .ToListAsync();
+        }
 
         public async Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string parentId)
         {
@@ -45,27 +52,28 @@ namespace Inventory.Services
             return _itemUtilities.ItemToResponseDto(item);
         }
         
-        // public async Task<string> CreateItemAsync(ItemCreateDto itemDto)
-        // {
-        //     var item = new Item
-        //     {
-        //         WpId = itemDto.WpId,
-        //         SerialNumber = itemDto.SerialNumber,
-        //         ProductNumber = itemDto.ProductNumber,
-        //         Location = itemDto.Location,
-        //         Description = itemDto.Description,
-        //         ParentId = itemDto.ParentSubassemblyId,
-        //         Vendor = itemDto.Vendor,
-        //         UserId = itemDto.AddedById,
-        //         Comment = itemDto.Comment,
-        //         CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
-        //     };
-        //
-        //     await _context.Items.AddAsync(item);
-        //     await _context.SaveChangesAsync();
-        //
-        //     return item.Id;
-        // }
+        public async Task<string> CreateItemAsync(ItemCreateDto itemDto)
+        {
+            var item = new Item
+            {
+                WpId = itemDto.WpId,
+                SerialNumber = itemDto.SerialNumber,
+                ProductNumber = itemDto.ProductNumber,
+                Type = itemDto.Type,
+                Location = itemDto.Location,
+                Description = itemDto.Description,
+                ParentId = itemDto.ParentId,
+                Vendor = itemDto.Vendor,
+                UserId = itemDto.AddedById,
+                Comment = itemDto.Comment,
+                CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+            };
+        
+            await _context.Items.AddAsync(item);
+            await _context.SaveChangesAsync();
+        
+            return item.Id;
+        }
 
         // public async Task UpdateItemAsync(ItemUpdateDto updatedItem)
         // {
