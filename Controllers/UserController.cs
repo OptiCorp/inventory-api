@@ -48,5 +48,21 @@ namespace inventory_api.Controllers
 
             return Ok(user);
         }
+        
+        [HttpGet("ByAzureId/{id}")]
+        [SwaggerOperation(Summary = "Get user by Azure Id", Description = "Retrieves a user by their Azure Id.")]
+        [SwaggerResponse(200, "Success", typeof(User))]
+        [SwaggerResponse(404, "User not found")]
+        public async Task<IActionResult> GetUserByAzureIdAsync(string id)
+        {
+            var user = await _userService.GetUserByAzureAdUserIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            return Ok(user);
+        }
     }
 }
