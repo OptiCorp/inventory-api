@@ -85,5 +85,45 @@ namespace Inventory.Controllers
         {
             return Ok(await _itemService.GetAllItemsByUserIdAsync(id));
         }
+        
+        [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Update item", Description = "Updates an item.")]
+        [SwaggerResponse(200, "Item updated")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<IActionResult> PutItem(string id, ItemUpdateDto itemUpdateDto)
+        {
+            if (id != itemUpdateDto.Id)
+            {
+                return BadRequest("Id does not match");
+            }
+
+            var item = await _itemService.GetItemByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            await _itemService.UpdateItemAsync(itemUpdateDto);
+
+            return NoContent();
+        }
+        
+        [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete item", Description = "Deletes an item.")]
+        [SwaggerResponse(200, "Item deleted")]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<IActionResult> DeleteItem(string id)
+        {
+            var item = _itemService.GetItemByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            await _itemService.DeleteItemAsync(id);
+
+            return NoContent();
+        }
     }
 }
