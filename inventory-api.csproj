@@ -59,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Services\" />
     <Folder Include="Validation\" />
     <Folder Include="Validation\UserValidations\" />
     <Folder Include="Validation\UserRoleValidations\" />
@@ -67,5 +66,8 @@
     <Folder Include="Validation\CategoryValidations\" />
     <Folder Include="Validation\ChecklistValidations\" />
     <Folder Include="Validation\ChecklistTaskValidations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 </Project>

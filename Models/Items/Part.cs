@@ -1,35 +1,35 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Inventory.Models.DTO
+namespace Inventory.Models
 {
-    public class ItemResponseDto
+    public class Part
     {
-        [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
 
         [Required]
-        public string? WpId { get; set; }
+        public string? WPId { get; set; }
 
         [Required]
         public string? SerialNumber { get; set; }
 
         [Required]
         public string? ProductNumber { get; set; }
-        
-        [Required]
-        public string? Type { get; set; }
+
+        public string? DocumentationId { get; set; }
 
         public string? Location { get; set; }
 
         [Required]
         public string? Description { get; set; }
 
-        public string? ParentId { get; set; }
+        public string? SubassemblyId { get; set; }
 
         [Required]
         public string? Vendor { get; set; }
-        
-        public string? AddedById { get; set; }
+
+        public string? UserId { get; set; }
 
         public string? Comment { get; set; }
 
@@ -37,5 +37,9 @@ namespace Inventory.Models.DTO
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
+
+        public Subassembly? Subassembly { get; }
+
+        public User? User { get; }
     }
 }

@@ -108,6 +108,70 @@ namespace inventoryapi.Migrations
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ParentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProductNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vendor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WpId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Description");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("SerialNumber");
+
+                    b.HasIndex("WpId");
+
+                    b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("Inventory.Models.Part", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DocumentationId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ProductNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -145,7 +209,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("WPId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Parts");
                 });
 
             modelBuilder.Entity("Inventory.Models.Subassembly", b =>
@@ -343,8 +407,17 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
                 {
+                    b.HasOne("Inventory.Models.Item", "ParentItem")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("ParentItem");
+                });
+
+            modelBuilder.Entity("Inventory.Models.Part", b =>
+                {
                     b.HasOne("Inventory.Models.Subassembly", "Subassembly")
-                        .WithMany("Items")
+                        .WithMany("Parts")
                         .HasForeignKey("SubassemblyId");
 
                     b.HasOne("Inventory.Models.User", "User")
@@ -381,7 +454,8 @@ namespace inventoryapi.Migrations
                 {
                     b.HasOne("Inventory.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });
@@ -393,7 +467,7 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.Subassembly", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("Parts");
 
                     b.Navigation("Subassemblies");
                 });

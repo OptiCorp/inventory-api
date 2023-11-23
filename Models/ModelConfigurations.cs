@@ -40,30 +40,30 @@ namespace Inventory.Configuration
         }
     }
 
-    public static class ItemConfigurations
+    public static class PartConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasKey(c => c.Id);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasOne(c => c.Subassembly)
-                .WithMany(c => c.Items)
+                .WithMany(c => c.Parts)
                 .HasForeignKey(c => c.SubassemblyId);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.UserId);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasIndex(c => c.WPId);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasIndex(c => c.SerialNumber);
 
-            modelBuilder.Entity<Item>()
+            modelBuilder.Entity<Part>()
                 .HasIndex(c => c.Description);
         }
     }
@@ -111,7 +111,8 @@ namespace Inventory.Configuration
             modelBuilder.Entity<Unit>()
                 .HasOne(c => c.User)
                 .WithMany()
-                .HasForeignKey(c => c.UserId);
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Unit>()
                 .HasIndex(c => c.WPId);
@@ -120,6 +121,29 @@ namespace Inventory.Configuration
                 .HasIndex(c => c.SerialNumber);
 
             modelBuilder.Entity<Unit>()
+                .HasIndex(c => c.Description);
+        }
+    }
+    
+    public static class ItemConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Item>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Item>()
+                .HasOne(c => c.ParentItem)
+                .WithMany()
+                .HasForeignKey(c => c.ParentId);
+
+            modelBuilder.Entity<Item>()
+                .HasIndex(c => c.WpId);
+
+            modelBuilder.Entity<Item>()
+                .HasIndex(c => c.SerialNumber);
+
+            modelBuilder.Entity<Item>()
                 .HasIndex(c => c.Description);
         }
     }

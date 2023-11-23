@@ -10,12 +10,13 @@ namespace Inventory.Utilities
             return new ItemResponseDto
             {
                 Id = item.Id,
-                WPId = item.WPId,
+                WpId = item.WpId,
                 SerialNumber = item.SerialNumber,
                 ProductNumber = item.ProductNumber,
+                Type = item.Type,
                 Location = item.Location,
                 Description = item.Description,
-                ParentSubassemblyId = item.SubassemblyId,
+                ParentId = item.ParentId,
                 Vendor = item.Vendor,
                 AddedById = item.UserId,
                 Comment = item.Comment,

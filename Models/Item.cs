@@ -4,19 +4,21 @@ using System.Reflection;
 
 namespace Inventory.Models
 {
-    public class Subassembly
+    public class Item
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
 
         [Required]
-        public string? WPId { get; set; }
+        public string? WpId { get; set; }
 
         [Required]
         public string? SerialNumber { get; set; }
 
         [Required]
         public string? ProductNumber { get; set; }
+        
+        public string? Type { get; set; }
 
         public string? DocumentationId { get; set; }
 
@@ -25,9 +27,7 @@ namespace Inventory.Models
         [Required]
         public string? Description { get; set; }
 
-        public string? AssemblyId { get; set; }
-
-        public string? ParentSubassemblyId { get; set; }
+        public string? ParentId { get; set; }
 
         [Required]
         public string? Vendor { get; set; }
@@ -40,14 +40,8 @@ namespace Inventory.Models
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
-
-        public Assembly? Assembly { get; }
-
-        public Subassembly? ParentSubassembly { get; }
-
-        public ICollection<Subassembly>? Subassemblies { get; }
-
-        public ICollection<Item>? Items { get; }
+        
+        public Item? ParentItem { get; }
 
         public User? User { get; }
     }
