@@ -115,7 +115,7 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "Item not found")]
         public async Task<IActionResult> DeleteItem(string id)
         {
-            var item = _itemService.GetItemByIdAsync(id);
+            var item = await _itemService.GetItemByIdAsync(id);
             if (item == null)
             {
                 return NotFound("Item not found");
