@@ -142,9 +142,13 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.Parent)
-                .WithMany(c => c.Children)
+                .WithMany()
                 .HasForeignKey(c => c.ParentId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Item>()
+                .HasMany(c => c.Children)
+                .WithOne(c => c.Parent);
             
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.User)

@@ -20,7 +20,6 @@ namespace Inventory.Utilities
                 Vendor = item.Vendor,
                 AddedById = item.UserId,
                 Comment = item.Comment,
-                Children = new List<ItemResponseDto>(),
                 CreatedDate = item.CreatedDate,
                 UpdatedDate = item.UpdatedDate
             };
@@ -46,9 +45,10 @@ namespace Inventory.Utilities
             }
             if (item.Children != null)
             {
+                var children = new List<ItemResponseDto>();
                 foreach (var child in item.Children)
                 {
-                    itemResponseDto.Children.Append(new ItemResponseDto
+                    children.Add(new ItemResponseDto
                     {
                         Id = child.Id,
                         WpId = child.WpId,
@@ -64,6 +64,7 @@ namespace Inventory.Utilities
                         CreatedDate = child.CreatedDate,
                         UpdatedDate = child.UpdatedDate
                     });
+                    itemResponseDto.Children = children;
                 }
             }
 
