@@ -23,7 +23,7 @@ namespace Inventory.Models.DTO
 
         [Required]
         public string? Description { get; set; }
-
+        
         public string? ParentId { get; set; }
 
         [Required]
@@ -32,6 +32,10 @@ namespace Inventory.Models.DTO
         public string? AddedById { get; set; }
 
         public string? Comment { get; set; }
+        
+        public ItemResponseDto? Parent { get; set; }
+        
+        public IEnumerable<ItemResponseDto>? Children { get; set; }
 
         [Required]
         public DateTime? CreatedDate { get; set; }

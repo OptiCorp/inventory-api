@@ -62,13 +62,13 @@ namespace Inventory.Controllers
             return CreatedAtAction(nameof(GetItem), new { id = itemId }, item);
         }
         
-        [HttpGet("Children/{id}")]
-        [SwaggerOperation(Summary = "Get an item's children", Description = "Retrieves a list of an item's children.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
-        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetChildren(string id)
-        {
-            return Ok(await _itemService.GetChildrenAsync(id));
-        }
+        // [HttpGet("Children/{id}")]
+        // [SwaggerOperation(Summary = "Get an item's children", Description = "Retrieves a list of an item's children.")]
+        // [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        // public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetChildren(string id)
+        // {
+        //     return Ok(await _itemService.GetChildrenAsync(id));
+        // }
 
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WPId, serial number or description.")]
