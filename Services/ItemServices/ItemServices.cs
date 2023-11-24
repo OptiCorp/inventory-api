@@ -101,9 +101,14 @@ namespace Inventory.Services
 
         public async Task DeleteItemAsync(string id)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == id);
+            var item = await _context.Items.Include(c => c.Children).FirstOrDefaultAsync(c => c.Id == id);
             if (item != null)
             {
+                foreach (var child in item.Children)
+                {
+                    child.ParentId = null;
+                }
+                    
                 _context.Items.Remove(item);
                 await _context.SaveChangesAsync();
             }
