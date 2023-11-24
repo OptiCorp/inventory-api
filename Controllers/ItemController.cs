@@ -48,6 +48,28 @@ namespace Inventory.Controllers
 
             return Ok(item);
         }
+
+        [HttpGet("ByPage/{page}")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        [SwaggerResponse(404, "Page not found")]
+        public async Task<ActionResult<List<Item>>> Pagination(int page)
+        {
+            var pageResults = 10f;
+            var pageCount = Math.Ceiling(await _context.Items.CountAsync() / pageResults);
+
+            if (page < 1 || page > pageCount)
+            {
+                return NotFound();
+            }
+            
+            var items = await _context.Items
+                .OrderBy(p => p.Id)
+                .Skip((page -1) * (int)pageResults)
+                .Take((int)pageResults)
+                .ToListAsync();
+
+            return Ok(items);
+        }
         
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
