@@ -22,22 +22,28 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
-        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString)
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page)
         {
+
             return await _context.Items.Where(c => c.WpId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
                                             .Include(c => c.Parent)
                                             .Include(c => c.Children)
+                                            .OrderBy(c => c.Id)
                                             .Select(c => _itemUtilities.ItemToResponseDto(c))
+                                            .Skip((page -1) * 10)
+                                            .Take(10)
                                             .ToListAsync();
         }
         
-        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id)
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id, int page)
         {
             return await _context.Items.Where(c => c.UserId == id)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .OrderByDescending(c => c.CreatedDate)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
+                .Skip((page -1) * 10)
+                .Take(10)
                 .ToListAsync();
         }
 
