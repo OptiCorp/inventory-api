@@ -25,6 +25,8 @@ namespace Inventory.Services
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString)
         {
             return await _context.Items.Where(c => c.WpId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+                                            .Include(c => c.Parent)
+                                            .Include(c => c.Children)
                                             .Select(c => _itemUtilities.ItemToResponseDto(c))
                                             .ToListAsync();
         }
@@ -32,6 +34,8 @@ namespace Inventory.Services
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id)
         {
             return await _context.Items.Where(c => c.UserId == id)
+                .Include(c => c.Parent)
+                .Include(c => c.Children)
                 .OrderByDescending(c => c.CreatedDate)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
@@ -46,7 +50,10 @@ namespace Inventory.Services
 
         public async Task<ItemResponseDto> GetItemByIdAsync(string id)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == id);
+            var item = await _context.Items
+                .Include(c => c.Parent)
+                .Include(c => c.Children)
+                .FirstOrDefaultAsync(c => c.Id == id);
         
             if (item == null) return null;
         
