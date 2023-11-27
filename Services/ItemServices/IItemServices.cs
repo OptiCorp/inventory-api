@@ -1,4 +1,4 @@
-using Inventory.Models.DTO;
+using Inventory.Models.DTOs.ItemDtos;
 
 namespace Inventory.Services
 {

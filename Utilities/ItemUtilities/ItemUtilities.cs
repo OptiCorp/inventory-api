@@ -1,5 +1,5 @@
 using Inventory.Models;
-using Inventory.Models.DTO;
+using Inventory.Models.DTOs.ItemDtos;
 
 namespace Inventory.Utilities
 {
@@ -64,8 +64,8 @@ namespace Inventory.Utilities
                         CreatedDate = child.CreatedDate,
                         UpdatedDate = child.UpdatedDate
                     });
-                    itemResponseDto.Children = children;
                 }
+                itemResponseDto.Children = children;
             }
 
             return itemResponseDto;
