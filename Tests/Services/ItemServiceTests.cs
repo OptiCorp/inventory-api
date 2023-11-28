@@ -1,5 +1,5 @@
 using Inventory.Models;
-using Inventory.Models.DTO;
+using Inventory.Models.DTOs.ItemDtos;
 using Inventory.Services;
 using Inventory.Utilities;
 using Xunit;
