@@ -184,6 +184,12 @@ namespace Inventory.Configuration
                 .WithMany()
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<List>()
+                .HasIndex(c => c.Title);
+            
+            modelBuilder.Entity<Item>()
+                .HasIndex(c => c.UserId);
         }
     }
 }

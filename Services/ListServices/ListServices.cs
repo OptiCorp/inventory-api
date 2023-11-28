@@ -22,6 +22,41 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
         
+        public async Task<IEnumerable<ListResponseDto>> GetAllListsBySearchStringAsync(string searchString, int page, string userId)
+        {   
+            if (page == 0)
+            {
+                return await _context.Lists.Include(c => c.Items)
+                    .Where(c => c.UserId == userId)
+                    .Where(list =>
+                        list.Title.Contains(searchString) |
+                        list.Items.Any(item =>
+                        item.WpId.Contains(searchString) |
+                        item.SerialNumber.Contains(searchString) |
+                        item.Description.Contains(searchString)
+                    ))
+                    .OrderByDescending(c => c.CreatedDate)
+                    .Take(10)
+                    .Select(list => _listUtilities.ListToResponseDto(list))
+                    .ToListAsync();
+            }
+
+            return await _context.Lists.Include(c => c.Items)
+                .Where(c => c.UserId == userId)
+                .Where(list =>
+                    list.Title.Contains(searchString) |
+                    list.Items.Any(item =>
+                        item.WpId.Contains(searchString) |
+                        item.SerialNumber.Contains(searchString) |
+                        item.Description.Contains(searchString)
+                    ))
+                .OrderByDescending(c => c.CreatedDate)
+                .Skip((page - 1) * 10)
+                .Take(10)
+                .Select(list => _listUtilities.ListToResponseDto(list))
+                .ToListAsync();
+        }
+        
         public async Task<IEnumerable<ListResponseDto>> GetAllListsByUserIdAsync(string id, int page)
         {
             if (page == 0)

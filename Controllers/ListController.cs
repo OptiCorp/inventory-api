@@ -20,11 +20,13 @@ namespace Inventory.Controllers
     {
         private readonly InventoryDbContext _context;
         private readonly IListService _listService;
+        private readonly IUserService _userService;
 
-        public ListController(InventoryDbContext context, IListService listService)
+        public ListController(InventoryDbContext context, IListService listService, IUserService userService)
         {
             _context = context;
             _listService = listService;
+            _userService = userService;
         }
         
         [HttpGet]
@@ -56,6 +58,20 @@ namespace Inventory.Controllers
         public async Task<ActionResult<IEnumerable<ListResponseDto>>> GetListByUserId(string id, int page)
         {
             return Ok(await _listService.GetAllListsByUserIdAsync(id, page));
+        }
+        
+        [HttpGet("BySearchString/{searchString}")]
+        [SwaggerOperation(Summary = "Get lists containing search string", Description = "Retrieves lists containing search string in title, WpId, serial number or description.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ListResponseDto>))]
+        [SwaggerResponse(404, "User not found")]
+        public async Task<ActionResult<IEnumerable<ListResponseDto>>> GetListBySearchString(string searchString, int page, string userId)
+        {
+            var user = _userService.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+            return Ok(await _listService.GetAllListsBySearchStringAsync(searchString, page, userId));
         }
         
         [HttpPost]
