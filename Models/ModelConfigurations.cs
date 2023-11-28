@@ -166,4 +166,30 @@ namespace Inventory.Configuration
                 .HasIndex(c => c.Description);
         }
     }
+    
+    public static class ListConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<List>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<List>()
+                .HasMany(c => c.Items)
+                .WithOne()
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<List>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<List>()
+                .HasIndex(c => c.Title);
+            
+            modelBuilder.Entity<Item>()
+                .HasIndex(c => c.UserId);
+        }
+    }
 }

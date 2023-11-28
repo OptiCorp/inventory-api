@@ -36,6 +36,8 @@ namespace Inventory.Models
         public string? UserId { get; set; }
 
         public string? Comment { get; set; }
+        
+        public string? ListId { get; set; }
 
         [Required]
         public DateTime? CreatedDate { get; set; }

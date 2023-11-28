@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTO;
+using Inventory.Models.DTOs.ItemDtos;
 using Inventory.Services;
 
 namespace Inventory.Controllers
@@ -56,6 +56,10 @@ namespace Inventory.Controllers
         public async Task<ActionResult<ItemResponseDto>> PostItem(ItemCreateDto itemCreateDto)
         {
             var itemId = await _itemService.CreateItemAsync(itemCreateDto);
+            if (itemId == null)
+            {
+                return StatusCode(500);
+            }
 
             var item = await _itemService.GetItemByIdAsync(itemId);
 
@@ -71,7 +75,7 @@ namespace Inventory.Controllers
         // }
 
         [HttpGet("BySearchString/{searchString}")]
-        [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WPId, serial number or description.")]
+        [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
         public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemBySearchString(string searchString, int page)
         {
