@@ -75,7 +75,7 @@ namespace Inventory.Controllers
         // }
 
         [HttpGet("BySearchString/{searchString}")]
-        [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WPId, serial number or description.")]
+        [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
         public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemBySearchString(string searchString, int page)
         {
