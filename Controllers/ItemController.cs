@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTO;
+using Inventory.Models.DTOs.ItemDtos;
 using Inventory.Services;
 
 namespace Inventory.Controllers

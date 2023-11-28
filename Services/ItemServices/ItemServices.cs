@@ -1,8 +1,7 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTO;
+using Inventory.Models.DTOs.ItemDtos;
 using Inventory.Utilities;
-using Microsoft.Extensions.Logging;
 
 namespace Inventory.Services
 {
@@ -10,13 +9,11 @@ namespace Inventory.Services
     {
         private readonly InventoryDbContext _context;
         private readonly IItemUtilities _itemUtilities;
-        private readonly ILogger _logger;
 
-        public ItemService(InventoryDbContext context, IItemUtilities itemUtilities, ILogger logger)
+        public ItemService(InventoryDbContext context, IItemUtilities itemUtilities)
         {
             _context = context;
             _itemUtilities = itemUtilities;
-            _logger = logger;
         }
 
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync()
@@ -116,7 +113,7 @@ namespace Inventory.Services
             }
             catch (Exception e)
             {
-                _logger.LogError("Creating item failed.");
+                Console.WriteLine("Creating item failed.");
                 return null;
             }
 

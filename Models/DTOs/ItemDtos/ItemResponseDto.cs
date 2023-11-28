@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Inventory.Models.DTO
+namespace Inventory.Models.DTOs.ItemDtos
 {
     public class ItemResponseDto
     {
@@ -32,6 +32,8 @@ namespace Inventory.Models.DTO
         public string? AddedById { get; set; }
 
         public string? Comment { get; set; }
+        
+        public string? ListId { get; set; }
         
         public ItemResponseDto? Parent { get; set; }
         

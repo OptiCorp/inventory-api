@@ -15,6 +15,7 @@ public class InventoryDbContext : DbContext
     public DbSet<Subassembly> Subassemblies { get; set; } = null!;
     public DbSet<Part> Parts { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;
+    public DbSet<List> Lists { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,7 @@ public class InventoryDbContext : DbContext
         SubassemblyConfigurations.Configure(modelBuilder);
         UnitConfigurations.Configure(modelBuilder);
         ItemConfigurations.Configure(modelBuilder);
+        ListConfigurations.Configure(modelBuilder);
 
     }
 
