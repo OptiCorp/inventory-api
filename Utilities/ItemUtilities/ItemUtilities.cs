@@ -20,6 +20,7 @@ namespace Inventory.Utilities
                 Vendor = item.Vendor,
                 AddedById = item.UserId,
                 Comment = item.Comment,
+                ListId = item.ListId,
                 CreatedDate = item.CreatedDate,
                 UpdatedDate = item.UpdatedDate
             };
@@ -39,6 +40,7 @@ namespace Inventory.Utilities
                     Vendor = item.Parent.Vendor,
                     AddedById = item.Parent.UserId,
                     Comment = item.Parent.Comment,
+                    ListId = item.Parent.ListId,
                     CreatedDate = item.Parent.CreatedDate,
                     UpdatedDate = item.Parent.UpdatedDate
                 };
@@ -61,6 +63,7 @@ namespace Inventory.Utilities
                         Vendor = child.Vendor,
                         AddedById = child.UserId,
                         Comment = child.Comment,
+                        ListId = child.ListId,
                         CreatedDate = child.CreatedDate,
                         UpdatedDate = child.UpdatedDate
                     });

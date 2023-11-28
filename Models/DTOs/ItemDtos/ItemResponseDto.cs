@@ -33,6 +33,8 @@ namespace Inventory.Models.DTOs.ItemDtos
 
         public string? Comment { get; set; }
         
+        public string? ListId { get; set; }
+        
         public ItemResponseDto? Parent { get; set; }
         
         public IEnumerable<ItemResponseDto>? Children { get; set; }
