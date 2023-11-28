@@ -52,6 +52,7 @@ namespace inventory
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IListService, ListService>();
 
             services.AddScoped<IAssemblyUtilities, AssemblyUtilities>();
             services.AddScoped<IPartUtilities, PartUtilities>();
@@ -59,6 +60,7 @@ namespace inventory
             services.AddScoped<IUnitUtilities, UnitUtilities>();
             services.AddScoped<IUserUtilities, UserUtilities>();
             services.AddScoped<IItemUtilities, ItemUtilities>();
+            services.AddScoped<IListUtilities, ListUtilities>();
 
             services.AddHostedService<UserCreateHandler>();
             services.AddHostedService<UserUpdateHandler>();
