@@ -88,9 +88,8 @@ namespace Inventory.Services
             return _listUtilities.ListToResponseDto(list);
         }
         
-        public async Task<string> CreateListAsync(ListCreateDto listCreateDto)
+        public async Task<string?> CreateListAsync(ListCreateDto listCreateDto)
         {
-            string listId;
             try
             {
                 var list = new List
@@ -100,18 +99,16 @@ namespace Inventory.Services
                     CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
                 };
-
-                listId = list.Id;
+                
                 await _context.Lists.AddAsync(list);
                 await _context.SaveChangesAsync();
+                return list.Id;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Creating list failed.");
                 return null;
             }
-
-            return listId;
         }
 
         public async Task AddItemsToListAsync(IEnumerable<string> itemIds, string listId)
