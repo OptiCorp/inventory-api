@@ -67,7 +67,7 @@ namespace Inventory.Services
                 .ToListAsync();
         }
 
-        public async Task<ICollection<ItemResponseDto>> GetChildrenAsync(string parentId)
+        public async Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string parentId)
         {
             return await _context.Items.Where(c => c.ParentId == parentId)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
