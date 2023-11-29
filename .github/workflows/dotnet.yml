@@ -26,7 +26,6 @@ jobs:
       
       - name: Test
         run: dotnet test inventory-api.csproj --no-build --verbosity normal
-        working-directory: .
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
