@@ -106,10 +106,10 @@ namespace Inventory.Services
                     CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
                 };
-
-                itemId = item.Id;
+                
                 await _context.Items.AddAsync(item);
                 await _context.SaveChangesAsync();
+                itemId = item.Id;
             }
             catch (Exception e)
             {
