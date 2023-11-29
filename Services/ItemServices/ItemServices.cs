@@ -86,9 +86,8 @@ namespace Inventory.Services
             return _itemUtilities.ItemToResponseDto(item);
         }
         
-        public async Task<string> CreateItemAsync(ItemCreateDto itemDto)
+        public async Task<string?> CreateItemAsync(ItemCreateDto itemDto)
         {
-            string itemId;
             try
             {
                 var item = new Item
@@ -106,18 +105,15 @@ namespace Inventory.Services
                     CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                         TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
                 };
-
-                itemId = item.Id;
                 await _context.Items.AddAsync(item);
                 await _context.SaveChangesAsync();
+                return item.Id;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Creating item failed.");
                 return null;
             }
-
-            return itemId;
         }
 
         public async Task UpdateItemAsync(ItemUpdateDto updatedItem)
