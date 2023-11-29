@@ -25,7 +25,7 @@ jobs:
         run: dotnet build --configuration Release
       
       - name: Test
-        run: dotnet test --no-build --verbosity:diag
+        run: dotnet test inventory-api.csproj --no-build --verbosity normal
         working-directory: .
 
       - name: dotnet publish
