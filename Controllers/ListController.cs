@@ -66,7 +66,7 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "User not found")]
         public async Task<ActionResult<IEnumerable<ListResponseDto>>> GetListBySearchString(string searchString, int page, string userId)
         {
-            var user = _userService.GetUserByIdAsync(userId);
+            var user = await _userService.GetUserByIdAsync(userId);
             if (user == null)
             {
                 return NotFound("User not found");
@@ -103,7 +103,7 @@ namespace Inventory.Controllers
                 return NotFound("List not found");
             }
 
-            _listService.AddItemsToListAsync(itemIds, listId);
+            await _listService.AddItemsToListAsync(itemIds, listId);
 
             return NoContent();
         }
@@ -120,7 +120,7 @@ namespace Inventory.Controllers
                 return NotFound("List not found");
             }
 
-            _listService.RemoveItemsFromListAsync(itemIds);
+            await _listService.RemoveItemsFromListAsync(itemIds);
 
             return NoContent();
         }
