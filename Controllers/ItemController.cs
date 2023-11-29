@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
 using Swashbuckle.AspNetCore.Annotations;
@@ -15,6 +16,7 @@ using Inventory.Services;
 namespace Inventory.Controllers
 {
     [Authorize(Policy = "AuthZPolicy")]
+    [EnableCors("AllowAllHeaders")]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemController : ControllerBase
