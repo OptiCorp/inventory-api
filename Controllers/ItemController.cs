@@ -15,8 +15,6 @@ using Inventory.Services;
 
 namespace Inventory.Controllers
 {
-    [Authorize(Policy = "AuthZPolicy")]
-    [EnableCors("AllowAllHeaders")]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemController : ControllerBase
