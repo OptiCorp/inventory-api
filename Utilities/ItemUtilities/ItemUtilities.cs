@@ -21,8 +21,8 @@ namespace Inventory.Utilities
                 AddedById = item.UserId,
                 Comment = item.Comment,
                 ListId = item.ListId,
-                CreatedDate = item.CreatedDate,
-                UpdatedDate = item.UpdatedDate
+                CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null,
+                UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null
             };
 
             if (item.Parent != null)
@@ -41,8 +41,8 @@ namespace Inventory.Utilities
                     AddedById = item.Parent.UserId,
                     Comment = item.Parent.Comment,
                     ListId = item.Parent.ListId,
-                    CreatedDate = item.Parent.CreatedDate,
-                    UpdatedDate = item.Parent.UpdatedDate
+                    CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null,
+                    UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null
                 };
             }
             if (item.Children != null)
@@ -64,8 +64,8 @@ namespace Inventory.Utilities
                         AddedById = child.UserId,
                         Comment = child.Comment,
                         ListId = child.ListId,
-                        CreatedDate = child.CreatedDate,
-                        UpdatedDate = child.UpdatedDate
+                        CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null,
+                        UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null
                     });
                 }
                 itemResponseDto.Children = children;
