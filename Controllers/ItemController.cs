@@ -55,17 +55,22 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
         [SwaggerResponse(201, "Item created", typeof(ItemResponseDto))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<ItemResponseDto>> PostItem(ItemCreateDto itemCreateDto)
+        public async Task<ActionResult<ItemResponseDto>> PostItem(List<ItemCreateDto> itemCreateDto)
         {
-            var itemId = await _itemService.CreateItemAsync(itemCreateDto);
-            if (itemId == null)
+            var itemIds = await _itemService.CreateItemAsync(itemCreateDto);
+            if (itemIds == null)
             {
                 return StatusCode(500);
             }
 
-            var item = await _itemService.GetItemByIdAsync(itemId);
-
-            return CreatedAtAction(nameof(GetItem), new { id = itemId }, item);
+            var items = new List<ItemResponseDto>();
+            foreach (var itemId in itemIds)
+            {
+                var item = await _itemService.GetItemByIdAsync(itemId);
+                items.Add(item);
+            }
+            
+            return CreatedAtAction(nameof(GetItem), new { id = itemIds.First() }, items);
         }
         
         // [HttpGet("Children/{id}")]
