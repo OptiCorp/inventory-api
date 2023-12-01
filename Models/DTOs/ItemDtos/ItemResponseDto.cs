@@ -40,8 +40,8 @@ namespace Inventory.Models.DTOs.ItemDtos
         public IEnumerable<ItemResponseDto>? Children { get; set; }
 
         [Required]
-        public DateTime? CreatedDate { get; set; }
+        public string? CreatedDate { get; set; }
 
-        public DateTime? UpdatedDate { get; set; }
+        public string? UpdatedDate { get; set; }
     }
 }
