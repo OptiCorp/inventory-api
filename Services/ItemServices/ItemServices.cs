@@ -86,35 +86,42 @@ namespace Inventory.Services
             return _itemUtilities.ItemToResponseDto(item);
         }
         
-        public async Task<string?> CreateItemAsync(ItemCreateDto itemDto)
+        public async Task<List<string>?> CreateItemAsync(List<ItemCreateDto> itemsDto)
         {
             try
             {
-                var item = new Item
+                List<string> createdItemIds = new List<string>();
+                foreach (var itemDto in itemsDto)
                 {
-                    WpId = itemDto.WpId,
-                    SerialNumber = itemDto.SerialNumber,
-                    ProductNumber = itemDto.ProductNumber,
-                    Type = itemDto.Type,
-                    Location = itemDto.Location,
-                    Description = itemDto.Description,
-                    ParentId = itemDto.ParentId,
-                    Vendor = itemDto.Vendor,
-                    UserId = itemDto.AddedById,
-                    Comment = itemDto.Comment,
-                    CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
-                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
-                };
-                await _context.Items.AddAsync(item);
-                await _context.SaveChangesAsync();
-                return item.Id;
+                    Item item = new Item
+                    {
+                        WpId = itemDto.WpId,
+                        UserId = itemDto.AddedById,
+                        ParentId = itemDto.ParentId,
+                        SerialNumber = itemDto.SerialNumber,
+                        ProductNumber = itemDto.ProductNumber,
+                        Type = itemDto.Type,
+                        Location = itemDto.Location,
+                        Description = itemDto.Description,
+                        Vendor = itemDto.Vendor,
+                        Comment = itemDto.Comment,
+                        CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
+                            TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                    };
+                    await _context.Items.AddAsync(item);
+                    await _context.SaveChangesAsync();
+                    createdItemIds.Add(item.Id);
+                }
+                return createdItemIds;
             }
             catch (Exception e)
             {
-                Console.WriteLine("Creating item failed.");
+                Console.WriteLine("Creating item(s) failed.");
                 return null;
             }
         }
+        
+       
 
         public async Task UpdateItemAsync(ItemUpdateDto updatedItem)
         {
