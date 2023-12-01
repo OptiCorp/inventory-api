@@ -141,7 +141,8 @@ namespace Inventory.Tests.Services
             var dbContext = await testUtilities.GetDbContext("Item");
             ItemUtilities itemUtilities = new ItemUtilities();
             ItemService itemService = new ItemService(dbContext, itemUtilities);
-            var newItem = new ItemCreateDto()
+            
+            var newTestItem1 = new ItemCreateDto()
             {
                 ProductNumber = "123",
                 Description = "ADescription",
@@ -155,13 +156,28 @@ namespace Inventory.Tests.Services
                 AddedById = "654",
             };
             
+            var newTestItem2 = new ItemCreateDto()
+            {
+                ProductNumber = "456",
+                Description = "ADescription",
+                SerialNumber = "321",
+                WpId = "789",
+                Comment = "AComment",
+                Location = "ALocation",
+                ParentId = "789",
+                Type = "BType",
+                Vendor = "AVendor",
+                AddedById = "654",
+            };
+            var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
             //Act
-            var newItemId = await itemService.CreateItemAsync(newItem);
+            var newItemIds = await itemService.CreateItemAsync(itemsToCreate);
             var items = await itemService.GetAllItemsAsync();
             
             //Assert
-            Assert.IsType<string>(newItemId);
-            Assert.Equal(11, items.Count());
+            Assert.IsType<List<string>>(newItemIds);
+            Assert.Equal(12, items.Count());
+            Assert.Equal(2, newItemIds.Count);
         }
 
         [Fact]
