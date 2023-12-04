@@ -26,9 +26,10 @@ namespace Inventory.Services
         {   
             if (page == 0)
             {
-                return await _context.Items.Where(c => c.WpId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+                return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
+                    .Include(c => c.User)
                     .OrderBy(c => c.Id)
                     .Take(10)
                     .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -38,6 +39,7 @@ namespace Inventory.Services
             return await _context.Items.Where(c => c.WpId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
                                             .Include(c => c.Parent)
                                             .Include(c => c.Children)
+                                            .Include(c => c.User)
                                             .OrderBy(c => c.Id)
                                             .Skip((page -1) * 10)
                                             .Take(10)
@@ -52,6 +54,7 @@ namespace Inventory.Services
                 return await _context.Items.Where(c => c.UserId == id)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
+                    .Include(c => c.User)
                     .OrderByDescending(c => c.CreatedDate)
                     .Take(10)
                     .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -60,6 +63,7 @@ namespace Inventory.Services
             return await _context.Items.Where(c => c.UserId == id)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
+                .Include(c => c.User)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip((page -1) * 10)
                 .Take(10)
@@ -79,6 +83,7 @@ namespace Inventory.Services
             var item = await _context.Items
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
+                .Include((c => c.User))
                 .FirstOrDefaultAsync(c => c.Id == id);
         
             if (item == null) return null;

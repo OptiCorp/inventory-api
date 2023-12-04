@@ -21,6 +21,8 @@ namespace Inventory.Utilities
                 AddedById = item.UserId,
                 Comment = item.Comment,
                 ListId = item.ListId,
+                AddedByFirstName = item.User?.FirstName,
+                AddedByLastName = item.User?.LastName,
                 CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null,
                 UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null
             };
@@ -41,6 +43,8 @@ namespace Inventory.Utilities
                     AddedById = item.Parent.UserId,
                     Comment = item.Parent.Comment,
                     ListId = item.Parent.ListId,
+                    // AddedByFirstName = item.Parent.User.FirstName,
+                    // AddedByLastName = item.Parent.User.LastName,
                     CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null,
                     UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null
                 };
@@ -64,6 +68,8 @@ namespace Inventory.Utilities
                         AddedById = child.UserId,
                         Comment = child.Comment,
                         ListId = child.ListId,
+                        // AddedByFirstName = child.User.FirstName,
+                        // AddedByLastName = child.User.LastName,
                         CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null,
                         UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null
                     });

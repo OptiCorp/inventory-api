@@ -30,7 +30,8 @@ namespace Inventory.Models.DTOs.ItemDtos
         public string? Vendor { get; set; }
         
         public string? AddedById { get; set; }
-
+        public string? AddedByFirstName { get; set; } 
+        public string? AddedByLastName { get; set; } 
         public string? Comment { get; set; }
         
         public string? ListId { get; set; }
