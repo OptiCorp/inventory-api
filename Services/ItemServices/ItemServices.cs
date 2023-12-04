@@ -26,7 +26,7 @@ namespace Inventory.Services
         {   
             if (page == 0)
             {
-                return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+                return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) || c.Description.Contains(searchString))
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.User)
@@ -36,7 +36,7 @@ namespace Inventory.Services
                     .ToListAsync();
             }
 
-            return await _context.Items.Where(c => c.WpId.Contains(searchString) | c.SerialNumber.Contains(searchString) | c.Description.Contains(searchString))
+            return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) || c.Description.Contains(searchString))
                                             .Include(c => c.Parent)
                                             .Include(c => c.Children)
                                             .Include(c => c.User)
