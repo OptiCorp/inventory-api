@@ -16,9 +16,9 @@ public class ListResponseDto
     public string? CreatedById { get; set; }
     
     [Required]
-    public string? CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
     
-    public string? UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
     
     public IEnumerable<ItemResponseDto>? Items { get; set; }
 }
