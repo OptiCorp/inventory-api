@@ -23,8 +23,8 @@ namespace Inventory.Utilities
                 ListId = item.ListId,
                 AddedByFirstName = item.User?.FirstName,
                 AddedByLastName = item.User?.LastName,
-                CreatedDate = item.CreatedDate+"Z",
-                UpdatedDate = item.UpdatedDate+"Z"
+                CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
+                UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
             };
 
             if (item.Parent != null)
@@ -45,8 +45,8 @@ namespace Inventory.Utilities
                     ListId = item.Parent.ListId,
                     AddedByFirstName = item.Parent.User?.FirstName,
                     AddedByLastName = item.Parent.User?.LastName,
-                    CreatedDate = item.CreatedDate+"Z",
-                    UpdatedDate = item.UpdatedDate+"Z"
+                    CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
+                    UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
                 };
             }
             if (item.Children != null)
@@ -70,8 +70,8 @@ namespace Inventory.Utilities
                         ListId = child.ListId,
                         AddedByFirstName = child.User?.FirstName,
                         AddedByLastName = child.User?.LastName,
-                        CreatedDate = item.CreatedDate+"Z",
-                        UpdatedDate = item.UpdatedDate+"Z"
+                        CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
+                        UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
                     });
                 }
                 itemResponseDto.Children = children;
