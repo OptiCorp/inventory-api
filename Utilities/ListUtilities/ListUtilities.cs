@@ -13,8 +13,8 @@ namespace Inventory.Utilities
                 Id = list.Id,
                 Title = list.Title,
                 CreatedById = list.UserId,
-                CreatedDate = list.CreatedDate.HasValue ? list.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null,
-                UpdatedDate = list.UpdatedDate.HasValue ? list.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null
+                CreatedDate = list.CreatedDate,
+                UpdatedDate = list.UpdatedDate
             };
             
             if (list.Items != null)
@@ -35,8 +35,8 @@ namespace Inventory.Utilities
                         Vendor = item.Vendor,
                         AddedById = item.UserId,
                         Comment = item.Comment,
-                        CreatedDate = list.CreatedDate.HasValue ? list.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null,
-                        UpdatedDate = list.UpdatedDate.HasValue ? list.UpdatedDate.Value.ToString("dd/MM/yyyy HH:mm") : null
+                        CreatedDate = list.CreatedDate,
+                        UpdatedDate = list.UpdatedDate
                     });
                 }
                 listReponseDto.Items = items;
