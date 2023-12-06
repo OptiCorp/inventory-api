@@ -96,8 +96,7 @@ namespace Inventory.Services
                 {
                     Title = listCreateDto.Title,
                     UserId = listCreateDto.CreatedById,
-                    CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
-                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                    CreatedDate = DateTime.Now
                 };
                 
                 await _context.Lists.AddAsync(list);
@@ -138,7 +137,7 @@ namespace Inventory.Services
             if (list != null)
             {
                 list.Title = updatedList.Title;
-                list.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+                list.UpdatedDate = DateTime.Now;
         
                 await _context.SaveChangesAsync();
             }

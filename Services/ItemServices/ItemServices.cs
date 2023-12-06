@@ -110,8 +110,7 @@ namespace Inventory.Services
                         Description = itemDto.Description,
                         Vendor = itemDto.Vendor,
                         Comment = itemDto.Comment,
-                        CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
-                            TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                        CreatedDate = DateTime.Now
                     };
                     await _context.Items.AddAsync(item);
                     await _context.SaveChangesAsync();
@@ -145,7 +144,7 @@ namespace Inventory.Services
                 item.UserId = updatedItem.AddedById;
                 item.Comment = updatedItem.Comment;
         
-                item.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+                item.UpdatedDate = DateTime.Now;
         
                 await _context.SaveChangesAsync();
             }
