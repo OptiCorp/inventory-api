@@ -13,8 +13,8 @@ namespace Inventory.Utilities
                 Id = list.Id,
                 Title = list.Title,
                 CreatedById = list.UserId,
-                CreatedDate = list.CreatedDate,
-                UpdatedDate = list.UpdatedDate
+                CreatedDate = list.CreatedDate+"Z",
+                UpdatedDate = list.UpdatedDate+"Z"
             };
             
             if (list.Items != null)
@@ -35,8 +35,8 @@ namespace Inventory.Utilities
                         Vendor = item.Vendor,
                         AddedById = item.UserId,
                         Comment = item.Comment,
-                        CreatedDate = list.CreatedDate,
-                        UpdatedDate = list.UpdatedDate
+                        CreatedDate = list.CreatedDate+"Z",
+                        UpdatedDate = list.UpdatedDate+"Z"
                     });
                 }
                 listReponseDto.Items = items;
