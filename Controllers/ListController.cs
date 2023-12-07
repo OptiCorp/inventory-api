@@ -120,7 +120,7 @@ namespace Inventory.Controllers
                 return NotFound("List not found");
             }
 
-            await _listService.RemoveItemsFromListAsync(itemIds);
+            await _listService.RemoveItemsFromListAsync(itemIds, listId);
 
             return NoContent();
         }
