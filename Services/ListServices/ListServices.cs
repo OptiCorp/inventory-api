@@ -117,16 +117,24 @@ namespace Inventory.Services
                 var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
                 item.ListId = listId;
             }
+            
+            var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
+            list.UpdatedDate = DateTime.Now;
+            
             await _context.SaveChangesAsync();
         }
         
-        public async Task RemoveItemsFromListAsync(IEnumerable<string> itemIds)
+        public async Task RemoveItemsFromListAsync(IEnumerable<string> itemIds, string listId)
         {
             foreach (var itemId in itemIds)
             {
                 var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
                 item.ListId = null;
             }
+            
+            var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
+            list.UpdatedDate = DateTime.Now;
+            
             await _context.SaveChangesAsync();
         }
 
