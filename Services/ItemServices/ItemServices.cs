@@ -22,29 +22,33 @@ namespace Inventory.Services
                                             .ToListAsync();
         }
 
-        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page)
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page, string type)
         {   
             if (page == 0)
             {
-                return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) || c.Description.Contains(searchString))
-                    .Include(c => c.Parent)
-                    .Include(c => c.Children)
-                    .Include(c => c.User)
-                    .OrderBy(c => c.Id)
-                    .Take(10)
-                    .Select(c => _itemUtilities.ItemToResponseDto(c))
-                    .ToListAsync();
+                return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
+                        || c.Description.Contains(searchString))
+                        && (type == null || type == "" || c.Type == type))
+                        .Include(c => c.Parent)
+                        .Include(c => c.Children)
+                        .Include(c => c.User)
+                        .OrderBy(c => c.Id)
+                        .Take(10)
+                        .Select(c => _itemUtilities.ItemToResponseDto(c))
+                        .ToListAsync();
             }
 
-            return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) || c.Description.Contains(searchString))
-                                            .Include(c => c.Parent)
-                                            .Include(c => c.Children)
-                                            .Include(c => c.User)
-                                            .OrderBy(c => c.Id)
-                                            .Skip((page -1) * 10)
-                                            .Take(10)
-                                            .Select(c => _itemUtilities.ItemToResponseDto(c))
-                                            .ToListAsync();
+            return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
+                            || c.Description.Contains(searchString))
+                            && (type == null || type == "" || c.Type == type))
+                            .Include(c => c.Parent)
+                            .Include(c => c.Children)
+                            .Include(c => c.User)
+                            .OrderBy(c => c.Id)
+                            .Skip((page -1) * 10)
+                            .Take(10)
+                            .Select(c => _itemUtilities.ItemToResponseDto(c))
+                            .ToListAsync();
         }
         
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
@@ -54,26 +58,26 @@ namespace Inventory.Services
                 return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
                         || c.Description.Contains(searchString))
                         && c.ListId != listId)
-                    .Include(c => c.Parent)
-                    .Include(c => c.Children)
-                    .Include(c => c.User)
-                    .OrderBy(c => c.Id)
-                    .Take(10)
-                    .Select(c => _itemUtilities.ItemToResponseDto(c))
-                    .ToListAsync();
+                        .Include(c => c.Parent)
+                        .Include(c => c.Children)
+                        .Include(c => c.User)
+                        .OrderBy(c => c.Id)
+                        .Take(10)
+                        .Select(c => _itemUtilities.ItemToResponseDto(c))
+                        .ToListAsync();
             }
 
             return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
                     || c.Description.Contains(searchString)
                     && c.ListId != listId)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
-                .Include(c => c.User)
-                .OrderBy(c => c.Id)
-                .Skip((page -1) * 10)
-                .Take(10)
-                .Select(c => _itemUtilities.ItemToResponseDto(c))
-                .ToListAsync();
+                    .Include(c => c.Parent)
+                    .Include(c => c.Children)
+                    .Include(c => c.User)
+                    .OrderBy(c => c.Id)
+                    .Skip((page -1) * 10)
+                    .Take(10)
+                    .Select(c => _itemUtilities.ItemToResponseDto(c))
+                    .ToListAsync();
         }
         
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id, int page)
