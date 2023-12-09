@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace Inventory.Models.DTOs.ItemDtos
 {
     public class ItemUpdateDto
