@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
 using Inventory.Services;
 using Swashbuckle.AspNetCore.Annotations;
@@ -16,12 +10,10 @@ namespace inventory_api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly InventoryDbContext _context;
         private readonly IUserService _userService;
 
-        public UserController(InventoryDbContext context, IUserService userService)
+        public UserController(IUserService userService)
         {
-            _context = context;
             _userService = userService;
         }
 

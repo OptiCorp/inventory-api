@@ -1,13 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTOs.ItemDtos;
@@ -19,13 +10,13 @@ namespace Inventory.Controllers
     [ApiController]
     public class ItemController : ControllerBase
     {
-        private readonly InventoryDbContext _context;
         private readonly IItemService _itemService;
+        private readonly IListService _listService;
 
-        public ItemController(InventoryDbContext context, IItemService itemService)
+        public ItemController(IItemService itemService, IListService listService)
         {
-            _context = context;
             _itemService = itemService;
+            _listService = listService;
         }
         
         [HttpGet]
@@ -72,14 +63,6 @@ namespace Inventory.Controllers
             
             return CreatedAtAction(nameof(GetItem), new { id = itemIds.First() }, items);
         }
-        
-        // [HttpGet("Children/{id}")]
-        // [SwaggerOperation(Summary = "Get an item's children", Description = "Retrieves a list of an item's children.")]
-        // [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
-        // public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetChildren(string id)
-        // {
-        //     return Ok(await _itemService.GetChildrenAsync(id));
-        // }
 
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
@@ -87,6 +70,20 @@ namespace Inventory.Controllers
         public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemBySearchString(string searchString, int page)
         {
             return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString, page));
+        }
+        
+        [HttpGet("BySearchStringNotInList/{searchString}")]
+        [SwaggerOperation(Summary = "Get items not in list containing search string", Description = "Retrieves items not in list containing search string in WpId, serial number or description.")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
+        [SwaggerResponse(404, "List not found")]
+        public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemNotInLIstBySearchString(string searchString, string listId, int page)
+        {
+            var list = _listService.GetListByIdAsync(listId);
+            if (list == null)
+            {
+                return NotFound("List not found");
+            }
+            return Ok(await _itemService.GetAllItemsNotInListBySearchStringAsync(searchString, listId, page));
         }
         
         [HttpGet("ByUserId/{id}")]

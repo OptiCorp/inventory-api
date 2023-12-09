@@ -7,9 +7,10 @@ namespace Inventory.Services
     {
         Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync();
         Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page);
+        Task<IEnumerable<ItemResponseDto>> GetAllItemsNotInListBySearchStringAsync(string searchString,string listId, int page);
         Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id, int page);
         Task<ItemResponseDto> GetItemByIdAsync(string id);
-        Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string id);
+        // Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string id);
         Task<List<string?>> CreateItemAsync(List<ItemCreateDto> item);
         Task UpdateItemAsync(ItemUpdateDto item);
         Task DeleteItemAsync(string id);
