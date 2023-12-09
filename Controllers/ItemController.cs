@@ -78,7 +78,7 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "List not found")]
         public async Task<ActionResult<IEnumerable<ItemResponseDto>>> GetItemNotInLIstBySearchString(string searchString, string listId, int page)
         {
-            var list = _listService.GetListByIdAsync(listId);
+            var list = await _listService.GetListByIdAsync(listId);
             if (list == null)
             {
                 return NotFound("List not found");
