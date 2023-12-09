@@ -1,13 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Inventory.Models;
-using Inventory.Models.DTOs.ItemDtos;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTOs.ListDtos;
 using Inventory.Services;
@@ -18,13 +9,11 @@ namespace Inventory.Controllers
     [ApiController]
     public class ListController : ControllerBase
     {
-        private readonly InventoryDbContext _context;
         private readonly IListService _listService;
         private readonly IUserService _userService;
 
-        public ListController(InventoryDbContext context, IListService listService, IUserService userService)
+        public ListController(IListService listService, IUserService userService)
         {
-            _context = context;
             _listService = listService;
             _userService = userService;
         }
