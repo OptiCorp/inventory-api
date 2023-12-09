@@ -51,8 +51,8 @@ namespace Inventory.Services
         {   
             if (page == 0)
             {
-                return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
-                        || c.Description.Contains(searchString)
+                return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
+                        || c.Description.Contains(searchString))
                         && c.ListId != listId)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
