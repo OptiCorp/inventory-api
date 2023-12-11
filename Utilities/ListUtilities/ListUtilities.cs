@@ -29,12 +29,16 @@ namespace Inventory.Utilities
                         SerialNumber = item.SerialNumber,
                         ProductNumber = item.ProductNumber,
                         Type = item.Type,
-                        Location = item.Location,
+                        CategoryId = item.CategoryId,
+                        LocationId = item.LocationId,
+                        VendorId = item.VendorId,
                         Description = item.Description,
                         ParentId = item.ParentId,
-                        Vendor = item.Vendor,
                         AddedById = item.UserId,
                         Comment = item.Comment,
+                        ListId = item.ListId,
+                        AddedByFirstName = item.User?.FirstName,
+                        AddedByLastName = item.User?.LastName,
                         CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
                         UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
                     });

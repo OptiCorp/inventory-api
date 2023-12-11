@@ -107,6 +107,9 @@ namespace Inventory.Services
         public async Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string parentId)
         {
             return await _context.Items.Where(c => c.ParentId == parentId)
+                .Include(c => c.Parent)
+                .Include(c => c.Children)
+                .Include(c => c.User)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
         }
@@ -159,8 +162,6 @@ namespace Inventory.Services
             }
         }
         
-       
-
         public async Task UpdateItemAsync(ItemUpdateDto updatedItem)
         {
             var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
@@ -178,6 +179,7 @@ namespace Inventory.Services
                 item.VendorId = updatedItem.VendorId;
                 item.UserId = updatedItem.AddedById;
                 item.Comment = updatedItem.Comment;
+                item.ListId = updatedItem.ListId;
         
                 item.UpdatedDate = DateTime.Now;
         

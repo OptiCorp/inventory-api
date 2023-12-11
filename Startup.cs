@@ -45,19 +45,11 @@ namespace inventory
             {
                 c.EnableAnnotations();
             });
-
-            services.AddScoped<IAssemblyService, AssemblyService>();
-            services.AddScoped<IPartService, PartService>();
-            services.AddScoped<ISubassemblyService, SubassemblyService>();
-            services.AddScoped<IUnitService, UnitService>();
+            
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IListService, ListService>();
-
-            services.AddScoped<IAssemblyUtilities, AssemblyUtilities>();
-            services.AddScoped<IPartUtilities, PartUtilities>();
-            services.AddScoped<ISubassemblyUtilities, SubassemblyUtilities>();
-            services.AddScoped<IUnitUtilities, UnitUtilities>();
+            
             services.AddScoped<IUserUtilities, UserUtilities>();
             services.AddScoped<IItemUtilities, ItemUtilities>();
             services.AddScoped<IListUtilities, ListUtilities>();
