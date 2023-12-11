@@ -5,6 +5,12 @@ namespace Inventory.Utilities
 {
     public class ItemUtilities : IItemUtilities
     {
+        private readonly IUserUtilities _userUtilities;
+        
+        public ItemUtilities(IUserUtilities userUtilities)
+        {
+            _userUtilities = userUtilities;
+        }
         public ItemResponseDto ItemToResponseDto(Item item)
         {
             var itemResponseDto = new ItemResponseDto
@@ -14,17 +20,22 @@ namespace Inventory.Utilities
                 SerialNumber = item.SerialNumber,
                 ProductNumber = item.ProductNumber,
                 Type = item.Type,
-                Location = item.Location,
+                CategoryId = item.CategoryId,
+                LocationId = item.LocationId,
+                VendorId = item.VendorId,
                 Description = item.Description,
                 ParentId = item.ParentId,
-                Vendor = item.Vendor,
                 AddedById = item.UserId,
                 Comment = item.Comment,
                 ListId = item.ListId,
                 AddedByFirstName = item.User?.FirstName,
                 AddedByLastName = item.User?.LastName,
                 CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
-                UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
+                UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
+                User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
+                Vendor = item.Vendor,
+                Category = item.Category,
+                Location = item.Location
             };
 
             if (item.Parent != null)
@@ -36,17 +47,22 @@ namespace Inventory.Utilities
                     SerialNumber = item.Parent.SerialNumber,
                     ProductNumber = item.Parent.ProductNumber,
                     Type = item.Parent.Type,
-                    Location = item.Parent.Location,
+                    CategoryId = item.CategoryId,
+                    LocationId = item.LocationId,
+                    VendorId = item.VendorId,
                     Description = item.Parent.Description,
                     ParentId = item.Parent.ParentId,
-                    Vendor = item.Parent.Vendor,
                     AddedById = item.Parent.UserId,
                     Comment = item.Parent.Comment,
                     ListId = item.Parent.ListId,
                     AddedByFirstName = item.Parent.User?.FirstName,
                     AddedByLastName = item.Parent.User?.LastName,
                     CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
-                    UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
+                    UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
+                    User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
+                    Vendor = item.Vendor,
+                    Category = item.Category,
+                    Location = item.Location
                 };
             }
             if (item.Children != null)
@@ -61,17 +77,22 @@ namespace Inventory.Utilities
                         SerialNumber = child.SerialNumber,
                         ProductNumber = child.ProductNumber,
                         Type = child.Type,
-                        Location = child.Location,
+                        CategoryId = item.CategoryId,
+                        LocationId = item.LocationId,
+                        VendorId = item.VendorId,
                         Description = child.Description,
                         ParentId = child.ParentId,
-                        Vendor = child.Vendor,
                         AddedById = child.UserId,
                         Comment = child.Comment,
                         ListId = child.ListId,
                         AddedByFirstName = child.User?.FirstName,
                         AddedByLastName = child.User?.LastName,
                         CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
-                        UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
+                        UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
+                        User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
+                        Vendor = item.Vendor,
+                        Category = item.Category,
+                        Location = item.Location
                     });
                 }
                 itemResponseDto.Children = children;

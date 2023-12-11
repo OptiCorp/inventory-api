@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Inventory.Models.DTO;
 using Inventory.Models.DTOs.ItemDtos;
 
 namespace Inventory.Models.DTOs.ListDtos;
@@ -20,4 +21,6 @@ public class ListResponseDto
     public string? UpdatedDate { get; set; }
     
     public IEnumerable<ItemResponseDto>? Items { get; set; }
+    
+    public UserDto? User { get; set; }
 }

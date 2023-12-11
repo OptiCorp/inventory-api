@@ -18,7 +18,13 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync()
         {
-            return await _context.Items.Select(c => _itemUtilities.ItemToResponseDto(c))
+            return await _context.Items.Include(c => c.Parent)
+                .Include(c => c.Children)
+                .Include(c => c.User)
+                .Include(c => c.Vendor)
+                .Include(c => c.Category)
+                .Include(c => c.Location)
+                .Select(c => _itemUtilities.ItemToResponseDto(c))
                                             .ToListAsync();
         }
 
@@ -32,6 +38,9 @@ namespace Inventory.Services
                         .Include(c => c.Parent)
                         .Include(c => c.Children)
                         .Include(c => c.User)
+                        .Include(c => c.Vendor)
+                        .Include(c => c.Category)
+                        .Include(c => c.Location)
                         .OrderBy(c => c.Id)
                         .Take(10)
                         .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -44,6 +53,9 @@ namespace Inventory.Services
                             .Include(c => c.Parent)
                             .Include(c => c.Children)
                             .Include(c => c.User)
+                            .Include(c => c.Vendor)
+                            .Include(c => c.Category)
+                            .Include(c => c.Location)
                             .OrderBy(c => c.Id)
                             .Skip((page -1) * 10)
                             .Take(10)
@@ -61,6 +73,9 @@ namespace Inventory.Services
                         .Include(c => c.Parent)
                         .Include(c => c.Children)
                         .Include(c => c.User)
+                        .Include(c => c.Vendor)
+                        .Include(c => c.Category)
+                        .Include(c => c.Location)
                         .OrderBy(c => c.Id)
                         .Take(10)
                         .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -73,6 +88,9 @@ namespace Inventory.Services
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.User)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Category)
+                    .Include(c => c.Location)
                     .OrderBy(c => c.Id)
                     .Skip((page -1) * 10)
                     .Take(10)
@@ -88,6 +106,9 @@ namespace Inventory.Services
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.User)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Category)
+                    .Include(c => c.Location)
                     .OrderByDescending(c => c.CreatedDate)
                     .Take(10)
                     .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -97,6 +118,9 @@ namespace Inventory.Services
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.User)
+                .Include(c => c.Vendor)
+                .Include(c => c.Category)
+                .Include(c => c.Location)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip((page -1) * 10)
                 .Take(10)
@@ -107,6 +131,12 @@ namespace Inventory.Services
         public async Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string parentId)
         {
             return await _context.Items.Where(c => c.ParentId == parentId)
+                .Include(c => c.Parent)
+                .Include(c => c.Children)
+                .Include(c => c.User)
+                .Include(c => c.Vendor)
+                .Include(c => c.Category)
+                .Include(c => c.Location)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
         }
@@ -116,7 +146,10 @@ namespace Inventory.Services
             var item = await _context.Items
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
-                .Include((c => c.User))
+                .Include(c => c.User)
+                .Include(c => c.Vendor)
+                .Include(c => c.Category)
+                .Include(c => c.Location)
                 .FirstOrDefaultAsync(c => c.Id == id);
         
             if (item == null) return null;
@@ -135,13 +168,14 @@ namespace Inventory.Services
                     {
                         WpId = itemDto.WpId,
                         UserId = itemDto.AddedById,
+                        CategoryId = itemDto.CategoryId,
                         ParentId = itemDto.ParentId,
                         SerialNumber = itemDto.SerialNumber,
                         ProductNumber = itemDto.ProductNumber,
                         Type = itemDto.Type,
-                        Location = itemDto.Location,
+                        LocationId = itemDto.LocationId,
                         Description = itemDto.Description,
-                        Vendor = itemDto.Vendor,
+                        VendorId = itemDto.VendorId,
                         Comment = itemDto.Comment,
                         CreatedDate = DateTime.Now
                     };
@@ -158,8 +192,6 @@ namespace Inventory.Services
             }
         }
         
-       
-
         public async Task UpdateItemAsync(ItemUpdateDto updatedItem)
         {
             var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
@@ -170,12 +202,14 @@ namespace Inventory.Services
                 item.SerialNumber = updatedItem.SerialNumber;
                 item.ProductNumber = updatedItem.ProductNumber;
                 item.Type = updatedItem.Type;
-                item.Location = updatedItem.Location;
+                item.CategoryId = updatedItem.CategoryId;
+                item.LocationId = updatedItem.LocationId;
                 item.Description = updatedItem.Description;
                 item.ParentId = updatedItem.ParentId;
-                item.Vendor = updatedItem.Vendor;
+                item.VendorId = updatedItem.VendorId;
                 item.UserId = updatedItem.AddedById;
                 item.Comment = updatedItem.Comment;
+                item.ListId = updatedItem.ListId;
         
                 item.UpdatedDate = DateTime.Now;
         

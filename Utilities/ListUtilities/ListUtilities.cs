@@ -6,6 +6,14 @@ namespace Inventory.Utilities
 {
     public class ListUtilities : IListUtilities
     {
+        private readonly IUserUtilities _userUtilities;
+        private readonly IItemUtilities _itemUtilities;
+        
+        public ListUtilities(IUserUtilities userUtilities, IItemUtilities itemUtilities)
+        {
+            _userUtilities = userUtilities;
+            _itemUtilities = itemUtilities;
+        }
         public ListResponseDto ListToResponseDto(List list)
         {
             var listReponseDto = new ListResponseDto
@@ -14,7 +22,8 @@ namespace Inventory.Utilities
                 Title = list.Title,
                 CreatedById = list.UserId,
                 CreatedDate = list.CreatedDate.HasValue ? list.CreatedDate+"Z": null,
-                UpdatedDate = list.UpdatedDate.HasValue ? list.UpdatedDate+"Z": null
+                UpdatedDate = list.UpdatedDate.HasValue ? list.UpdatedDate+"Z": null,
+                User = list.User != null ? _userUtilities.UserToDto(list.User): null,
             };
             
             if (list.Items != null)
@@ -22,22 +31,7 @@ namespace Inventory.Utilities
                 var items = new List<ItemResponseDto>();
                 foreach (var item in list.Items)
                 {
-                    items.Add(new ItemResponseDto
-                    {
-                        Id = item.Id,
-                        WpId = item.WpId,
-                        SerialNumber = item.SerialNumber,
-                        ProductNumber = item.ProductNumber,
-                        Type = item.Type,
-                        Location = item.Location,
-                        Description = item.Description,
-                        ParentId = item.ParentId,
-                        Vendor = item.Vendor,
-                        AddedById = item.UserId,
-                        Comment = item.Comment,
-                        CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
-                        UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
-                    });
+                    items.Add(_itemUtilities.ItemToResponseDto(item));
                 }
                 listReponseDto.Items = items;
             }
