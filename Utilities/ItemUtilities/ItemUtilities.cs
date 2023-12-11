@@ -6,12 +6,10 @@ namespace Inventory.Utilities
     public class ItemUtilities : IItemUtilities
     {
         private readonly IUserUtilities _userUtilities;
-        private readonly IItemUtilities _itemUtilities;
         
-        public ItemUtilities(IUserUtilities userUtilities, IItemUtilities itemUtilities)
+        public ItemUtilities(IUserUtilities userUtilities)
         {
             _userUtilities = userUtilities;
-            _itemUtilities = itemUtilities;
         }
         public ItemResponseDto ItemToResponseDto(Item item)
         {
