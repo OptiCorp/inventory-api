@@ -18,20 +18,21 @@ namespace Inventory.Models
         public string? ProductNumber { get; set; }
         
         public string? Type { get; set; }
+        
+        public string? CategoryId { get; set; }
+        
+        public string? ParentId { get; set; }
+        
+        public string? VendorId { get; set; }
+        
+        public string? LocationId { get; set; }
 
         public string? DocumentationId { get; set; }
-
-        public string? Location { get; set; }
+        
+        public string? UserId { get; set; }
 
         [Required]
         public string? Description { get; set; }
-        
-        public string? ParentId { get; set; }
-
-        [Required]
-        public string? Vendor { get; set; }
-
-        public string? UserId { get; set; }
 
         public string? Comment { get; set; }
         
@@ -42,10 +43,17 @@ namespace Inventory.Models
 
         public DateTime? UpdatedDate { get; set; }
         
+        public Category? Category { get; set; }
+        
         public Item? Parent { get; set; }
         
         public IEnumerable<Item>? Children { get; set; }
+        
+        public Vendor? Vendor { get; set; }
+        
+        public Location? Location { get; set; }
 
         public User? User { get; set; }
+        
     }
 }

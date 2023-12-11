@@ -14,7 +14,8 @@ namespace Inventory.Tests.Services
             // Arrange
             TestUtilities testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            ItemUtilities itemUtilities = new ItemUtilities();
+            UserUtilities userUtilities = new UserUtilities();
+            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
             ItemService itemService = new ItemService(dbContext, itemUtilities);
             
             // Act
@@ -55,7 +56,8 @@ namespace Inventory.Tests.Services
             // Arrange
             TestUtilities testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            ItemUtilities itemUtilities = new ItemUtilities();
+            UserUtilities userUtilities = new UserUtilities();
+            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
             ItemService itemService = new ItemService(dbContext, itemUtilities);
             
             // Act
@@ -73,7 +75,8 @@ namespace Inventory.Tests.Services
         {
             // Arrange
             TestUtilities testUtilities = new TestUtilities();
-            ItemUtilities itemUtilities = new ItemUtilities();
+            UserUtilities userUtilities = new UserUtilities();
+            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
             var dbContext = await testUtilities.GetDbContext("Item");
             var parentId = "parentId 1";
             
@@ -88,7 +91,7 @@ namespace Inventory.Tests.Services
                     Description = "Test Description",
                     ProductNumber = "TestProductNumber",
                     SerialNumber = "TestSerialNumber",
-                    Vendor = "TestVendor",
+                    VendorId = "TestVendor",
                     WpId = "TestWpId",
                     
                 }
@@ -121,7 +124,8 @@ namespace Inventory.Tests.Services
             //Arrange
             TestUtilities testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            ItemUtilities itemUtilities = new ItemUtilities();
+            UserUtilities userUtilities = new UserUtilities();
+            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
             ItemService itemService = new ItemService(dbContext, itemUtilities);
             
             //Act
@@ -139,7 +143,8 @@ namespace Inventory.Tests.Services
             //Arrange
             TestUtilities testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            ItemUtilities itemUtilities = new ItemUtilities();
+            UserUtilities userUtilities = new UserUtilities();
+            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
             ItemService itemService = new ItemService(dbContext, itemUtilities);
             
             var newTestItem1 = new ItemCreateDto()
@@ -149,10 +154,10 @@ namespace Inventory.Tests.Services
                 SerialNumber = "321",
                 WpId = "456",
                 Comment = "AComment",
-                Location = "ALocation",
+                LocationId = "ALocation",
                 ParentId = "789",
                 Type = "AType",
-                Vendor = "AVendor",
+                VendorId = "AVendor",
                 AddedById = "654",
             };
             
@@ -163,10 +168,10 @@ namespace Inventory.Tests.Services
                 SerialNumber = "321",
                 WpId = "789",
                 Comment = "AComment",
-                Location = "ALocation",
+                LocationId = "ALocation",
                 ParentId = "789",
                 Type = "BType",
-                Vendor = "AVendor",
+                VendorId = "AVendor",
                 AddedById = "654",
             };
             var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
@@ -186,7 +191,8 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            ItemUtilities itemUtilities = new ItemUtilities();
+            UserUtilities userUtilities = new UserUtilities();
+            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
             ItemService itemService = new ItemService(dbContext, itemUtilities);
 
             var updatedItem = new ItemUpdateDto()
@@ -199,9 +205,9 @@ namespace Inventory.Tests.Services
                 Comment = "Item Comment 1",
                 ProductNumber = "123",
                 SerialNumber = "456",
-                Location = "ALocation2",
+                LocationId = "ALocation2",
                 Type = "AType2",
-                Vendor = "AVendor2"
+                VendorId = "AVendor2"
             };
             
             // Act
@@ -219,7 +225,8 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            ItemUtilities itemUtilities = new ItemUtilities();
+            UserUtilities userUtilities = new UserUtilities();
+            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
             ItemService itemService = new ItemService(dbContext, itemUtilities);
 
             const string itemId = "Item 1";
