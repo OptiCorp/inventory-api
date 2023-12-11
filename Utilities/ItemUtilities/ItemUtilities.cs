@@ -32,7 +32,10 @@ namespace Inventory.Utilities
                 AddedByLastName = item.User?.LastName,
                 CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
                 UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
-                User = item.User != null ? _userUtilities.UserToDto(item.User) : null
+                User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
+                Vendor = item.Vendor,
+                Category = item.Category,
+                Location = item.Location
             };
 
             if (item.Parent != null)
@@ -56,7 +59,10 @@ namespace Inventory.Utilities
                     AddedByLastName = item.Parent.User?.LastName,
                     CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
                     UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
-                    User = item.User != null ? _userUtilities.UserToDto(item.User) : null
+                    User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
+                    Vendor = item.Vendor,
+                    Category = item.Category,
+                    Location = item.Location
                 };
             }
             if (item.Children != null)
@@ -83,7 +89,10 @@ namespace Inventory.Utilities
                         AddedByLastName = child.User?.LastName,
                         CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
                         UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
-                        User = item.User != null ? _userUtilities.UserToDto(item.User) : null
+                        User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
+                        Vendor = item.Vendor,
+                        Category = item.Category,
+                        Location = item.Location
                     });
                 }
                 itemResponseDto.Children = children;

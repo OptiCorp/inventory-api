@@ -18,7 +18,13 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync()
         {
-            return await _context.Items.Select(c => _itemUtilities.ItemToResponseDto(c))
+            return await _context.Items.Include(c => c.Parent)
+                .Include(c => c.Children)
+                .Include(c => c.User)
+                .Include(c => c.Vendor)
+                .Include(c => c.Category)
+                .Include(c => c.Location)
+                .Select(c => _itemUtilities.ItemToResponseDto(c))
                                             .ToListAsync();
         }
 
@@ -32,6 +38,9 @@ namespace Inventory.Services
                         .Include(c => c.Parent)
                         .Include(c => c.Children)
                         .Include(c => c.User)
+                        .Include(c => c.Vendor)
+                        .Include(c => c.Category)
+                        .Include(c => c.Location)
                         .OrderBy(c => c.Id)
                         .Take(10)
                         .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -44,6 +53,9 @@ namespace Inventory.Services
                             .Include(c => c.Parent)
                             .Include(c => c.Children)
                             .Include(c => c.User)
+                            .Include(c => c.Vendor)
+                            .Include(c => c.Category)
+                            .Include(c => c.Location)
                             .OrderBy(c => c.Id)
                             .Skip((page -1) * 10)
                             .Take(10)
@@ -61,6 +73,9 @@ namespace Inventory.Services
                         .Include(c => c.Parent)
                         .Include(c => c.Children)
                         .Include(c => c.User)
+                        .Include(c => c.Vendor)
+                        .Include(c => c.Category)
+                        .Include(c => c.Location)
                         .OrderBy(c => c.Id)
                         .Take(10)
                         .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -73,6 +88,9 @@ namespace Inventory.Services
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.User)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Category)
+                    .Include(c => c.Location)
                     .OrderBy(c => c.Id)
                     .Skip((page -1) * 10)
                     .Take(10)
@@ -88,6 +106,9 @@ namespace Inventory.Services
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.User)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Category)
+                    .Include(c => c.Location)
                     .OrderByDescending(c => c.CreatedDate)
                     .Take(10)
                     .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -97,6 +118,9 @@ namespace Inventory.Services
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.User)
+                .Include(c => c.Vendor)
+                .Include(c => c.Category)
+                .Include(c => c.Location)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip((page -1) * 10)
                 .Take(10)
@@ -110,6 +134,9 @@ namespace Inventory.Services
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.User)
+                .Include(c => c.Vendor)
+                .Include(c => c.Category)
+                .Include(c => c.Location)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
         }
@@ -119,7 +146,10 @@ namespace Inventory.Services
             var item = await _context.Items
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
-                .Include((c => c.User))
+                .Include(c => c.User)
+                .Include(c => c.Vendor)
+                .Include(c => c.Category)
+                .Include(c => c.Location)
                 .FirstOrDefaultAsync(c => c.Id == id);
         
             if (item == null) return null;
