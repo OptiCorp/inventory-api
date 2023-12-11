@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Inventory.Models.DTO;
 
 namespace Inventory.Models.DTOs.ItemDtos
 {
@@ -52,5 +53,7 @@ namespace Inventory.Models.DTOs.ItemDtos
         public Vendor? Vendor { get; set; }
         
         public Location? Location { get; set; }
+        
+        public UserDto? User { get; set; }
     }
 }

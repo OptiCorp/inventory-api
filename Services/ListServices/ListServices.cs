@@ -18,7 +18,9 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<ListResponseDto>> GetAllListsAsync()
         {
-            return await _context.Lists.Select(c => _listUtilities.ListToResponseDto(c))
+            return await _context.Lists.Include(c => c.User)
+                                            .Include(c => c.Items)
+                                            .Select(c => _listUtilities.ListToResponseDto(c))
                                             .ToListAsync();
         }
         
@@ -29,12 +31,13 @@ namespace Inventory.Services
                 return await _context.Lists.Include(c => c.Items)
                     .Where(c => c.UserId == userId)
                     .Where(list =>
-                        list.Title.Contains(searchString) |
+                        list.Title.Contains(searchString) ||
                         list.Items.Any(item =>
-                        item.WpId.Contains(searchString) |
-                        item.SerialNumber.Contains(searchString) |
+                        item.WpId.Contains(searchString) ||
+                        item.SerialNumber.Contains(searchString) ||
                         item.Description.Contains(searchString)
                     ))
+                    .Include(c => c.User)
                     .OrderByDescending(c => c.CreatedDate)
                     .Take(10)
                     .Select(list => _listUtilities.ListToResponseDto(list))
@@ -50,6 +53,7 @@ namespace Inventory.Services
                         item.SerialNumber.Contains(searchString) |
                         item.Description.Contains(searchString)
                     ))
+                .Include(c => c.User)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip((page - 1) * 10)
                 .Take(10)
@@ -62,6 +66,7 @@ namespace Inventory.Services
             if (page == 0)
             {
                 return await _context.Lists.Where(c => c.UserId == id)
+                    .Include(c => c.User)
                     .Include(c => c.Items)
                     .OrderByDescending(c => c.CreatedDate)
                     .Take(10)
@@ -69,6 +74,7 @@ namespace Inventory.Services
                     .ToListAsync();
             }
             return await _context.Lists.Where(c => c.UserId == id)
+                .Include(c => c.User)
                 .Include(c => c.Items)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip((page -1) * 10)
@@ -80,6 +86,7 @@ namespace Inventory.Services
         public async Task<ListResponseDto> GetListByIdAsync(string id)
         {
             var list = await _context.Lists
+                .Include(c => c.User)
                 .Include(c => c.Items)
                 .FirstOrDefaultAsync(c => c.Id == id);
         

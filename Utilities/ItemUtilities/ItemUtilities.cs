@@ -5,6 +5,14 @@ namespace Inventory.Utilities
 {
     public class ItemUtilities : IItemUtilities
     {
+        private readonly IUserUtilities _userUtilities;
+        private readonly IItemUtilities _itemUtilities;
+        
+        public ItemUtilities(IUserUtilities userUtilities, IItemUtilities itemUtilities)
+        {
+            _userUtilities = userUtilities;
+            _itemUtilities = itemUtilities;
+        }
         public ItemResponseDto ItemToResponseDto(Item item)
         {
             var itemResponseDto = new ItemResponseDto
@@ -25,7 +33,8 @@ namespace Inventory.Utilities
                 AddedByFirstName = item.User?.FirstName,
                 AddedByLastName = item.User?.LastName,
                 CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
-                UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
+                UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
+                User = item.User != null ? _userUtilities.UserToDto(item.User) : null
             };
 
             if (item.Parent != null)
@@ -48,7 +57,8 @@ namespace Inventory.Utilities
                     AddedByFirstName = item.Parent.User?.FirstName,
                     AddedByLastName = item.Parent.User?.LastName,
                     CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
-                    UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
+                    UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
+                    User = item.User != null ? _userUtilities.UserToDto(item.User) : null
                 };
             }
             if (item.Children != null)
@@ -74,7 +84,8 @@ namespace Inventory.Utilities
                         AddedByFirstName = child.User?.FirstName,
                         AddedByLastName = child.User?.LastName,
                         CreatedDate = item.CreatedDate.HasValue ? item.CreatedDate+"Z": null,
-                        UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null
+                        UpdatedDate = item.UpdatedDate.HasValue ? item.UpdatedDate+"Z": null,
+                        User = item.User != null ? _userUtilities.UserToDto(item.User) : null
                     });
                 }
                 itemResponseDto.Children = children;
