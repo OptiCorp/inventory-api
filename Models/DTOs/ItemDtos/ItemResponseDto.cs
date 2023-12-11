@@ -18,31 +18,39 @@ namespace Inventory.Models.DTOs.ItemDtos
         
         [Required]
         public string? Type { get; set; }
-
-        public string? Location { get; set; }
-
-        [Required]
-        public string? Description { get; set; }
+        
+        public string? CategoryId { get; set; }
         
         public string? ParentId { get; set; }
+        
+        public string? VendorId { get; set; }
 
-        [Required]
-        public string? Vendor { get; set; }
+        public string? LocationId { get; set; }
         
         public string? AddedById { get; set; }
         public string? AddedByFirstName { get; set; } 
         public string? AddedByLastName { get; set; } 
+        
+        [Required]
+        public string? Description { get; set; }
+        
         public string? Comment { get; set; }
         
         public string? ListId { get; set; }
-        
-        public ItemResponseDto? Parent { get; set; }
-        
-        public IEnumerable<ItemResponseDto>? Children { get; set; }
 
         [Required]
         public string? CreatedDate { get; set; }
 
         public string? UpdatedDate { get; set; }
+        
+        public Category? Category { get; set; }
+        
+        public ItemResponseDto? Parent { get; set; }
+        
+        public IEnumerable<ItemResponseDto>? Children { get; set; }
+        
+        public Vendor? Vendor { get; set; }
+        
+        public Location? Location { get; set; }
     }
 }

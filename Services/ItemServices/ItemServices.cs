@@ -135,13 +135,14 @@ namespace Inventory.Services
                     {
                         WpId = itemDto.WpId,
                         UserId = itemDto.AddedById,
+                        CategoryId = itemDto.CategoryId,
                         ParentId = itemDto.ParentId,
                         SerialNumber = itemDto.SerialNumber,
                         ProductNumber = itemDto.ProductNumber,
                         Type = itemDto.Type,
-                        Location = itemDto.Location,
+                        LocationId = itemDto.LocationId,
                         Description = itemDto.Description,
-                        Vendor = itemDto.Vendor,
+                        VendorId = itemDto.VendorId,
                         Comment = itemDto.Comment,
                         CreatedDate = DateTime.Now
                     };
@@ -170,10 +171,11 @@ namespace Inventory.Services
                 item.SerialNumber = updatedItem.SerialNumber;
                 item.ProductNumber = updatedItem.ProductNumber;
                 item.Type = updatedItem.Type;
-                item.Location = updatedItem.Location;
+                item.CategoryId = updatedItem.CategoryId;
+                item.LocationId = updatedItem.LocationId;
                 item.Description = updatedItem.Description;
                 item.ParentId = updatedItem.ParentId;
-                item.Vendor = updatedItem.Vendor;
+                item.VendorId = updatedItem.VendorId;
                 item.UserId = updatedItem.AddedById;
                 item.Comment = updatedItem.Comment;
         

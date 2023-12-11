@@ -16,6 +16,9 @@ public class InventoryDbContext : DbContext
     public DbSet<Part> Parts { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;
     public DbSet<List> Lists { get; set; } = null!;
+    public DbSet<Category> Categories { get; set; } = null!;
+    public DbSet<Vendor> Vendors { get; set; } = null!;
+    public DbSet<Location> Locations { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,7 +31,7 @@ public class InventoryDbContext : DbContext
         UnitConfigurations.Configure(modelBuilder);
         ItemConfigurations.Configure(modelBuilder);
         ListConfigurations.Configure(modelBuilder);
-
+        
     }
 
 }

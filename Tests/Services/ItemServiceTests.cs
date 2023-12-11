@@ -88,7 +88,7 @@ namespace Inventory.Tests.Services
                     Description = "Test Description",
                     ProductNumber = "TestProductNumber",
                     SerialNumber = "TestSerialNumber",
-                    Vendor = "TestVendor",
+                    VendorId = "TestVendor",
                     WpId = "TestWpId",
                     
                 }
@@ -149,10 +149,10 @@ namespace Inventory.Tests.Services
                 SerialNumber = "321",
                 WpId = "456",
                 Comment = "AComment",
-                Location = "ALocation",
+                LocationId = "ALocation",
                 ParentId = "789",
                 Type = "AType",
-                Vendor = "AVendor",
+                VendorId = "AVendor",
                 AddedById = "654",
             };
             
@@ -163,10 +163,10 @@ namespace Inventory.Tests.Services
                 SerialNumber = "321",
                 WpId = "789",
                 Comment = "AComment",
-                Location = "ALocation",
+                LocationId = "ALocation",
                 ParentId = "789",
                 Type = "BType",
-                Vendor = "AVendor",
+                VendorId = "AVendor",
                 AddedById = "654",
             };
             var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
@@ -199,9 +199,9 @@ namespace Inventory.Tests.Services
                 Comment = "Item Comment 1",
                 ProductNumber = "123",
                 SerialNumber = "456",
-                Location = "ALocation2",
+                LocationId = "ALocation2",
                 Type = "AType2",
-                Vendor = "AVendor2"
+                VendorId = "AVendor2"
             };
             
             // Act
