@@ -15,6 +15,7 @@ public class InventoryDbContext : DbContext
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<Vendor> Vendors { get; set; } = null!;
     public DbSet<Location> Locations { get; set; } = null!;
+    public DbSet<LogEntry> LogEntries { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
