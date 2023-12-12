@@ -7,7 +7,7 @@ namespace Inventory.Services
         Task<IEnumerable<LocationResponseDto>> GetAllLocationsAsync();
         Task<IEnumerable<LocationResponseDto>> GetAllLocationsBySearchStringAsync(string searchString);
         Task<LocationResponseDto> GetLocationByIdAsync(string id);
-        Task<string> CreateLocationAsync(LocationCreateDto item);
+        Task<string?> CreateLocationAsync(LocationCreateDto item);
         Task UpdateLocationAsync(LocationUpdateDto item);
         Task DeleteLocationAsync(string id);
     }

@@ -47,10 +47,10 @@ namespace Inventory.Services
             return await _context.Lists.Include(c => c.Items)
                 .Where(c => c.UserId == userId)
                 .Where(list =>
-                    list.Title.Contains(searchString) |
+                    list.Title.Contains(searchString) ||
                     list.Items.Any(item =>
-                        item.WpId.Contains(searchString) |
-                        item.SerialNumber.Contains(searchString) |
+                        item.WpId.Contains(searchString) ||
+                        item.SerialNumber.Contains(searchString) ||
                         item.Description.Contains(searchString)
                     ))
                 .Include(c => c.User)
