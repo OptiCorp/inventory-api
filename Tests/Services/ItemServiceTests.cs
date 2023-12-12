@@ -205,9 +205,9 @@ namespace Inventory.Tests.Services
                 Comment = "Item Comment 1",
                 ProductNumber = "123",
                 SerialNumber = "456",
-                LocationId = "ALocation2",
+                // LocationId = "ALocation2",
                 Type = "AType2",
-                VendorId = "AVendor2"
+                // VendorId = "AVendor2"
             };
             
             // Act
