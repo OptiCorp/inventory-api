@@ -54,6 +54,8 @@ namespace Inventory.Models.DTOs.ItemDtos
         
         public Location? Location { get; set; }
         
+        public IEnumerable<LogEntry> LogEntries { get; set; }
+        
         public UserDto? User { get; set; }
     }
 }
