@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Inventory.Models.DTO;
 
-namespace Inventory.Models
+namespace Inventory.Models.DTOs.VendorDtos
 {
-    public class Vendor
+    public class VendorUpdateDto
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Required]
         public string? Id { get; set; }
         
         [Required]
@@ -21,15 +21,5 @@ namespace Inventory.Models
         [Required]
         [Phone]
         public string? PhoneNumber { get; set; }
-        
-        [Required]
-        public string? UserId { get; set; }
-        
-        [Required]
-        public DateTime? CreatedDate { get; set; }
-
-        public DateTime? UpdatedDate { get; set; }
-        
-        public User? User { get; set; }
     }
 }
