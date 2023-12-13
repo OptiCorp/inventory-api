@@ -211,7 +211,7 @@ namespace Inventory.Tests.Services
             };
             
             // Act
-            await itemService.UpdateItemAsync(updatedItem);
+            await itemService.UpdateItemAsync(updatedItem.AddedById, updatedItem);
             var item = await itemService.GetItemByIdAsync("Item 1");
             
             // Assert
