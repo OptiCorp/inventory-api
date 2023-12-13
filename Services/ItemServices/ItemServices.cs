@@ -270,28 +270,28 @@ namespace Inventory.Services
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.CategoryId != item.CategoryId)
+                if (updatedItem.CategoryId != item.CategoryId && updatedItem.CategoryId != null)
                 {
                     var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updatedItem.CategoryId);
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
                         UserId = updatedItem.AddedById,
-                        Message = "Category changed from " + item.Category.Name + " to " + category.Name,
+                        Message = "Category changed from " + item.Category?.Name + " to " + category.Name,
                         CreatedDate = DateTime.Now
                     };
                     item.CategoryId = updatedItem.CategoryId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.LocationId != item.LocationId)
+                if (updatedItem.LocationId != item.LocationId && updatedItem.LocationId != null)
                 {
                     var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == updatedItem.LocationId);
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
                         UserId = updatedItem.AddedById,
-                        Message = "Location changed from " + item.Location.Name + " to " + location.Name,
+                        Message = "Location changed from " + item.Location?.Name + " to " + location.Name,
                         CreatedDate = DateTime.Now
                     };
                     item.LocationId = updatedItem.LocationId;
@@ -324,14 +324,14 @@ namespace Inventory.Services
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.VendorId != item.VendorId)
+                if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
                 {
                     var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedItem.VendorId);
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
                         UserId = updatedItem.AddedById,
-                        Message = "Vendor changed from " + item.Vendor.Name + " to " + vendor.Name,
+                        Message = "Vendor changed from " + item.Vendor?.Name + " to " + vendor.Name,
                         CreatedDate = DateTime.Now
                     };
                     item.VendorId = updatedItem.VendorId;
