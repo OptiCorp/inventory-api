@@ -12,7 +12,7 @@ namespace Inventory.Services
         Task<ItemResponseDto> GetItemByIdAsync(string id);
         Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string id);
         Task<List<string?>> CreateItemAsync(List<ItemCreateDto> item);
-        Task UpdateItemAsync(ItemUpdateDto item);
+        Task UpdateItemAsync(string updatedById, ItemUpdateDto item);
         Task DeleteItemAsync(string id);
     }
 }
