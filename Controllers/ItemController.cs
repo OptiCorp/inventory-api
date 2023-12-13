@@ -98,7 +98,7 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Item updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Item not found")]
-        public async Task<IActionResult> PutItem(string id, ItemUpdateDto itemUpdateDto)
+        public async Task<IActionResult> PutItem(string id, string updatedById, ItemUpdateDto itemUpdateDto)
         {
             if (id != itemUpdateDto.Id)
             {
@@ -111,7 +111,7 @@ namespace Inventory.Controllers
                 return NotFound("Item not found");
             }
 
-            await _itemService.UpdateItemAsync(itemUpdateDto);
+            await _itemService.UpdateItemAsync(updatedById, itemUpdateDto);
 
             return NoContent();
         }

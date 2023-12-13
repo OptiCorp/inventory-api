@@ -211,7 +211,7 @@ namespace Inventory.Services
             }
         }
         
-        public async Task UpdateItemAsync(ItemUpdateDto updatedItem)
+        public async Task UpdateItemAsync(string updatedById, ItemUpdateDto updatedItem)
         {
             var item = await _context.Items.Include(c => c.Category).FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
         
@@ -223,7 +223,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "WellPartner ID changed from " + item.WpId + " to " + updatedItem.WpId,
                         CreatedDate = DateTime.Now
                     };
@@ -236,7 +236,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "Serial number changed from " + item.SerialNumber + " to " + updatedItem.SerialNumber,
                         CreatedDate = DateTime.Now
                     };
@@ -249,7 +249,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "Product number changed from " + item.ProductNumber + " to " + updatedItem.ProductNumber,
                         CreatedDate = DateTime.Now
                     };
@@ -262,7 +262,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "Type changed from " + item.Type + " to " + updatedItem.Type,
                         CreatedDate = DateTime.Now
                     };
@@ -276,7 +276,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "Category changed from " + item.Category?.Name + " to " + category.Name,
                         CreatedDate = DateTime.Now
                     };
@@ -290,7 +290,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "Location changed from " + item.Location?.Name + " to " + location.Name,
                         CreatedDate = DateTime.Now
                     };
@@ -303,7 +303,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "Description updated",
                         CreatedDate = DateTime.Now
                     };
@@ -316,7 +316,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "Parent ID changed from " + item.ParentId + " to " + updatedItem.ParentId,
                         CreatedDate = DateTime.Now
                     };
@@ -330,7 +330,7 @@ namespace Inventory.Services
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedItem.AddedById,
+                        UserId = updatedById,
                         Message = "Vendor changed from " + item.Vendor?.Name + " to " + vendor.Name,
                         CreatedDate = DateTime.Now
                     };
@@ -338,7 +338,6 @@ namespace Inventory.Services
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                item.UserId = updatedItem.AddedById;
                 item.Comment = updatedItem.Comment;
                 item.ListId = updatedItem.ListId;
                 item.UpdatedDate = DateTime.Now;
