@@ -24,6 +24,7 @@ namespace Inventory.Services
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
+                .Include(c => c.LogEntries)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                                             .ToListAsync();
         }
@@ -41,6 +42,7 @@ namespace Inventory.Services
                         .Include(c => c.Vendor)
                         .Include(c => c.Category)
                         .Include(c => c.Location)
+                        .Include(c => c.LogEntries)
                         .OrderBy(c => c.Id)
                         .Take(10)
                         .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -56,6 +58,7 @@ namespace Inventory.Services
                             .Include(c => c.Vendor)
                             .Include(c => c.Category)
                             .Include(c => c.Location)
+                            .Include(c => c.LogEntries)
                             .OrderBy(c => c.Id)
                             .Skip((page -1) * 10)
                             .Take(10)
@@ -76,6 +79,7 @@ namespace Inventory.Services
                         .Include(c => c.Vendor)
                         .Include(c => c.Category)
                         .Include(c => c.Location)
+                        .Include(c => c.LogEntries)
                         .OrderBy(c => c.Id)
                         .Take(10)
                         .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -91,6 +95,7 @@ namespace Inventory.Services
                     .Include(c => c.Vendor)
                     .Include(c => c.Category)
                     .Include(c => c.Location)
+                    .Include(c => c.LogEntries)
                     .OrderBy(c => c.Id)
                     .Skip((page -1) * 10)
                     .Take(10)
@@ -109,6 +114,7 @@ namespace Inventory.Services
                     .Include(c => c.Vendor)
                     .Include(c => c.Category)
                     .Include(c => c.Location)
+                    .Include(c => c.LogEntries)
                     .OrderByDescending(c => c.CreatedDate)
                     .Take(10)
                     .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -121,6 +127,7 @@ namespace Inventory.Services
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
+                .Include(c => c.LogEntries)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip((page -1) * 10)
                 .Take(10)
@@ -137,6 +144,7 @@ namespace Inventory.Services
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
+                .Include(c => c.LogEntries)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
         }
@@ -150,6 +158,7 @@ namespace Inventory.Services
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
+                .Include(c => c.LogEntries)
                 .FirstOrDefaultAsync(c => c.Id == id);
         
             if (item == null) return null;
@@ -180,8 +189,18 @@ namespace Inventory.Services
                         CreatedDate = DateTime.Now
                     };
                     await _context.Items.AddAsync(item);
-                    await _context.SaveChangesAsync();
                     createdItemIds.Add(item.Id);
+
+                    LogEntry logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = itemDto.AddedById,
+                        Message = "Item added",
+                        CreatedDate = item.CreatedDate
+                    };
+
+                    await _context.LogEntries.AddAsync(logEntry);
+                    await _context.SaveChangesAsync();
                 }
                 return createdItemIds;
             }
@@ -194,25 +213,136 @@ namespace Inventory.Services
         
         public async Task UpdateItemAsync(ItemUpdateDto updatedItem)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
+            var item = await _context.Items.Include(c => c.Category).FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
         
             if (item != null)
             {
-                item.WpId = updatedItem.WpId;
-                item.SerialNumber = updatedItem.SerialNumber;
-                item.ProductNumber = updatedItem.ProductNumber;
-                item.Type = updatedItem.Type;
-                item.CategoryId = updatedItem.CategoryId;
-                item.LocationId = updatedItem.LocationId;
-                item.Description = updatedItem.Description;
-                item.ParentId = updatedItem.ParentId;
-                item.VendorId = updatedItem.VendorId;
+                LogEntry logEntry;
+                if (updatedItem.WpId != item.WpId)
+                {
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "WellPartner ID changed from " + item.WpId + " to " + updatedItem.WpId,
+                        CreatedDate = DateTime.Now
+                    };
+                    item.WpId = updatedItem.WpId;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+                
+                if (updatedItem.SerialNumber != item.SerialNumber)
+                {
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "Serial number changed from " + item.SerialNumber + " to " + updatedItem.SerialNumber,
+                        CreatedDate = DateTime.Now
+                    };
+                    item.SerialNumber = updatedItem.SerialNumber;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+                
+                if (updatedItem.ProductNumber != item.ProductNumber)
+                {
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "Product number changed from " + item.ProductNumber + " to " + updatedItem.ProductNumber,
+                        CreatedDate = DateTime.Now
+                    };
+                    item.ProductNumber = updatedItem.ProductNumber;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+                
+                if (updatedItem.Type != item.Type)
+                {
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "Type changed from " + item.Type + " to " + updatedItem.Type,
+                        CreatedDate = DateTime.Now
+                    };
+                    item.Type = updatedItem.Type;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+                
+                if (updatedItem.CategoryId != item.CategoryId)
+                {
+                    var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updatedItem.CategoryId);
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "Category changed from " + item.Category.Name + " to " + category.Name,
+                        CreatedDate = DateTime.Now
+                    };
+                    item.CategoryId = updatedItem.CategoryId;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+                
+                if (updatedItem.LocationId != item.LocationId)
+                {
+                    var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == updatedItem.LocationId);
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "Location changed from " + item.Location.Name + " to " + location.Name,
+                        CreatedDate = DateTime.Now
+                    };
+                    item.LocationId = updatedItem.LocationId;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+               
+                if (updatedItem.Description != item.Description)
+                {
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "Description updated",
+                        CreatedDate = DateTime.Now
+                    };
+                    item.Description = updatedItem.Description;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+                
+                if (updatedItem.ParentId != item.ParentId)
+                {
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "Parent ID changed from " + item.ParentId + " to " + updatedItem.ParentId,
+                        CreatedDate = DateTime.Now
+                    };
+                    item.ParentId = updatedItem.ParentId;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+                
+                if (updatedItem.VendorId != item.VendorId)
+                {
+                    var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedItem.VendorId);
+                    logEntry = new LogEntry
+                    {
+                        ItemId = item.Id,
+                        UserId = updatedItem.AddedById,
+                        Message = "Vendor changed from " + item.Vendor.Name + " to " + vendor.Name,
+                        CreatedDate = DateTime.Now
+                    };
+                    item.VendorId = updatedItem.VendorId;
+                    await _context.LogEntries.AddAsync(logEntry);
+                }
+                
                 item.UserId = updatedItem.AddedById;
                 item.Comment = updatedItem.Comment;
                 item.ListId = updatedItem.ListId;
-        
                 item.UpdatedDate = DateTime.Now;
-        
+                
                 await _context.SaveChangesAsync();
             }
         }

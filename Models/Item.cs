@@ -52,6 +52,8 @@ namespace Inventory.Models
         public Vendor? Vendor { get; set; }
         
         public Location? Location { get; set; }
+        
+        public IEnumerable<LogEntry>? LogEntries { get; set; }
 
         public User? User { get; set; }
         

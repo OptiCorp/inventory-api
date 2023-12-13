@@ -35,7 +35,8 @@ namespace Inventory.Utilities
                 User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
                 Vendor = item.Vendor,
                 Category = item.Category,
-                Location = item.Location
+                Location = item.Location,
+                LogEntries = item.LogEntries
             };
 
             if (item.Parent != null)
@@ -62,7 +63,8 @@ namespace Inventory.Utilities
                     User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
                     Vendor = item.Vendor,
                     Category = item.Category,
-                    Location = item.Location
+                    Location = item.Location,
+                    LogEntries = item.LogEntries
                 };
             }
             if (item.Children != null)
@@ -92,7 +94,8 @@ namespace Inventory.Utilities
                         User = item.User != null ? _userUtilities.UserToDto(item.User) : null,
                         Vendor = item.Vendor,
                         Category = item.Category,
-                        Location = item.Location
+                        Location = item.Location,
+                        LogEntries = item.LogEntries
                     });
                 }
                 itemResponseDto.Children = children;
