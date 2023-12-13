@@ -49,10 +49,16 @@ namespace inventory
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IListService, ListService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<IVendorService, VendorService>();
             
             services.AddScoped<IUserUtilities, UserUtilities>();
             services.AddScoped<IItemUtilities, ItemUtilities>();
             services.AddScoped<IListUtilities, ListUtilities>();
+            services.AddScoped<ICategoryUtilities, CategoryUtilities>();
+            services.AddScoped<ILocationUtilities, LocationUtilities>();
+            services.AddScoped<IVendorUtilities, VendorUtilities>();
 
             services.AddHostedService<UserCreateHandler>();
             services.AddHostedService<UserUpdateHandler>();
