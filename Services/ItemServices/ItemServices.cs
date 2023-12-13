@@ -25,6 +25,7 @@ namespace Inventory.Services
                 .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)
+                .ThenInclude(c => c.User)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                                             .ToListAsync();
         }
@@ -43,6 +44,7 @@ namespace Inventory.Services
                         .Include(c => c.Category)
                         .Include(c => c.Location)
                         .Include(c => c.LogEntries)
+                        .ThenInclude(c => c.User)
                         .OrderBy(c => c.Id)
                         .Take(10)
                         .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -59,6 +61,7 @@ namespace Inventory.Services
                             .Include(c => c.Category)
                             .Include(c => c.Location)
                             .Include(c => c.LogEntries)
+                            .ThenInclude(c => c.User)
                             .OrderBy(c => c.Id)
                             .Skip((page -1) * 10)
                             .Take(10)
@@ -80,6 +83,7 @@ namespace Inventory.Services
                         .Include(c => c.Category)
                         .Include(c => c.Location)
                         .Include(c => c.LogEntries)
+                        .ThenInclude(c => c.User)
                         .OrderBy(c => c.Id)
                         .Take(10)
                         .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -96,6 +100,7 @@ namespace Inventory.Services
                     .Include(c => c.Category)
                     .Include(c => c.Location)
                     .Include(c => c.LogEntries)
+                    .ThenInclude(c => c.User)
                     .OrderBy(c => c.Id)
                     .Skip((page -1) * 10)
                     .Take(10)
@@ -115,6 +120,7 @@ namespace Inventory.Services
                     .Include(c => c.Category)
                     .Include(c => c.Location)
                     .Include(c => c.LogEntries)
+                    .ThenInclude(c => c.User)
                     .OrderByDescending(c => c.CreatedDate)
                     .Take(10)
                     .Select(c => _itemUtilities.ItemToResponseDto(c))
@@ -128,6 +134,7 @@ namespace Inventory.Services
                 .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)
+                .ThenInclude(c => c.User)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip((page -1) * 10)
                 .Take(10)
@@ -145,6 +152,7 @@ namespace Inventory.Services
                 .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)
+                .ThenInclude(c => c.User)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
         }
@@ -159,6 +167,7 @@ namespace Inventory.Services
                 .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)
+                .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(c => c.Id == id);
         
             if (item == null) return null;
