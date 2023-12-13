@@ -346,7 +346,8 @@ namespace Inventory.Services
                     item.VendorId = updatedItem.VendorId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
+                item.UserId = updatedItem.AddedById;
                 item.Comment = updatedItem.Comment;
                 item.ListId = updatedItem.ListId;
                 item.UpdatedDate = DateTime.Now;
