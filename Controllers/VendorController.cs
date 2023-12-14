@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.VendorDtos;
+using Inventory.Models.DTOs.VendorDTOs;
 using Inventory.Services;
 
 namespace Inventory.Controllers
@@ -10,12 +10,10 @@ namespace Inventory.Controllers
     public class VendorController : ControllerBase
     {
         private readonly IVendorService _vendorService;
-        private readonly IUserService _userService;
 
-        public VendorController(IVendorService vendorService, IUserService userService)
+        public VendorController(IVendorService vendorService)
         {
             _vendorService = vendorService;
-            _userService = userService;
         }
         
         [HttpGet]
@@ -58,7 +56,7 @@ namespace Inventory.Controllers
             var vendorId = await _vendorService.CreateVendorAsync(vendorCreateDto);
             if (vendorId == null)
             {
-                return StatusCode(500);
+                return BadRequest("Vendor creation failed");
             }
 
             var vendor = await _vendorService.GetVendorByIdAsync(vendorId);

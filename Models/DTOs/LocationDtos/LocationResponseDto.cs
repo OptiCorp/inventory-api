@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Inventory.Models.DTO;
 
-namespace Inventory.Models.DTOs.LocationDtos
+namespace Inventory.Models.DTOs.LocationDTOs
 {
     public class LocationResponseDto
     {

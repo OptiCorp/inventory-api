@@ -1,6 +1,6 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.ListDtos;
+using Inventory.Models.DTOs.ListDTOs;
 using Inventory.Utilities;
 
 namespace Inventory.Services
@@ -26,24 +26,6 @@ namespace Inventory.Services
         
         public async Task<IEnumerable<ListResponseDto>> GetAllListsBySearchStringAsync(string searchString, int page, string userId)
         {   
-            if (page == 0)
-            {
-                return await _context.Lists.Include(c => c.Items)
-                    .Where(c => c.UserId == userId)
-                    .Where(list =>
-                        list.Title.Contains(searchString) ||
-                        list.Items.Any(item =>
-                        item.WpId.Contains(searchString) ||
-                        item.SerialNumber.Contains(searchString) ||
-                        item.Description.Contains(searchString)
-                    ))
-                    .Include(c => c.User)
-                    .OrderByDescending(c => c.CreatedDate)
-                    .Take(10)
-                    .Select(list => _listUtilities.ListToResponseDto(list))
-                    .ToListAsync();
-            }
-
             return await _context.Lists.Include(c => c.Items)
                 .Where(c => c.UserId == userId)
                 .Where(list =>
@@ -55,7 +37,7 @@ namespace Inventory.Services
                     ))
                 .Include(c => c.User)
                 .OrderByDescending(c => c.CreatedDate)
-                .Skip((page - 1) * 10)
+                .Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10)
                 .Select(list => _listUtilities.ListToResponseDto(list))
                 .ToListAsync();
@@ -63,21 +45,11 @@ namespace Inventory.Services
         
         public async Task<IEnumerable<ListResponseDto>> GetAllListsByUserIdAsync(string id, int page)
         {
-            if (page == 0)
-            {
-                return await _context.Lists.Where(c => c.UserId == id)
-                    .Include(c => c.User)
-                    .Include(c => c.Items)
-                    .OrderByDescending(c => c.CreatedDate)
-                    .Take(10)
-                    .Select(c => _listUtilities.ListToResponseDto(c))
-                    .ToListAsync();
-            }
             return await _context.Lists.Where(c => c.UserId == id)
                 .Include(c => c.User)
                 .Include(c => c.Items)
                 .OrderByDescending(c => c.CreatedDate)
-                .Skip((page -1) * 10)
+                .Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10)
                 .Select(c => _listUtilities.ListToResponseDto(c))
                 .ToListAsync();
@@ -112,7 +84,7 @@ namespace Inventory.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Creating list failed.");
+                Console.WriteLine(e);
                 return null;
             }
         }

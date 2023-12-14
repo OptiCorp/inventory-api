@@ -1,6 +1,6 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.VendorDtos;
+using Inventory.Models.DTOs.VendorDTOs;
 using Inventory.Utilities;
 
 namespace Inventory.Services
@@ -25,20 +25,15 @@ namespace Inventory.Services
         
         public async Task<IEnumerable<VendorResponseDto>> GetAllVendorsBySearchStringAsync(string searchString)
         {   
-            return await _context.Vendors
-                .Where(vendor =>
-                    vendor.Name.Contains(searchString)
-                    )
-                .Include(c => c.User)
-                .Select(vendor => _vendorUtilities.VendorToResponseDto(vendor))
-                .ToListAsync();
+            return await _context.Vendors.Where(vendor => vendor.Name.Contains(searchString))
+                                        .Include(c => c.User)
+                                        .Select(vendor => _vendorUtilities.VendorToResponseDto(vendor))
+                                        .ToListAsync();
         }
         
         public async Task<VendorResponseDto> GetVendorByIdAsync(string id)
         {
-            var vendor = await _context.Vendors
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var vendor = await _context.Vendors.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
         
             if (vendor == null) return null;
         
@@ -65,7 +60,7 @@ namespace Inventory.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Creating vendor failed.");
+                Console.WriteLine(e);
                 return null;
             }
         }

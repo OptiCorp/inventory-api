@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.ListDtos;
+using Inventory.Models.DTOs.ListDTOs;
 using Inventory.Services;
 
 namespace Inventory.Controllers

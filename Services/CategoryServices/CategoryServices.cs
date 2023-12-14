@@ -1,6 +1,6 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.CategoryDtos;
+using Inventory.Models.DTOs.CategoryDTOs;
 using Inventory.Utilities;
 
 namespace Inventory.Services
@@ -25,20 +25,15 @@ namespace Inventory.Services
         
         public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesBySearchStringAsync(string searchString)
         {   
-            return await _context.Categories
-                .Where(category =>
-                    category.Name.Contains(searchString)
-                    )
-                .Include(c => c.User)
-                .Select(category => _categoryUtilities.CategoryToResponseDto(category))
-                .ToListAsync();
+            return await _context.Categories.Where(category => category.Name.Contains(searchString))
+                                            .Include(c => c.User)
+                                            .Select(category => _categoryUtilities.CategoryToResponseDto(category))
+                                            .ToListAsync();
         }
         
         public async Task<CategoryResponseDto> GetCategoryByIdAsync(string id)
         {
-            var category = await _context.Categories
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var category = await _context.Categories.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
         
             if (category == null) return null;
         
@@ -62,7 +57,7 @@ namespace Inventory.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Creating category failed.");
+                Console.WriteLine(e);
                 return null;
             }
         }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Inventory.Models.DTOs.ItemDtos
+namespace Inventory.Models.DTOs.ItemDTOs
 {
     public class ItemCreateDto
     {

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Inventory.Models.DTO;
 
-namespace Inventory.Models.DTOs.CategoryDtos
+namespace Inventory.Models.DTOs.CategoryDTOs
 {
     public class CategoryResponseDto
     {
