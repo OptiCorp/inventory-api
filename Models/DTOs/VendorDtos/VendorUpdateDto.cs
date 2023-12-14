@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Inventory.Models.DTO;
 
-namespace Inventory.Models.DTOs.VendorDtos
+namespace Inventory.Models.DTOs.VendorDTOs
 {
     public class VendorUpdateDto
     {

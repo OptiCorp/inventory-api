@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Inventory.Models.DTOs.LocationDtos
+namespace Inventory.Models.DTOs.LocationDTOs
 {
     public class LocationCreateDto
     {

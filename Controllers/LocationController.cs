@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.LocationDtos;
+using Inventory.Models.DTOs.LocationDTOs;
 using Inventory.Services;
 
 namespace Inventory.Controllers
@@ -10,12 +10,10 @@ namespace Inventory.Controllers
     public class LocationController : ControllerBase
     {
         private readonly ILocationService _locationService;
-        private readonly IUserService _userService;
 
-        public LocationController(ILocationService locationService, IUserService userService)
+        public LocationController(ILocationService locationService)
         {
             _locationService = locationService;
-            _userService = userService;
         }
         
         [HttpGet]
@@ -59,7 +57,7 @@ namespace Inventory.Controllers
             var locationId = await _locationService.CreateLocationAsync(locationCreateDto);
             if (locationId == null)
             {
-                return StatusCode(500);
+                return BadRequest("Location creation failed");
             }
 
             var location = await _locationService.GetLocationByIdAsync(locationId);

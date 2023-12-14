@@ -97,7 +97,7 @@ namespace Inventory.Tests.Services
                             Id = string.Format("Item {0}", i),
                             WpId = string.Format("ItemWpId {0}", i),
                             ParentId = string.Format("ItemParentId {0}", i),
-                            UserId = string.Format("ItemUserId {0}", i),
+                            UserId = string.Format("User {0}", i),
                             DocumentationId = string.Format("ItemDocumentationId {0}", i),
                             Description = string.Format("ItemDescription {0}", i),
                             Comment = string.Format("ItemComment {0}", i),

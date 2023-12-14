@@ -1,5 +1,5 @@
 using Inventory.Models;
-using Inventory.Models.DTOs.LocationDtos;
+using Inventory.Models.DTOs.LocationDTOs;
 
 namespace Inventory.Utilities
 {

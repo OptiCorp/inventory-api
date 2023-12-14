@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.ItemDtos;
+using Inventory.Models.DTOs.ItemDTOs;
 using Inventory.Services;
 
 namespace Inventory.Controllers
@@ -45,12 +45,12 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
         [SwaggerResponse(201, "Item created", typeof(ItemResponseDto))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<ItemResponseDto>> PostItem(List<ItemCreateDto> itemCreateDto)
+        public async Task<ActionResult<ItemResponseDto>> PostItem(List<ItemCreateDto> itemCreateDtoList)
         {
-            var itemIds = await _itemService.CreateItemAsync(itemCreateDto);
+            var itemIds = await _itemService.CreateItemAsync(itemCreateDtoList);
             if (itemIds == null)
             {
-                return StatusCode(500);
+                return BadRequest("Item creation failed");
             }
 
             var items = new List<ItemResponseDto>();
@@ -60,7 +60,7 @@ namespace Inventory.Controllers
                 items.Add(item);
             }
             
-            return CreatedAtAction(nameof(GetItem), new { id = itemIds.First() }, items);
+            return CreatedAtAction(nameof(GetItem), new { ids = itemIds }, items);
         }
 
         [HttpGet("BySearchString/{searchString}")]

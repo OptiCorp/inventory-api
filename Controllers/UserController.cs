@@ -29,7 +29,7 @@ namespace inventory_api.Controllers
         [SwaggerOperation(Summary = "Get user", Description = "Retrieves a user.")]
         [SwaggerResponse(200, "Success", typeof(UserDto))]
         [SwaggerResponse(404, "User not found")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<UserDto>> GetUser(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
 
@@ -43,9 +43,9 @@ namespace inventory_api.Controllers
         
         [HttpGet("ByAzureId/{id}")]
         [SwaggerOperation(Summary = "Get user by Azure Id", Description = "Retrieves a user by their Azure Id.")]
-        [SwaggerResponse(200, "Success", typeof(User))]
+        [SwaggerResponse(200, "Success", typeof(UserDto))]
         [SwaggerResponse(404, "User not found")]
-        public async Task<IActionResult> GetUserByAzureIdAsync(string id)
+        public async Task<ActionResult<UserDto>> GetUserByAzureIdAsync(string id)
         {
             var user = await _userService.GetUserByAzureAdUserIdAsync(id);
 

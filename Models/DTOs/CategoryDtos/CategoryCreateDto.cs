@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Inventory.Models.DTOs.CategoryDtos
+namespace Inventory.Models.DTOs.CategoryDTOs
 {
     public class CategoryCreateDto
     {

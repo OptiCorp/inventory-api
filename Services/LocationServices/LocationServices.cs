@@ -1,6 +1,6 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.LocationDtos;
+using Inventory.Models.DTOs.LocationDTOs;
 using Inventory.Utilities;
 
 namespace Inventory.Services
@@ -25,20 +25,15 @@ namespace Inventory.Services
         
         public async Task<IEnumerable<LocationResponseDto>> GetAllLocationsBySearchStringAsync(string searchString)
         {   
-            return await _context.Locations
-                .Where(location =>
-                    location.Name.Contains(searchString)
-                    )
-                .Include(c => c.User)
-                .Select(location => _locationUtilities.LocationToResponseDto(location))
-                .ToListAsync();
+            return await _context.Locations.Where(location => location.Name.Contains(searchString))
+                                            .Include(c => c.User)
+                                            .Select(location => _locationUtilities.LocationToResponseDto(location))
+                                            .ToListAsync();
         }
         
         public async Task<LocationResponseDto> GetLocationByIdAsync(string id)
         {
-            var location = await _context.Locations
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var location = await _context.Locations.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
         
             if (location == null) return null;
         
@@ -62,7 +57,7 @@ namespace Inventory.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Creating location failed.");
+                Console.WriteLine(e);
                 return null;
             }
         }

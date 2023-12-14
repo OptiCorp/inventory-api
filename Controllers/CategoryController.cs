@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.CategoryDtos;
+using Inventory.Models.DTOs.CategoryDTOs;
 using Inventory.Services;
 
 namespace Inventory.Controllers
@@ -10,12 +10,10 @@ namespace Inventory.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly IUserService _userService;
 
-        public CategoryController(ICategoryService categoryService, IUserService userService)
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-            _userService = userService;
         }
         
         [HttpGet]
@@ -58,7 +56,7 @@ namespace Inventory.Controllers
             var categoryId = await _categoryService.CreateCategoryAsync(categoryCreateDto);
             if (categoryId == null)
             {
-                return StatusCode(500);
+                return BadRequest("Category creation failed");
             }
 
             var category = await _categoryService.GetCategoryByIdAsync(categoryId);
@@ -90,7 +88,7 @@ namespace Inventory.Controllers
         }
         
         [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Delete category", Description = "Deletes an category.")]
+        [SwaggerOperation(Summary = "Delete category", Description = "Deletes a category.")]
         [SwaggerResponse(200, "Category deleted")]
         [SwaggerResponse(404, "Category not found")]
         public async Task<IActionResult> DeleteCategory(string id)

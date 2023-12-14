@@ -1,5 +1,5 @@
 using Inventory.Models;
-using Inventory.Models.DTOs.LocationDtos;
+using Inventory.Models.DTOs.LocationDTOs;
 
 namespace Inventory.Utilities
 {
@@ -20,7 +20,7 @@ namespace Inventory.Utilities
                 AddedById = location.UserId,
                 CreatedDate = location.CreatedDate.HasValue ? location.CreatedDate+"Z": null,
                 UpdatedDate = location.UpdatedDate.HasValue ? location.UpdatedDate+"Z": null,
-                User = location.User != null ? _userUtilities.UserToDto(location.User) : null,
+                User = location.User != null ? _userUtilities.UserToDto(location.User) : null
             };
         }
     }
