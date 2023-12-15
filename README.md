@@ -41,6 +41,7 @@ This section contains information about the API endpoints.
 - Entity Framework Core
 - REST API
 - Azure App Service with Entra authentication and authorization
+- Deployment to Azure using GitHub Actions
 
 ## Install & Run
 
