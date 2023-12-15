@@ -34,7 +34,7 @@ namespace Inventory.Services
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type)
         {   
             return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
-                            || EF.Functions.Like(c.Description, $"%{searchString}%"))
+                            || c.Description.Contains(searchString))
                             && (type.IsNullOrEmpty() || c.Type == type))
                             .Include(c => c.Parent)
                             .Include(c => c.Children)
