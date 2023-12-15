@@ -4,8 +4,8 @@ This is the API for the [WellPartner Inventory App](https://github.com/OptiCorp/
 The system keeps track of their items: **Units**, **Assemblies**, **Subassemblies** and **Parts**.
 
 - Units consists of Assemblies
-- Assemblies consists of Subassemblies and/or parts
-- Subassemblies consists of parts
+- Assemblies consists of Subassemblies and/or Parts
+- Subassemblies consists of Parts
 
 ## Key Features
 This section contains information about the API endpoints.
