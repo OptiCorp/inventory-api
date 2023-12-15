@@ -49,6 +49,7 @@ Clone and Run the API Application:
 1. Clone the repo
 2. Navigate to project folder: `inventory-api`
 3. Run the API: `dotnet run`
+4. Use Swagger for endpoint documentation: `http://localhost:5026/swagger/index.html`
 
 
 ## Branch name convention
