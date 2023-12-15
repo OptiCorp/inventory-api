@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Inventory.Models.DTOs.ListDtos;
+namespace Inventory.Models.DTOs.ListDTOs;
 
 public class ListUpdateDto
 {

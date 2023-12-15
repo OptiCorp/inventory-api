@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Inventory.Models.DTO;
 
-namespace Inventory.Models.DTOs.ItemDtos
+namespace Inventory.Models.DTOs.ItemDTOs
 {
     public class ItemResponseDto
     {
@@ -29,8 +29,6 @@ namespace Inventory.Models.DTOs.ItemDtos
         public string? LocationId { get; set; }
         
         public string? AddedById { get; set; }
-        public string? AddedByFirstName { get; set; } 
-        public string? AddedByLastName { get; set; } 
         
         [Required]
         public string? Description { get; set; }
@@ -54,7 +52,7 @@ namespace Inventory.Models.DTOs.ItemDtos
         
         public Location? Location { get; set; }
         
-        public IEnumerable<LogEntry> LogEntries { get; set; }
+        public IEnumerable<LogEntry>? LogEntries { get; set; }
         
         public UserDto? User { get; set; }
     }

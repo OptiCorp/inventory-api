@@ -1,5 +1,5 @@
 using Inventory.Models;
-using Inventory.Models.DTOs.ItemDtos;
+using Inventory.Models.DTOs.ItemDTOs;
 using Inventory.Services;
 using Inventory.Utilities;
 using Xunit;
@@ -12,11 +12,11 @@ namespace Inventory.Tests.Services
         public async void ItemService_GetAllItems_ReturnsItemList()
         {
             // Arrange
-            TestUtilities testUtilities = new TestUtilities();
+            var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            UserUtilities userUtilities = new UserUtilities();
-            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
-            ItemService itemService = new ItemService(dbContext, itemUtilities);
+            var userUtilities = new UserUtilities();
+            var itemUtilities = new ItemUtilities(userUtilities);
+            var itemService = new ItemService(dbContext, itemUtilities);
             
             // Act
             var items = await itemService.GetAllItemsAsync();
@@ -25,40 +25,41 @@ namespace Inventory.Tests.Services
             Assert.IsType<List<ItemResponseDto>>(items);
             Assert.Equal(10, items.Count());
         }
-        // TODO: Add when there are user ids in db
-        // [Fact]
-        // public async void ItemService_GetAllItemsByUserId_ReturnsItemList()
-        // {
-        //     // Arrange
-        //     TestUtilities testUtilities = new TestUtilities();
-        //     var dbContext = await testUtilities.GetDbContext("Item");
-        //     ItemUtilities itemUtilities = new ItemUtilities();
-        //     ItemService itemService = new ItemService(dbContext, itemUtilities);
-        //
-        //     var userId1 = "User 2";
-        //     var userId2 = "User 10";
-        //     var page1 = 1;
-        //     var page2 = 10;
-        //     
-        //     // Act
-        //     var itemsByUserId1 = await itemService.GetAllItemsByUserIdAsync(userId1, page1);
-        //     var itemsByUserId2 = await itemService.GetAllItemsByUserIdAsync(userId2, page2);
-        //     
-        //     // Assert 
-        //     Assert.IsType<List<ItemResponseDto>>(itemsByUserId1);
-        //     /*Assert.Equal(itemsByUserId1.Count(), 10);
-        //     Assert.Equal(itemsByUserId2.Count(), 10);*/
-        // }
+        
+        [Fact]
+        public async void ItemService_GetAllItemsByUserId_ReturnsItemList()
+        {
+            // Arrange
+            var testUtilities = new TestUtilities();
+            var dbContext = await testUtilities.GetDbContext("Item");
+            var userUtilities = new UserUtilities();
+            var itemUtilities = new ItemUtilities(userUtilities);
+            var itemService = new ItemService(dbContext, itemUtilities);
+        
+            const string userId1 = "User 2";
+            const string userId2 = "User 15";
+            const int page1 = 1;
+            const int page2 = 1;
+            
+            // Act
+            var itemsByUserId1 = await itemService.GetAllItemsByUserIdAsync(userId1, page1);
+            var itemsByUserId2 = await itemService.GetAllItemsByUserIdAsync(userId2, page2);
+            
+            // Assert 
+            Assert.IsType<List<ItemResponseDto>>(itemsByUserId1);
+            Assert.Equal(1, itemsByUserId1.Count());
+            Assert.Equal(0, itemsByUserId2.Count());
+        }
         
         [Fact]
         public async Task ItemService_GetAllItemsBySearchString_ReturnsItemList()
         {
             // Arrange
-            TestUtilities testUtilities = new TestUtilities();
+            var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            UserUtilities userUtilities = new UserUtilities();
-            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
-            ItemService itemService = new ItemService(dbContext, itemUtilities);
+            var userUtilities = new UserUtilities();
+            var itemUtilities = new ItemUtilities(userUtilities);
+            var itemService = new ItemService(dbContext, itemUtilities);
             
             // Act
             var items = await itemService.GetAllItemsBySearchStringAsync("a", 1, null);
@@ -74,11 +75,11 @@ namespace Inventory.Tests.Services
         public async Task ItemService_GetChildren_ReturnsItemList()
         {
             // Arrange
-            TestUtilities testUtilities = new TestUtilities();
-            UserUtilities userUtilities = new UserUtilities();
-            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
+            var testUtilities = new TestUtilities();
+            var userUtilities = new UserUtilities();
+            var itemUtilities = new ItemUtilities(userUtilities);
             var dbContext = await testUtilities.GetDbContext("Item");
-            var parentId = "parentId 1";
+            const string parentId = "parentId 1";
             
             
             var expectedItems = new List<Item>
@@ -122,11 +123,11 @@ namespace Inventory.Tests.Services
         public async void ItemService_GetItemById_ReturnsItem()
         {
             //Arrange
-            TestUtilities testUtilities = new TestUtilities();
+            var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            UserUtilities userUtilities = new UserUtilities();
-            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
-            ItemService itemService = new ItemService(dbContext, itemUtilities);
+            var userUtilities = new UserUtilities();
+            var itemUtilities = new ItemUtilities(userUtilities);
+            var itemService = new ItemService(dbContext, itemUtilities);
             
             //Act
             var item = await itemService.GetItemByIdAsync("Item 1");
@@ -141,11 +142,11 @@ namespace Inventory.Tests.Services
         public async void ItemService_CreateItem_ReturnsString()
         {
             //Arrange
-            TestUtilities testUtilities = new TestUtilities();
+            var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            UserUtilities userUtilities = new UserUtilities();
-            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
-            ItemService itemService = new ItemService(dbContext, itemUtilities);
+            var userUtilities = new UserUtilities();
+            var itemUtilities = new ItemUtilities(userUtilities);
+            var itemService = new ItemService(dbContext, itemUtilities);
             
             var newTestItem1 = new ItemCreateDto()
             {
@@ -175,6 +176,7 @@ namespace Inventory.Tests.Services
                 AddedById = "654",
             };
             var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
+            
             //Act
             var newItemIds = await itemService.CreateItemAsync(itemsToCreate);
             var items = await itemService.GetAllItemsAsync();
@@ -191,9 +193,9 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            UserUtilities userUtilities = new UserUtilities();
-            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
-            ItemService itemService = new ItemService(dbContext, itemUtilities);
+            var userUtilities = new UserUtilities();
+            var itemUtilities = new ItemUtilities(userUtilities);
+            var itemService = new ItemService(dbContext, itemUtilities);
 
             var updatedItem = new ItemUpdateDto()
             {
@@ -215,8 +217,8 @@ namespace Inventory.Tests.Services
             var item = await itemService.GetItemByIdAsync("Item 1");
             
             // Assert
-            Assert.Equal(item.Description, "Item 10");
-            Assert.Equal(item.Comment, "Item Comment 1");
+            Assert.Equal("Item 10", item.Description);
+            Assert.Equal("Item Comment 1", item.Comment);
         }
 
         [Fact]
@@ -225,9 +227,9 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            UserUtilities userUtilities = new UserUtilities();
-            ItemUtilities itemUtilities = new ItemUtilities(userUtilities);
-            ItemService itemService = new ItemService(dbContext, itemUtilities);
+            var userUtilities = new UserUtilities();
+            var itemUtilities = new ItemUtilities(userUtilities);
+            var itemService = new ItemService(dbContext, itemUtilities);
 
             const string itemId = "Item 1";
             

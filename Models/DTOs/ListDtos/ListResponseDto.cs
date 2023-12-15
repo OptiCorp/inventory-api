@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Inventory.Models.DTO;
-using Inventory.Models.DTOs.ItemDtos;
+using Inventory.Models.DTOs.ItemDTOs;
 
-namespace Inventory.Models.DTOs.ListDtos;
+namespace Inventory.Models.DTOs.ListDTOs;
 
 public class ListResponseDto
 {   

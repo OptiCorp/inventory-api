@@ -1,6 +1,6 @@
 using Inventory.Models;
-using Inventory.Models.DTOs.ListDtos;
-using Inventory.Models.DTOs.ItemDtos;
+using Inventory.Models.DTOs.ListDTOs;
+using Inventory.Models.DTOs.ItemDTOs;
 
 namespace Inventory.Utilities
 {
@@ -23,7 +23,7 @@ namespace Inventory.Utilities
                 CreatedById = list.UserId,
                 CreatedDate = list.CreatedDate.HasValue ? list.CreatedDate+"Z": null,
                 UpdatedDate = list.UpdatedDate.HasValue ? list.UpdatedDate+"Z": null,
-                User = list.User != null ? _userUtilities.UserToDto(list.User): null,
+                User = list.User != null ? _userUtilities.UserToDto(list.User): null
             };
             
             if (list.Items != null)

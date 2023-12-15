@@ -1,6 +1,7 @@
+using Duende.IdentityServer.Extensions;
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.ItemDtos;
+using Inventory.Models.DTOs.ItemDTOs;
 using Inventory.Utilities;
 
 namespace Inventory.Services
@@ -24,36 +25,17 @@ namespace Inventory.Services
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)
+                .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.User)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                                             .ToListAsync();
         }
 
-        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page, string type)
+        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type)
         {   
-            if (page == 0)
-            {
-                return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
-                        || c.Description.Contains(searchString))
-                        && (type == null || type == "" || c.Type == type))
-                        .Include(c => c.Parent)
-                        .Include(c => c.Children)
-                        .Include(c => c.User)
-                        .Include(c => c.Vendor)
-                        .Include(c => c.Category)
-                        .Include(c => c.Location)
-                        .Include(c => c.LogEntries)
-                        .ThenInclude(c => c.User)
-                        .OrderBy(c => c.Id)
-                        .Take(10)
-                        .Select(c => _itemUtilities.ItemToResponseDto(c))
-                        .ToListAsync();
-            }
-
             return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
-                            || c.Description.Contains(searchString))
-                            && (type == null || type == "" || c.Type == type))
+                            || EF.Functions.Like(c.Description, $"%{searchString}%"))
+                            && (type.IsNullOrEmpty() || c.Type == type))
                             .Include(c => c.Parent)
                             .Include(c => c.Children)
                             .Include(c => c.User)
@@ -63,7 +45,7 @@ namespace Inventory.Services
                             .Include(c => c.LogEntries)
                             .ThenInclude(c => c.User)
                             .OrderBy(c => c.Id)
-                            .Skip((page -1) * 10)
+                            .Skip(page == 0 ? 0 : (page - 1) * 10)
                             .Take(10)
                             .Select(c => _itemUtilities.ItemToResponseDto(c))
                             .ToListAsync();
@@ -71,25 +53,6 @@ namespace Inventory.Services
         
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
         {   
-            if (page == 0)
-            {
-                return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
-                        || c.Description.Contains(searchString))
-                        && c.ListId != listId)
-                        .Include(c => c.Parent)
-                        .Include(c => c.Children)
-                        .Include(c => c.User)
-                        .Include(c => c.Vendor)
-                        .Include(c => c.Category)
-                        .Include(c => c.Location)
-                        .Include(c => c.LogEntries)
-                        .ThenInclude(c => c.User)
-                        .OrderBy(c => c.Id)
-                        .Take(10)
-                        .Select(c => _itemUtilities.ItemToResponseDto(c))
-                        .ToListAsync();
-            }
-
             return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
                     || c.Description.Contains(searchString)
                     && c.ListId != listId)
@@ -102,7 +65,7 @@ namespace Inventory.Services
                     .Include(c => c.LogEntries)
                     .ThenInclude(c => c.User)
                     .OrderBy(c => c.Id)
-                    .Skip((page -1) * 10)
+                    .Skip(page == 0 ? 0 : (page - 1) * 10)
                     .Take(10)
                     .Select(c => _itemUtilities.ItemToResponseDto(c))
                     .ToListAsync();
@@ -110,22 +73,6 @@ namespace Inventory.Services
         
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id, int page)
         {
-            if (page == 0)
-            {
-                return await _context.Items.Where(c => c.UserId == id)
-                    .Include(c => c.Parent)
-                    .Include(c => c.Children)
-                    .Include(c => c.User)
-                    .Include(c => c.Vendor)
-                    .Include(c => c.Category)
-                    .Include(c => c.Location)
-                    .Include(c => c.LogEntries)
-                    .ThenInclude(c => c.User)
-                    .OrderByDescending(c => c.CreatedDate)
-                    .Take(10)
-                    .Select(c => _itemUtilities.ItemToResponseDto(c))
-                    .ToListAsync();
-            }
             return await _context.Items.Where(c => c.UserId == id)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
@@ -133,10 +80,10 @@ namespace Inventory.Services
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)
+                .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.User)
                 .OrderByDescending(c => c.CreatedDate)
-                .Skip((page -1) * 10)
+                .Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
@@ -151,7 +98,7 @@ namespace Inventory.Services
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)
+                .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.User)
                 .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
@@ -166,7 +113,7 @@ namespace Inventory.Services
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)
+                .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(c => c.Id == id);
         
@@ -215,7 +162,7 @@ namespace Inventory.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine("Creating item(s) failed.");
+                Console.WriteLine(e);
                 return null;
             }
         }
@@ -346,7 +293,8 @@ namespace Inventory.Services
                     item.VendorId = updatedItem.VendorId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
+                item.UserId = updatedItem.AddedById;
                 item.Comment = updatedItem.Comment;
                 item.ListId = updatedItem.ListId;
                 item.UpdatedDate = DateTime.Now;

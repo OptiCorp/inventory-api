@@ -1,6 +1,5 @@
 using Inventory.Models;
-using Inventory.Models.DTOs.ListDtos;
-
+using Inventory.Models.DTOs.ListDTOs;
 
 namespace Inventory.Utilities
 {
