@@ -62,10 +62,6 @@
     <Folder Include="Validation\" />
     <Folder Include="Validation\UserValidations\" />
     <Folder Include="Validation\UserRoleValidations\" />
-    <Folder Include="Common\" />
-    <Folder Include="Validation\CategoryValidations\" />
-    <Folder Include="Validation\ChecklistValidations\" />
-    <Folder Include="Validation\ChecklistTaskValidations\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="WeatherForecast.cs" />
