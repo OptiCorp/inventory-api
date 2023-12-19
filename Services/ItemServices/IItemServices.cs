@@ -14,5 +14,6 @@ namespace Inventory.Services
         Task<List<string?>> CreateItemAsync(List<ItemCreateDto> item);
         Task UpdateItemAsync(string updatedById, ItemUpdateDto item);
         Task DeleteItemAsync(string id);
+        Task<bool> IsWpIdUnique(string id);
     }
 }

@@ -132,5 +132,14 @@ namespace Inventory.Controllers
 
             return NoContent();
         }
+        
+        [HttpPost("IsWpIdUnique")]
+        [SwaggerOperation(Summary = "Unique WellPartner Id check", Description = "Checks if WellPartner Id is unique.")]
+        [SwaggerResponse(200, "Item created", typeof(bool))]
+        [SwaggerResponse(400, "Invalid request")]
+        public async Task<ActionResult<bool>> IsIdUnique(string wpId)
+        {
+            return await _itemService.IsWpIdUnique(wpId);
+        }
     }
 }

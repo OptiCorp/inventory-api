@@ -317,5 +317,11 @@ namespace Inventory.Services
                 await _context.SaveChangesAsync();
             }
         }
+        
+        public async Task<bool> IsWpIdUnique(string id)
+        {
+            var item = await _context.Items.FirstOrDefaultAsync(c => c.WpId == id);
+            return item == null;
+        }
     }
 }
