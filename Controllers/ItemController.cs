@@ -133,7 +133,7 @@ namespace Inventory.Controllers
             return NoContent();
         }
         
-        [HttpPost("IsWpIdUnique")]
+        [HttpGet("IsWpIdUnique/{wpId}")]
         [SwaggerOperation(Summary = "Unique WellPartner Id check", Description = "Checks if WellPartner Id is unique.")]
         [SwaggerResponse(200, "Item created", typeof(bool))]
         [SwaggerResponse(400, "Invalid request")]
