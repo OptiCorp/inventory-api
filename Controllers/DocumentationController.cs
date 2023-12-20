@@ -44,10 +44,14 @@ namespace Inventory.Controllers
                 return NotFound("Item not found");
             }
 
-            string newDocumentationId = await _documentationService.UploadDocumentationAsync(documentation);
-            Documentation newDocumentation = await _documentationService.GetDocumentationById(newDocumentationId);
+            string[] newDocumentationIds = await _documentationService.UploadDocumentationAsync(documentation);
+            var documentations = new List<Documentation>();
+            foreach (var id in newDocumentationIds)
+            {
+                Documentation newDocumentation = await _documentationService.GetDocumentationById(id); 
+            }
 
-            return CreatedAtAction(nameof(PostDocumentation), new { id = newDocumentationId }, newDocumentation);
+            return CreatedAtAction(nameof(PostDocumentation), new { ids = newDocumentationIds }, documentations);
             // return Ok();
         }
     }

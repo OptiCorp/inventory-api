@@ -8,7 +8,7 @@ namespace Inventory.Models.DTOs.DocumentationDtos
         public string? ItemId { get; set; }
         
         [Required]
-        public IFormFile? File { get; set; }
+        public IFormFile[]? Files { get; set; }
     }
 }
 

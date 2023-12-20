@@ -49,40 +49,51 @@ namespace Inventory.Services
             return await _context.Documentations.FirstOrDefaultAsync(documentation => documentation.Id == id);
         }
 
-        public async Task<string> UploadDocumentationAsync(DocumentationCreateDto documentation)
+        public async Task<string[]> UploadDocumentationAsync(DocumentationCreateDto documentation)
         {
-            var newDocumentation = new Documentation
-            {
-                ItemId = documentation.ItemId,
-                ContentType = documentation.File.ContentType,
-                BlobRef = Guid.NewGuid().ToString()
-            };
-
             string containerEndpoint = "https://storageaccountinventory.blob.core.windows.net/item-documentation";
 
             BlobContainerClient containerClient =
                 new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
 
-            try
+            var documentationIds = new List<string>();
+            
+            foreach (var file in documentation.Files)
             {
-                await containerClient.CreateIfNotExistsAsync();
-
-                using (MemoryStream stream = new MemoryStream())
+                var newDocumentation = new Documentation
                 {
-                    await documentation.File.CopyToAsync(stream);
-                    stream.Position = 0;
-                    await containerClient.UploadBlobAsync(newDocumentation.BlobRef, stream);
+                    ItemId = documentation.ItemId,
+                    ContentType = file.ContentType,
+                    BlobRef = Guid.NewGuid().ToString()
+                };
+                
+                try
+                {
+                    await containerClient.CreateIfNotExistsAsync();
+
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        await file.CopyToAsync(stream);
+                        stream.Position = 0;
+                        await containerClient.UploadBlobAsync(newDocumentation.BlobRef, stream);
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                throw;
+                catch (Exception e)
+                {
+                    throw;
+                }
+
+                await _context.Documentations.AddAsync(newDocumentation);
+                await _context.SaveChangesAsync();
+                
+                documentationIds.Add(newDocumentation.Id);
+                
             }
 
-            await _context.Documentations.AddAsync(newDocumentation);
-            await _context.SaveChangesAsync();
 
-            return newDocumentation.Id;
+
+
+            return documentationIds.ToArray();
         }
     }
 }
