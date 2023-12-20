@@ -50,6 +50,31 @@ namespace inventoryapi.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Inventory.Models.Documentation", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BlobRef")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("Documentations");
+                });
+
             modelBuilder.Entity("Inventory.Models.Item", b =>
                 {
                     b.Property<string>("Id")
@@ -319,6 +344,17 @@ namespace inventoryapi.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Inventory.Models.Documentation", b =>
+                {
+                    b.HasOne("Inventory.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("Inventory.Models.Item", b =>

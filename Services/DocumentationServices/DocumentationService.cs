@@ -1,0 +1,89 @@
+using Azure.Identity;
+using Azure.Storage.Blobs;
+using Inventory.Models;
+using Inventory.Models.DTOs.DocumentationDtos;
+using Inventory.Utilities.DocumentationUtilities;
+using Microsoft.EntityFrameworkCore;
+
+namespace Inventory.Services
+{
+    public class DocumentationService : IDocumentationService
+    {
+        private readonly InventoryDbContext _context;
+        private readonly IDocumentationUtilities _documentationUtilities;
+
+        public DocumentationService(InventoryDbContext context, IDocumentationUtilities documentationUtilities)
+        {
+            _context = context;
+            _documentationUtilities = documentationUtilities;
+        }
+
+        public async Task<IEnumerable<DocumentationResponseDto>> GetDocumentationByItemId(string id)
+        {
+            string containerEndpoint = "https://storageaccountinventory.blob.core.windows.net/item-documentation";
+            BlobContainerClient containerClient =
+                new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
+            var documentationList = new List<DocumentationResponseDto>();
+
+            var documents = _context.Documentations.Where(d => d.ItemId == id);
+
+            foreach (var document in documents)
+            {
+                var stream = new MemoryStream();
+
+                var blobClient = containerClient.GetBlobClient(document.BlobRef);
+
+                await blobClient.DownloadToAsync(stream);
+
+                var documentationResponse =
+                    _documentationUtilities.DocumentationToResponseDto(document, stream.ToArray());
+                
+                documentationList.Add(documentationResponse);
+            }
+
+            return documentationList;
+        }
+
+        public async Task<Documentation> GetDocumentationById(string id)
+        {
+            return await _context.Documentations.FirstOrDefaultAsync(documentation => documentation.Id == id);
+        }
+
+        public async Task<string> UploadDocumentationAsync(DocumentationCreateDto documentation)
+        {
+            var newDocumentation = new Documentation
+            {
+                ItemId = documentation.ItemId,
+                ContentType = documentation.File.ContentType,
+                BlobRef = Guid.NewGuid().ToString()
+            };
+
+            string containerEndpoint = "https://storageaccountinventory.blob.core.windows.net/item-documentation";
+
+            BlobContainerClient containerClient =
+                new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
+
+            try
+            {
+                await containerClient.CreateIfNotExistsAsync();
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    await documentation.File.CopyToAsync(stream);
+                    stream.Position = 0;
+                    await containerClient.UploadBlobAsync(newDocumentation.BlobRef, stream);
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            await _context.Documentations.AddAsync(newDocumentation);
+            await _context.SaveChangesAsync();
+
+            return newDocumentation.Id;
+        }
+    }
+}
+
