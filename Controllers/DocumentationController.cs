@@ -19,7 +19,7 @@ namespace Inventory.Controllers
             _itemService = itemService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("ByItemId/{id}")]
         [SwaggerOperation(Summary = "Get documentation by item ID", Description = "Retrives all files related to an item")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentationResponseDto>))]
         public async Task<ActionResult<IEnumerable<DocumentationResponseDto>>> GetDocumentationByItemId(string id)
