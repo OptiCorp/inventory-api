@@ -52,7 +52,27 @@ namespace Inventory.Controllers
             }
 
             return CreatedAtAction(nameof(PostDocumentation), new { ids = newDocumentationIds }, documentations);
-            // return Ok();
+        }
+
+        [HttpDelete("{documentId}")]
+        [SwaggerOperation(Summary = "Remove a document from an item", Description = "Removes a document from an item")]
+        [SwaggerResponse(200, "Document removed")]
+        [SwaggerResponse(404, "User or document not found")]
+        public async Task<IActionResult> DeleteDocumentFromItem(string documentId, string itemId)
+        {
+            var document = await _documentationService.GetDocumentationById(documentId);
+            if (document == null)
+            {
+                return NotFound("Document not found");
+            }
+            if (document.ItemId != itemId)
+            {
+                return NotFound("Document not in item");
+            }
+
+            await _documentationService.DeleteDocumentFromItem(document);
+
+            return Ok();
         }
     }
 }

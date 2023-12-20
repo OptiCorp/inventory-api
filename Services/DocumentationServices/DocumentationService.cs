@@ -89,11 +89,24 @@ namespace Inventory.Services
                 documentationIds.Add(newDocumentation.Id);
                 
             }
-
-
-
-
+            
             return documentationIds.ToArray();
+        }
+
+        public async Task DeleteDocumentFromItem(Documentation document)
+        {
+            string containerEndpoint = "https://storageaccountinventory.blob.core.windows.net/item-documentation";
+            
+            BlobContainerClient containerClient =
+                new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
+            
+            var blobClient = containerClient.GetBlobClient(document.BlobRef);
+            
+            await blobClient.DeleteAsync();
+                
+            _context.Documentations.Remove(document);
+            await _context.SaveChangesAsync();
+            
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Inventory.Services
         Task<IEnumerable<DocumentationResponseDto>> GetDocumentationByItemId(string id);
         Task<Documentation> GetDocumentationById(string id);
         Task<string[]> UploadDocumentationAsync(DocumentationCreateDto documentation);
+
+        Task DeleteDocumentFromItem(Documentation document);
     }
 }
 
