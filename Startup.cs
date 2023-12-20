@@ -8,6 +8,7 @@ using Serilog;
 using Inventory.Models;
 using Inventory.Services;
 using Inventory.Utilities;
+using Inventory.Utilities.DocumentationUtilities;
 
 namespace inventory
 
@@ -52,6 +53,7 @@ namespace inventory
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IVendorService, VendorService>();
+            services.AddScoped<IDocumentationService, DocumentationService>();
             
             services.AddScoped<IUserUtilities, UserUtilities>();
             services.AddScoped<IItemUtilities, ItemUtilities>();
@@ -59,6 +61,7 @@ namespace inventory
             services.AddScoped<ICategoryUtilities, CategoryUtilities>();
             services.AddScoped<ILocationUtilities, LocationUtilities>();
             services.AddScoped<IVendorUtilities, VendorUtilities>();
+            services.AddScoped<IDocumentationUtilities, DocumentationUtilities>();
 
             services.AddHostedService<UserCreateHandler>();
             services.AddHostedService<UserUpdateHandler>();
