@@ -3,6 +3,22 @@ using Inventory.Models;
 
 namespace Inventory.Configuration
 {
+
+    public static class DocumentationConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Documentation>()
+                .HasKey(d => d.Id);
+
+            modelBuilder.Entity<Documentation>()
+                .HasOne(d => d.Item)
+                .WithMany()
+                .HasForeignKey(d => d.ItemId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+    
     public static class UserConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
