@@ -11,6 +11,7 @@ namespace Inventory.Utilities.DocumentationUtilities
             {
                 Id = documentation.Id,
                 BlobRef = documentation.BlobRef,
+                Name = documentation.Name,
                 ContentType = documentation.ContentType,
                 Bytes = document
             };

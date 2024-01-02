@@ -20,7 +20,7 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<DocumentationResponseDto>> GetDocumentationByItemId(string id)
         {
-            string containerEndpoint = "https://storageaccountinventory.blob.core.windows.net/item-documentation";
+            var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
             BlobContainerClient containerClient =
                 new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
             var documentationList = new List<DocumentationResponseDto>();
@@ -51,7 +51,7 @@ namespace Inventory.Services
 
         public async Task<string[]> UploadDocumentationAsync(DocumentationCreateDto documentation)
         {
-            string containerEndpoint = "https://storageaccountinventory.blob.core.windows.net/item-documentation";
+            var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
 
             BlobContainerClient containerClient =
                 new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
@@ -63,6 +63,7 @@ namespace Inventory.Services
                 var newDocumentation = new Documentation
                 {
                     ItemId = documentation.ItemId,
+                    Name = documentation.Name,
                     ContentType = file.ContentType,
                     BlobRef = Guid.NewGuid().ToString()
                 };
@@ -95,7 +96,7 @@ namespace Inventory.Services
 
         public async Task DeleteDocumentFromItem(Documentation document)
         {
-            string containerEndpoint = "https://storageaccountinventory.blob.core.windows.net/item-documentation";
+            var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
             
             BlobContainerClient containerClient =
                 new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
