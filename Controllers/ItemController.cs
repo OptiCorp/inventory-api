@@ -1,7 +1,10 @@
+using FluentValidation;
+using Inventory.Models.DTOs.CategoryDTOs;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTOs.ItemDTOs;
 using Inventory.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
 {
@@ -45,8 +48,25 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
         [SwaggerResponse(201, "Item created", typeof(ItemResponseDto))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<ItemResponseDto>> PostItem(List<ItemCreateDto> itemCreateDtoList)
+        public async Task<ActionResult<ItemResponseDto>> PostItem(List<ItemCreateDto> itemCreateDtoList, [FromServices] IValidator<ItemCreateDto> validator)
         {
+            foreach (var itemCreateDto in itemCreateDtoList)
+            {
+                var validationResult = await validator.ValidateAsync(itemCreateDto);
+                if (!validationResult.IsValid)
+                {
+                    var modelStateDictionary = new ModelStateDictionary();
+                    foreach (var failure in validationResult.Errors)
+                    {
+                        modelStateDictionary.AddModelError(
+                            failure.PropertyName,
+                            failure.ErrorMessage
+                        );
+                    }
+                    return ValidationProblem(modelStateDictionary);
+                }
+            }
+            
             var itemIds = await _itemService.CreateItemAsync(itemCreateDtoList);
             if (itemIds == null)
             {
@@ -98,8 +118,22 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Item updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Item not found")]
-        public async Task<IActionResult> PutItem(string id, string updatedById, ItemUpdateDto itemUpdateDto)
+        public async Task<IActionResult> PutItem(string id, string updatedById, ItemUpdateDto itemUpdateDto, [FromServices] IValidator<ItemUpdateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(itemUpdateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             if (id != itemUpdateDto.Id)
             {
                 return BadRequest("Id does not match");
