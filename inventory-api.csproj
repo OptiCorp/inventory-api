@@ -60,7 +60,6 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Validation\DocumentationValidations\" />
-    <Folder Include="Validation\ItemValidations\" />
     <Folder Include="Validation\UserValidations\" />
     <Folder Include="Validation\UserRoleValidations\" />
   </ItemGroup>
