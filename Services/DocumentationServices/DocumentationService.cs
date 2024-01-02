@@ -60,18 +60,27 @@ namespace Inventory.Services
             
             foreach (var file in documentation.Files)
             {
+                var blobRef = Guid.NewGuid().ToString();
+                var blobExists = await containerClient.GetBlobClient(blobRef).ExistsAsync();
+
+                while (blobExists == true)
+                {
+                    blobRef = Guid.NewGuid().ToString();
+                    blobExists = await containerClient.GetBlobClient(blobRef).ExistsAsync();
+                }
+                
                 var newDocumentation = new Documentation
                 {
                     ItemId = documentation.ItemId,
                     Name = file.FileName,
                     ContentType = file.ContentType,
-                    BlobRef = Guid.NewGuid().ToString()
+                    BlobRef = blobRef
                 };
                 
                 try
                 {
                     await containerClient.CreateIfNotExistsAsync();
-
+                
                     using (MemoryStream stream = new MemoryStream())
                     {
                         await file.CopyToAsync(stream);
@@ -83,7 +92,7 @@ namespace Inventory.Services
                 {
                     throw;
                 }
-
+                
                 await _context.Documentations.AddAsync(newDocumentation);
                 await _context.SaveChangesAsync();
                 
