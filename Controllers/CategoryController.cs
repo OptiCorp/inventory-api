@@ -1,7 +1,10 @@
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTOs.CategoryDTOs;
 using Inventory.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
 {
@@ -51,8 +54,22 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new category", Description = "Creates a new category.")]
         [SwaggerResponse(201, "Category created", typeof(CategoryResponseDto))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<CategoryResponseDto>> PostCategory(CategoryCreateDto categoryCreateDto)
+        public async Task<ActionResult<CategoryResponseDto>> PostCategory(CategoryCreateDto categoryCreateDto, [FromServices] IValidator<CategoryCreateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(categoryCreateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             var categoryId = await _categoryService.CreateCategoryAsync(categoryCreateDto);
             if (categoryId == null)
             {
@@ -69,8 +86,22 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Category updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Category not found")]
-        public async Task<IActionResult> PutCategory(string id, CategoryUpdateDto categoryUpdateDto)
+        public async Task<IActionResult> PutCategory(string id, CategoryUpdateDto categoryUpdateDto, [FromServices] IValidator<CategoryUpdateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(categoryUpdateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             if (id != categoryUpdateDto.Id)
             {
                 return BadRequest("Id does not match");

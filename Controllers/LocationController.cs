@@ -1,7 +1,10 @@
+using FluentValidation;
+using Inventory.Models.DTOs.CategoryDTOs;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTOs.LocationDTOs;
 using Inventory.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
 {
@@ -52,8 +55,22 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new location", Description = "Creates a new location.")]
         [SwaggerResponse(201, "Location created", typeof(LocationResponseDto))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<LocationResponseDto>> PostLocation(LocationCreateDto locationCreateDto)
+        public async Task<ActionResult<LocationResponseDto>> PostLocation(LocationCreateDto locationCreateDto, [FromServices] IValidator<LocationCreateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(locationCreateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             var locationId = await _locationService.CreateLocationAsync(locationCreateDto);
             if (locationId == null)
             {
@@ -70,8 +87,22 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Location updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Location not found")]
-        public async Task<IActionResult> PutLocation(string id, LocationUpdateDto locationUpdateDto)
+        public async Task<IActionResult> PutLocation(string id, LocationUpdateDto locationUpdateDto, [FromServices] IValidator<LocationUpdateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(locationUpdateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             if (id != locationUpdateDto.Id)
             {
                 return BadRequest("Id does not match");

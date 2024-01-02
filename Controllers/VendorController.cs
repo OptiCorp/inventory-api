@@ -1,7 +1,10 @@
+using FluentValidation;
+using Inventory.Models.DTOs.LocationDTOs;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTOs.VendorDTOs;
 using Inventory.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
 {
@@ -51,8 +54,22 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new vendor", Description = "Creates a new vendor.")]
         [SwaggerResponse(201, "Vendor created", typeof(VendorResponseDto))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<VendorResponseDto>> PostVendor(VendorCreateDto vendorCreateDto)
+        public async Task<ActionResult<VendorResponseDto>> PostVendor(VendorCreateDto vendorCreateDto, [FromServices] IValidator<VendorCreateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(vendorCreateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             var vendorId = await _vendorService.CreateVendorAsync(vendorCreateDto);
             if (vendorId == null)
             {
@@ -69,8 +86,22 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Vendor updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Vendor not found")]
-        public async Task<IActionResult> PutVendor(string id, VendorUpdateDto vendorUpdateDto)
+        public async Task<IActionResult> PutVendor(string id, VendorUpdateDto vendorUpdateDto, [FromServices] IValidator<VendorUpdateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(vendorUpdateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             if (id != vendorUpdateDto.Id)
             {
                 return BadRequest("Id does not match");
