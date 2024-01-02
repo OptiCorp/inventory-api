@@ -1,5 +1,7 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using FluentValidation;
+using Inventory.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Logging;
@@ -62,6 +64,8 @@ namespace inventory
             services.AddScoped<ILocationUtilities, LocationUtilities>();
             services.AddScoped<IVendorUtilities, VendorUtilities>();
             services.AddScoped<IDocumentationUtilities, DocumentationUtilities>();
+            
+            services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
 
             services.AddHostedService<UserCreateHandler>();
             services.AddHostedService<UserUpdateHandler>();
