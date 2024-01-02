@@ -63,7 +63,7 @@ namespace Inventory.Services
                 var newDocumentation = new Documentation
                 {
                     ItemId = documentation.ItemId,
-                    Name = documentation.Name,
+                    Name = file.FileName,
                     ContentType = file.ContentType,
                     BlobRef = Guid.NewGuid().ToString()
                 };
