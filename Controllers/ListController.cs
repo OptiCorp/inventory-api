@@ -1,7 +1,10 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models.DTOs.ListDTOs;
+using Inventory.Models.DTOs.VendorDTOs;
 using Inventory.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
 {
@@ -67,8 +70,22 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new list", Description = "Creates a new list.")]
         [SwaggerResponse(201, "List created", typeof(ListResponseDto))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<ListResponseDto>> PostList(ListCreateDto listCreateDto)
+        public async Task<ActionResult<ListResponseDto>> PostList(ListCreateDto listCreateDto, [FromServices] IValidator<ListCreateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(listCreateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             var listId = await _listService.CreateListAsync(listCreateDto);
             if (listId == null)
             {
@@ -119,8 +136,22 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "List updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
-        public async Task<IActionResult> PutList(string id, ListUpdateDto listUpdateDto)
+        public async Task<IActionResult> PutList(string id, ListUpdateDto listUpdateDto, [FromServices] IValidator<ListUpdateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(listUpdateDto);
+            if (!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+                foreach (var failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage
+                    );
+                }
+                return ValidationProblem(modelStateDictionary);
+            }
+            
             if (id != listUpdateDto.Id)
             {
                 return BadRequest("Id does not match");
