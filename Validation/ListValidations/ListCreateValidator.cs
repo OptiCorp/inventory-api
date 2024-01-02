@@ -12,7 +12,7 @@ namespace Inventory.Validations.ListValidations
                 .NotNull().WithMessage("List title cannot be null.")
                 .MinimumLength(3).WithMessage("List title must be at least 3 characters.")
                 .MaximumLength(40).WithMessage("List title cannot exceed 40 characters.")
-                .Matches("^[a-zA-Z0-9_.\\- ]+$").WithMessage("List title can only contain letters, numbers, underscores, periods or hyphens.");
+                .Matches("^[a-zA-Z0-9_,.\\- ]+$").WithMessage("List title can only contain letters, numbers, underscores, periods or hyphens.");
             
             RuleFor(list => list.CreatedById).NotEmpty().WithMessage("CreatedById is required.")
                 .NotNull().WithMessage("CreatedById cannot be null.");
