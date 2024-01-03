@@ -47,9 +47,6 @@ namespace Inventory.Services
                 var vendor = new Vendor
                 {
                     Name = vendorCreateDto.Name,
-                    Address = vendorCreateDto.Address,
-                    Email = vendorCreateDto.Email,
-                    PhoneNumber = vendorCreateDto.PhoneNumber,
                     UserId = vendorCreateDto.AddedById,
                     CreatedDate = DateTime.Now
                 };
@@ -72,9 +69,6 @@ namespace Inventory.Services
             if (vendor != null)
             {
                 vendor.Name = updatedVendor.Name;
-                vendor.Address = updatedVendor.Address;
-                vendor.Email = updatedVendor.Email;
-                vendor.PhoneNumber = updatedVendor.PhoneNumber;
                 vendor.UpdatedDate = DateTime.Now;
         
                 await _context.SaveChangesAsync();

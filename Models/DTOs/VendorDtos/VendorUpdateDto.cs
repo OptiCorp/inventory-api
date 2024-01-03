@@ -10,13 +10,5 @@ namespace Inventory.Models.DTOs.VendorDTOs
         
         [Required]
         public string? Name { get; set; }
-        
-        public string? Address { get; set; }
-        
-        [EmailAddress]
-        public string? Email { get; set; }
-        
-        [Phone]
-        public string? PhoneNumber { get; set; }
     }
 }

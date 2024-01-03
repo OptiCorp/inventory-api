@@ -17,9 +17,6 @@ namespace Inventory.Utilities
             {
                 Id = vendor.Id,
                 Name = vendor.Name,
-                Address = vendor.Address,
-                Email = vendor.Email,
-                PhoneNumber = vendor.PhoneNumber,
                 AddedById = vendor.UserId,
                 CreatedDate = vendor.CreatedDate.HasValue ? vendor.CreatedDate+"Z": null,
                 UpdatedDate = vendor.UpdatedDate.HasValue ? vendor.UpdatedDate+"Z": null,
