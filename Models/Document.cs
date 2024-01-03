@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
@@ -7,8 +8,10 @@ namespace Inventory.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
         
+        [Required]
         public string? DocumentTypeId { get; set; }
         
+        [Required]
         public string? BlobId { get; set; }
         
         public DocumentType? DocumentType { get; set; }

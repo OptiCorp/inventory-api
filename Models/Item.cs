@@ -37,6 +37,8 @@ namespace Inventory.Models
         public string? Comment { get; set; }
         
         public string? ListId { get; set; }
+        
+        public string? PreCheckId { get; set; }
 
         [Required]
         public DateTime? CreatedDate { get; set; }
@@ -56,6 +58,8 @@ namespace Inventory.Models
         public IEnumerable<LogEntry>? LogEntries { get; set; }
 
         public User? User { get; set; }
+        
+        public PreCheck? PreCheck { get; set; }
         
     }
 }
