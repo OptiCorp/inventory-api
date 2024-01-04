@@ -31,6 +31,8 @@ namespace Inventory.Models
         
         public User? Creator { get; set; }
 
+        public IEnumerable<Document>? Documents { get; set; }
         
+        public IEnumerable<Size>? Sizes { get; set; }
     }
 }

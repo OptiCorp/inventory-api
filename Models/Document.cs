@@ -15,6 +15,5 @@ namespace Inventory.Models
         public string? BlobId { get; set; }
         
         public DocumentType? DocumentType { get; set; }
-        
     }
 }

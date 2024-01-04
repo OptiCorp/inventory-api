@@ -9,14 +9,11 @@ namespace Inventory.Models
         public string? Id { get; set; }
         
         [Required]
-        public string? ItemId { get; set; }
-        
-        [Required]
         public bool? Check { get; set; }
         
         public string? Comment { get; set; }
         
-        public Item? Item { get; set; }
+        public IEnumerable<Item>? Items { get; set; }
         
     }
 }

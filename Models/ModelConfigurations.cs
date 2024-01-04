@@ -57,8 +57,18 @@ namespace Inventory.Configuration
             modelBuilder.Entity<Item>()
                 .HasIndex(c => c.SerialNumber);
 
+            // modelBuilder.Entity<Item>()
+            //     .HasIndex(c => c.Description);
+            
             modelBuilder.Entity<Item>()
-                .HasIndex(c => c.Description);
+                .HasOne(c => c.ItemTemplate)
+                .WithMany()
+                .HasForeignKey(c => c.ItemTemplateId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Item>()
+                .HasMany(c => c.Documents)
+                .WithMany();
         }
     }
     
@@ -85,6 +95,71 @@ namespace Inventory.Configuration
             
             modelBuilder.Entity<Item>()
                 .HasIndex(c => c.UserId);
+        }
+    }
+    
+    public static class DocumentTypeConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DocumentType>()
+                .HasKey(d => d.Id);
+        }
+    }
+    
+    public static class DocumentConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Document>()
+                .HasKey(d => d.Id);
+
+            modelBuilder.Entity<Document>()
+                .HasOne(d => d.DocumentType)
+                .WithMany()
+                .HasForeignKey(d => d.DocumentTypeId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+    
+    public static class PreCheckConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PreCheck>()
+                .HasKey(d => d.Id);
+
+            modelBuilder.Entity<PreCheck>()
+                .HasMany(d => d.Items)
+                .WithOne();
+        }
+    }
+    
+    public static class ItemTemplateConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ItemTemplate>()
+                .HasKey(d => d.Id);
+
+            modelBuilder.Entity<ItemTemplate>()
+                .HasMany(d => d.Sizes)
+                .WithOne()
+                .HasForeignKey(d => d.ItemTemplateId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ItemTemplate>()
+                .HasMany(d => d.Documents)
+                .WithMany();
+        }
+    }
+    
+    public static class SizeConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Size>()
+                .HasKey(d => d.Id);
         }
     }
 }

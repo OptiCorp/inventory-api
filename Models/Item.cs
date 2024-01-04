@@ -13,11 +13,6 @@ namespace Inventory.Models
 
         [Required]
         public string? SerialNumber { get; set; }
-
-        [Required]
-        public string? ProductNumber { get; set; }
-        
-        public string? Type { get; set; }
         
         public string? CategoryId { get; set; }
         
@@ -26,18 +21,17 @@ namespace Inventory.Models
         public string? VendorId { get; set; }
         
         public string? LocationId { get; set; }
-
-        public string? DocumentationId { get; set; }
         
         public string? UserId { get; set; }
-
-        [Required]
-        public string? Description { get; set; }
 
         public string? Comment { get; set; }
         
         public string? ListId { get; set; }
         
+        [Required]
+        public string? ItemTemplateId { get; set; }
+        
+        [Required]
         public string? PreCheckId { get; set; }
 
         [Required]
@@ -60,6 +54,10 @@ namespace Inventory.Models
         public User? User { get; set; }
         
         public PreCheck? PreCheck { get; set; }
+        
+        public ItemTemplate? ItemTemplate { get; set; }
+        
+        public IEnumerable<Document>? Documents { get; set; }
         
     }
 }

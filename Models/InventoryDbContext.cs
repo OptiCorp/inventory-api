@@ -17,6 +17,13 @@ public class InventoryDbContext : DbContext
     public DbSet<Location> Locations { get; set; } = null!;
     public DbSet<LogEntry> LogEntries { get; set; } = null!;
     public DbSet<Documentation> Documentations { get; set; } = null!;
+    
+    
+    public DbSet<Document> Documents { get; set; } = null!;
+    public DbSet<DocumentType> DocumentTypes { get; set; } = null!;
+    public DbSet<ItemTemplate> ItemTemplates { get; set; } = null!;
+    public DbSet<PreCheck> PreChecks { get; set; } = null!;
+    public DbSet<Size> Sizes { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,7 +33,11 @@ public class InventoryDbContext : DbContext
         ItemConfigurations.Configure(modelBuilder);
         ListConfigurations.Configure(modelBuilder);
         DocumentationConfigurations.Configure(modelBuilder);
-
+        DocumentConfigurations.Configure(modelBuilder);
+        DocumentTypeConfigurations.Configure(modelBuilder);
+        ItemTemplateConfigurations.Configure(modelBuilder);
+        PreCheckConfigurations.Configure(modelBuilder);
+        SizeConfigurations.Configure(modelBuilder);
     }
 
 }
