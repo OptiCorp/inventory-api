@@ -59,5 +59,15 @@ namespace Inventory.Models
         
         public IEnumerable<Document>? Documents { get; set; }
         
+        [Required]
+        public string? Type { get; set; }
+        
+        [Required]
+        public string? ProductNumber { get; set; }
+        
+        public string? Revision { get; set; }
+        
+        [Required]
+        public string? Description { get; set; }
     }
 }
