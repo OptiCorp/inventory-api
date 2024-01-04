@@ -62,13 +62,13 @@ namespace Inventory.Configuration
             
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.ItemTemplate)
-                .WithMany()
+                .WithMany( c => c.Items)
                 .HasForeignKey(c => c.ItemTemplateId)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Item>()
                 .HasMany(c => c.Documents)
-                .WithMany();
+                .WithMany(c=> c.Items);
         }
     }
     
@@ -116,7 +116,7 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<Document>()
                 .HasOne(d => d.DocumentType)
-                .WithMany()
+                .WithMany(d => d.Documents)
                 .HasForeignKey(d => d.DocumentTypeId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
@@ -131,7 +131,7 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<PreCheck>()
                 .HasMany(d => d.Items)
-                .WithOne()
+                .WithOne(d => d.PreCheck)
                 .HasForeignKey(d => d.PreCheckId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
@@ -146,13 +146,13 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<ItemTemplate>()
                 .HasMany(d => d.Sizes)
-                .WithOne()
+                .WithOne(d => d.ItemTemplate)
                 .HasForeignKey(d => d.ItemTemplateId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<ItemTemplate>()
                 .HasMany(d => d.Documents)
-                .WithMany();
+                .WithMany(d => d.ItemTemplates);
         }
     }
     

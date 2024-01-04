@@ -19,5 +19,7 @@ namespace Inventory.Models
         
         [Required]
         public string? Unit { get; set; }
+        
+        public ItemTemplate ItemTemplate { get; set; }
     }
 }
