@@ -131,7 +131,9 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<PreCheck>()
                 .HasMany(d => d.Items)
-                .WithOne();
+                .WithOne()
+                .HasForeignKey(d => d.PreCheckId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
     
