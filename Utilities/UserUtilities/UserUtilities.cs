@@ -1,16 +1,16 @@
 using Inventory.Models;
-using Inventory.Models.DTO;
+
 
 namespace Inventory.Utilities
 {
     public class UserUtilities : IUserUtilities
     {
-        public bool IsUsernameTaken(IEnumerable<UserDto> users, string username)
+        public bool IsUsernameTaken(IEnumerable<User> users, string username)
         {
             return users.Any(u => u.Username == username);
         }
 
-        public bool IsEmailTaken(IEnumerable<UserDto> users, string userEmail)
+        public bool IsEmailTaken(IEnumerable<User> users, string userEmail)
         {
             return users.Any(u => u.Email == userEmail);
         }
@@ -35,22 +35,6 @@ namespace Inventory.Utilities
                     return "Active";
             }
         }
-
-        public UserDto UserToDto(User user)
-        {
-            return new UserDto
-            {
-                Id = user.Id,
-                AzureAdUserId = user.AzureAdUserId,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Username = user.Username,
-                UserRole = user.UserRole,
-                Status = GetUserStatus(user.Status),
-                CreatedDate = user.CreatedDate,
-                UpdatedDate = user.UpdatedDate
-            };
-        }
+        
     }
 }

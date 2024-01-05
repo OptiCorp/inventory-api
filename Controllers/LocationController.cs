@@ -1,8 +1,7 @@
 using FluentValidation;
-using Inventory.Models.DTOs.CategoryDTOs;
+using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.LocationDTOs;
 using Inventory.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -21,17 +20,17 @@ namespace Inventory.Controllers
         
         [HttpGet]
         [SwaggerOperation(Summary = "Get all locations", Description = "Retrieves a list of all locations.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<LocationResponseDto>))]
-        public async Task<ActionResult<IEnumerable<LocationResponseDto>>> GetLocation()
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<Location>))]
+        public async Task<ActionResult<IEnumerable<Location>>> GetAllLocations()
         {
             return Ok(await _locationService.GetAllLocationsAsync());
         }
         
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get location", Description = "Retrieves a location.")]
-        [SwaggerResponse(200, "Success", typeof(LocationResponseDto))]
+        [SwaggerResponse(200, "Success", typeof(Location))]
         [SwaggerResponse(404, "Location not found")]
-        public async Task<ActionResult<LocationResponseDto>> GetLocation(string id)
+        public async Task<ActionResult<Location>> GetLocation(string id)
         {
             var location = await _locationService.GetLocationByIdAsync(id);
             if (location == null)
@@ -45,19 +44,19 @@ namespace Inventory.Controllers
         
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get locations containing search string", Description = "Retrieves locations containing search string in name.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<LocationResponseDto>))]
-        public async Task<ActionResult<IEnumerable<LocationResponseDto>>> GetLocationBySearchString(string searchString)
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<Location>))]
+        public async Task<ActionResult<IEnumerable<Location>>> GetLocationsBySearchString(string searchString)
         {
             return Ok(await _locationService.GetAllLocationsBySearchStringAsync(searchString));
         }
         
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new location", Description = "Creates a new location.")]
-        [SwaggerResponse(201, "Location created", typeof(LocationResponseDto))]
+        [SwaggerResponse(201, "Location created", typeof(Location))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<LocationResponseDto>> PostLocation(LocationCreateDto locationCreateDto, [FromServices] IValidator<LocationCreateDto> validator)
+        public async Task<ActionResult<Location>> CreateLocation(Location locationCreate, [FromServices] IValidator<LocationCreateDto> validator)
         {
-            var validationResult = await validator.ValidateAsync(locationCreateDto);
+            var validationResult = await validator.ValidateAsync(locationCreate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -71,7 +70,7 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
             
-            var locationId = await _locationService.CreateLocationAsync(locationCreateDto);
+            var locationId = await _locationService.CreateLocationAsync(locationCreate);
             if (locationId == null)
             {
                 return BadRequest("Location creation failed");
@@ -87,9 +86,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Location updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Location not found")]
-        public async Task<IActionResult> PutLocation(string id, LocationUpdateDto locationUpdateDto, [FromServices] IValidator<LocationUpdateDto> validator)
+        public async Task<IActionResult> UpdateLocation(string id, Location locationUpdate, [FromServices] IValidator<LocationUpdateDto> validator)
         {
-            var validationResult = await validator.ValidateAsync(locationUpdateDto);
+            var validationResult = await validator.ValidateAsync(locationUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -103,7 +102,7 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
             
-            if (id != locationUpdateDto.Id)
+            if (id != locationUpdate.Id)
             {
                 return BadRequest("Id does not match");
             }
@@ -114,7 +113,7 @@ namespace Inventory.Controllers
                 return NotFound("Location not found");
             }
 
-            await _locationService.UpdateLocationAsync(locationUpdateDto);
+            await _locationService.UpdateLocationAsync(locationUpdate);
 
             return NoContent();
         }

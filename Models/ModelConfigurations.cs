@@ -3,27 +3,26 @@ using Inventory.Models;
 
 namespace Inventory.Configuration
 {
-
-    public static class DocumentationConfigurations
-    {
-        public static void Configure(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Documentation>()
-                .HasKey(d => d.Id);
-
-            modelBuilder.Entity<Documentation>()
-                .HasOne(d => d.Item)
-                .WithMany()
-                .HasForeignKey(d => d.ItemId)
-                .OnDelete(DeleteBehavior.NoAction);
-        }
-    }
-    
     public static class UserConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
+            
+            modelBuilder.Entity<User>()
+                .HasOne(c => c.UserRole)
+                .WithMany(c => c.Users)
+                .HasForeignKey(c => c.UserRoleId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+    
+    public static class UserRoleConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserRole>()
                 .HasKey(u => u.Id);
         }
     }
@@ -37,18 +36,14 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.Parent)
-                .WithMany()
+                .WithMany(c => c.Children)
                 .HasForeignKey(c => c.ParentId)
                 .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<Item>()
-                .HasMany(c => c.Children)
-                .WithOne(c => c.Parent);
             
             modelBuilder.Entity<Item>()
-                .HasOne(c => c.User)
+                .HasOne(c => c.CreatedBy)
                 .WithMany()
-                .HasForeignKey(c => c.UserId)
+                .HasForeignKey(c => c.CreatedById)
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Item>()
@@ -56,9 +51,6 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<Item>()
                 .HasIndex(c => c.SerialNumber);
-
-            // modelBuilder.Entity<Item>()
-            //     .HasIndex(c => c.Description);
             
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.ItemTemplate)
@@ -81,20 +73,19 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<List>()
                 .HasMany(c => c.Items)
-                .WithOne()
-                .OnDelete(DeleteBehavior.NoAction);
+                .WithMany();
             
             modelBuilder.Entity<List>()
-                .HasOne(c => c.User)
+                .HasOne(c => c.CreatedBy)
                 .WithMany()
-                .HasForeignKey(c => c.UserId)
+                .HasForeignKey(c => c.CreatedById)
                 .OnDelete(DeleteBehavior.NoAction);
             
             modelBuilder.Entity<List>()
                 .HasIndex(c => c.Title);
             
             modelBuilder.Entity<Item>()
-                .HasIndex(c => c.UserId);
+                .HasIndex(c => c.CreatedById);
         }
     }
     
@@ -116,7 +107,7 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<Document>()
                 .HasOne(d => d.DocumentType)
-                .WithMany(d => d.Documents)
+                .WithMany()
                 .HasForeignKey(d => d.DocumentTypeId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
@@ -130,7 +121,7 @@ namespace Inventory.Configuration
                 .HasKey(d => d.Id);
 
             modelBuilder.Entity<PreCheck>()
-                .HasMany(d => d.Items)
+                .HasMany<Item>()
                 .WithOne(d => d.PreCheck)
                 .HasForeignKey(d => d.PreCheckId)
                 .OnDelete(DeleteBehavior.NoAction);
@@ -146,7 +137,7 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<ItemTemplate>()
                 .HasMany(d => d.Sizes)
-                .WithOne(d => d.ItemTemplate)
+                .WithOne()
                 .HasForeignKey(d => d.ItemTemplateId)
                 .OnDelete(DeleteBehavior.NoAction);
 

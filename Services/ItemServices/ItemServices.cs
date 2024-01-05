@@ -1,7 +1,6 @@
 using Duende.IdentityServer.Extensions;
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.ItemDTOs;
 using Inventory.Utilities;
 
 namespace Inventory.Services
@@ -9,148 +8,127 @@ namespace Inventory.Services
     public class ItemService : IItemService
     {
         private readonly InventoryDbContext _context;
-        private readonly IItemUtilities _itemUtilities;
 
-        public ItemService(InventoryDbContext context, IItemUtilities itemUtilities)
+        public ItemService(InventoryDbContext context)
         {
             _context = context;
-            _itemUtilities = itemUtilities;
         }
 
-        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync()
+        public async Task<IEnumerable<Item>> GetAllItemsAsync()
         {
             return await _context.Items.Include(c => c.Parent)
                 .Include(c => c.Children)
-                .Include(c => c.User)
+                .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.User)
-                .Select(c => _itemUtilities.ItemToResponseDto(c))
-                                            .ToListAsync();
+                .ThenInclude(c => c.CreatedBy)
+                .ToListAsync();
         }
 
-        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type)
+        public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type)
         {   
-            return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
-                            || c.Description.Contains(searchString))
-                            && (type.IsNullOrEmpty() || c.Type == type))
+            return await _context.Items
+                            .Include(c => c.ItemTemplate)
+                            .Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
+                            || c.ItemTemplate.Description.Contains(searchString))
+                            && (type.IsNullOrEmpty() || c.ItemTemplate.Type == type))
                             .Include(c => c.Parent)
                             .Include(c => c.Children)
-                            .Include(c => c.User)
+                            .Include(c => c.CreatedBy)
                             .Include(c => c.Vendor)
                             .Include(c => c.Category)
                             .Include(c => c.Location)
                             .Include(c => c.LogEntries)
-                            .ThenInclude(c => c.User)
+                            .ThenInclude(c => c.CreatedBy)
                             .OrderBy(c => c.Id)
                             .Skip(page == 0 ? 0 : (page - 1) * 10)
                             .Take(10)
-                            .Select(c => _itemUtilities.ItemToResponseDto(c))
                             .ToListAsync();
         }
         
-        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
+        public async Task<IEnumerable<Item>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
         {   
-            return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
-                    || c.Description.Contains(searchString)
+            return await _context.Items.Include(c => c.ItemTemplate)
+                    .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
+                    || c.ItemTemplate.Description.Contains(searchString)
                     && c.ListId != listId)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
-                    .Include(c => c.User)
+                    .Include(c => c.CreatedBy)
                     .Include(c => c.Vendor)
                     .Include(c => c.Category)
                     .Include(c => c.Location)
                     .Include(c => c.LogEntries)
-                    .ThenInclude(c => c.User)
+                    .ThenInclude(c => c.CreatedBy)
                     .OrderBy(c => c.Id)
                     .Skip(page == 0 ? 0 : (page - 1) * 10)
                     .Take(10)
-                    .Select(c => _itemUtilities.ItemToResponseDto(c))
                     .ToListAsync();
         }
         
-        public async Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id, int page)
+        public async Task<IEnumerable<Item>> GetAllItemsByUserIdAsync(string id, int page)
         {
-            return await _context.Items.Where(c => c.UserId == id)
+            return await _context.Items.Where(c => c.CreatedById == id)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
-                .Include(c => c.User)
+                .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.User)
+                .ThenInclude(c => c.CreatedBy)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10)
-                .Select(c => _itemUtilities.ItemToResponseDto(c))
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string parentId)
+        public async Task<IEnumerable<Item>> GetChildrenAsync(string parentId)
         {
             return await _context.Items.Where(c => c.ParentId == parentId)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
-                .Include(c => c.User)
+                .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.User)
-                .Select(c => _itemUtilities.ItemToResponseDto(c))
+                .ThenInclude(c => c.CreatedBy)
                 .ToListAsync();
         }
 
-        public async Task<ItemResponseDto> GetItemByIdAsync(string id)
+        public async Task<Item> GetItemByIdAsync(string id)
         {
-            var item = await _context.Items
+            return await _context.Items
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
-                .Include(c => c.User)
+                .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.User)
+                .ThenInclude(c => c.CreatedBy)
                 .FirstOrDefaultAsync(c => c.Id == id);
-        
-            if (item == null) return null;
-        
-            return _itemUtilities.ItemToResponseDto(item);
+            
         }
         
-        public async Task<List<string>?> CreateItemAsync(List<ItemCreateDto> itemsDto)
+        public async Task<List<string>?> CreateItemAsync(List<Item> itemsCreate)
         {
             try
             {
                 List<string> createdItemIds = new List<string>();
-                foreach (var itemDto in itemsDto)
+                foreach (var item in itemsCreate)
                 {
-                    Item item = new Item
-                    {
-                        WpId = itemDto.WpId,
-                        UserId = itemDto.AddedById,
-                        CategoryId = itemDto.CategoryId,
-                        ParentId = itemDto.ParentId,
-                        SerialNumber = itemDto.SerialNumber,
-                        ProductNumber = itemDto.ProductNumber,
-                        Type = itemDto.Type,
-                        LocationId = itemDto.LocationId,
-                        Description = itemDto.Description,
-                        VendorId = itemDto.VendorId,
-                        Comment = itemDto.Comment,
-                        CreatedDate = DateTime.Now
-                    };
+                   
                     await _context.Items.AddAsync(item);
                     createdItemIds.Add(item.Id);
 
                     LogEntry logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = itemDto.AddedById,
+                        CreatedById = item.CreatedById,
                         Message = "Item added",
                         CreatedDate = item.CreatedDate
                     };
@@ -167,136 +145,136 @@ namespace Inventory.Services
             }
         }
         
-        public async Task UpdateItemAsync(string updatedById, ItemUpdateDto updatedItem)
+        public async Task UpdateItemAsync(string updatedById, Item itemUpdate)
         {
-            var item = await _context.Items.Include(c => c.Category).FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
+            var item = await _context.Items.Include(c => c.Category).FirstOrDefaultAsync(c => c.Id == itemUpdate.Id);
         
             if (item != null)
             {
                 LogEntry logEntry;
-                if (updatedItem.WpId != item.WpId)
+                if (itemUpdate.WpId != item.WpId)
                 {
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
-                        Message = "WellPartner ID changed from " + item.WpId + " to " + updatedItem.WpId,
+                        CreatedById = updatedById,
+                        Message = "WellPartner ID changed from " + item.WpId + " to " + itemUpdate.WpId,
                         CreatedDate = DateTime.Now
                     };
-                    item.WpId = updatedItem.WpId;
+                    item.WpId = itemUpdate.WpId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.SerialNumber != item.SerialNumber)
+                if (itemUpdate.SerialNumber != item.SerialNumber)
                 {
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
-                        Message = "Serial number changed from " + item.SerialNumber + " to " + updatedItem.SerialNumber,
+                        CreatedById = updatedById,
+                        Message = "Serial number changed from " + item.SerialNumber + " to " + itemUpdate.SerialNumber,
                         CreatedDate = DateTime.Now
                     };
-                    item.SerialNumber = updatedItem.SerialNumber;
+                    item.SerialNumber = itemUpdate.SerialNumber;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.ProductNumber != item.ProductNumber)
+                if (itemUpdate.ItemTemplate.ProductNumber != item.ItemTemplate.ProductNumber)
                 {
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
-                        Message = "Product number changed from " + item.ProductNumber + " to " + updatedItem.ProductNumber,
+                        CreatedById = updatedById,
+                        Message = "Product number changed from " + item.ItemTemplate.ProductNumber + " to " + itemUpdate.ItemTemplate.ProductNumber,
                         CreatedDate = DateTime.Now
                     };
-                    item.ProductNumber = updatedItem.ProductNumber;
+                    item.ItemTemplate.ProductNumber = itemUpdate.ItemTemplate.ProductNumber;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.Type != item.Type)
+                if (itemUpdate.ItemTemplate.Type != item.ItemTemplate.Type)
                 {
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
-                        Message = "Type changed from " + item.Type + " to " + updatedItem.Type,
+                        CreatedById = updatedById,
+                        Message = "Type changed from " + item.ItemTemplate.Type + " to " + itemUpdate.ItemTemplate.Type,
                         CreatedDate = DateTime.Now
                     };
-                    item.Type = updatedItem.Type;
+                    item.ItemTemplate.Type = itemUpdate.ItemTemplate.Type;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.CategoryId != item.CategoryId && updatedItem.CategoryId != null)
+                if (itemUpdate.CategoryId != item.CategoryId && itemUpdate.CategoryId != null)
                 {
-                    var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updatedItem.CategoryId);
+                    var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == itemUpdate.CategoryId);
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
+                        CreatedById = updatedById,
                         Message = "Category changed from " + item.Category?.Name + " to " + category.Name,
                         CreatedDate = DateTime.Now
                     };
-                    item.CategoryId = updatedItem.CategoryId;
+                    item.CategoryId = itemUpdate.CategoryId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.LocationId != item.LocationId && updatedItem.LocationId != null)
+                if (itemUpdate.LocationId != item.LocationId && itemUpdate.LocationId != null)
                 {
-                    var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == updatedItem.LocationId);
+                    var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == itemUpdate.LocationId);
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
+                        CreatedById = updatedById,
                         Message = "Location changed from " + item.Location?.Name + " to " + location.Name,
                         CreatedDate = DateTime.Now
                     };
-                    item.LocationId = updatedItem.LocationId;
+                    item.LocationId = itemUpdate.LocationId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                
-                if (updatedItem.Description != item.Description)
+                if (itemUpdate.ItemTemplate.Description != item.ItemTemplate.Description)
                 {
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
+                        CreatedById = updatedById,
                         Message = "Description updated",
                         CreatedDate = DateTime.Now
                     };
-                    item.Description = updatedItem.Description;
+                    item.ItemTemplate.Description = itemUpdate.ItemTemplate.Description;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.ParentId != item.ParentId)
+                if (itemUpdate.ParentId != item.ParentId)
                 {
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
-                        Message = "Parent ID changed from " + item.ParentId + " to " + updatedItem.ParentId,
+                        CreatedById = updatedById,
+                        Message = "Parent ID changed from " + item.ParentId + " to " + itemUpdate.ParentId,
                         CreatedDate = DateTime.Now
                     };
-                    item.ParentId = updatedItem.ParentId;
+                    item.ParentId = itemUpdate.ParentId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
+                if (itemUpdate.VendorId != item.VendorId && itemUpdate.VendorId != null)
                 {
-                    var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedItem.VendorId);
+                    var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == itemUpdate.VendorId);
                     logEntry = new LogEntry
                     {
                         ItemId = item.Id,
-                        UserId = updatedById,
+                        CreatedById = updatedById,
                         Message = "Vendor changed from " + item.Vendor?.Name + " to " + vendor.Name,
                         CreatedDate = DateTime.Now
                     };
-                    item.VendorId = updatedItem.VendorId;
+                    item.VendorId = itemUpdate.VendorId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
 
-                item.UserId = updatedItem.AddedById;
-                item.Comment = updatedItem.Comment;
-                item.ListId = updatedItem.ListId;
+                item.CreatedById = itemUpdate.CreatedById;
+                item.Comment = itemUpdate.Comment;
+                item.ListId = itemUpdate.ListId;
                 item.UpdatedDate = DateTime.Now;
                 
                 await _context.SaveChangesAsync();

@@ -1,8 +1,7 @@
 using FluentValidation;
-using Inventory.Models.DTOs.LocationDTOs;
+using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.VendorDTOs;
 using Inventory.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -21,17 +20,17 @@ namespace Inventory.Controllers
         
         [HttpGet]
         [SwaggerOperation(Summary = "Get all vendors", Description = "Retrieves a list of all vendors.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<VendorResponseDto>))]
-        public async Task<ActionResult<IEnumerable<VendorResponseDto>>> GetVendor()
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<Vendor>))]
+        public async Task<ActionResult<IEnumerable<Vendor>>> GetAllVendors()
         {
             return Ok(await _vendorService.GetAllVendorsAsync());
         }
         
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get vendor", Description = "Retrieves a vendor.")]
-        [SwaggerResponse(200, "Success", typeof(VendorResponseDto))]
+        [SwaggerResponse(200, "Success", typeof(Vendor))]
         [SwaggerResponse(404, "Vendor not found")]
-        public async Task<ActionResult<VendorResponseDto>> GetVendor(string id)
+        public async Task<ActionResult<Vendor>> GetVendor(string id)
         {
             var vendor = await _vendorService.GetVendorByIdAsync(id);
             if (vendor == null)
@@ -44,19 +43,19 @@ namespace Inventory.Controllers
         
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get vendors containing search string", Description = "Retrieves vendors containing search string in name.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<VendorResponseDto>))]
-        public async Task<ActionResult<IEnumerable<VendorResponseDto>>> GetVendorBySearchString(string searchString)
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<Vendor>))]
+        public async Task<ActionResult<IEnumerable<Vendor>>> GetVendorBySearchString(string searchString)
         {
             return Ok(await _vendorService.GetAllVendorsBySearchStringAsync(searchString));
         }
         
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new vendor", Description = "Creates a new vendor.")]
-        [SwaggerResponse(201, "Vendor created", typeof(VendorResponseDto))]
+        [SwaggerResponse(201, "Vendor created", typeof(Vendor))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<VendorResponseDto>> PostVendor(VendorCreateDto vendorCreateDto, [FromServices] IValidator<VendorCreateDto> validator)
+        public async Task<ActionResult<Vendor>> CreateVendor(Vendor vendorCreate, [FromServices] IValidator<VendorCreateDto> validator)
         {
-            var validationResult = await validator.ValidateAsync(vendorCreateDto);
+            var validationResult = await validator.ValidateAsync(vendorCreate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -70,7 +69,7 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
             
-            var vendorId = await _vendorService.CreateVendorAsync(vendorCreateDto);
+            var vendorId = await _vendorService.CreateVendorAsync(vendorCreate);
             if (vendorId == null)
             {
                 return BadRequest("Vendor creation failed");
@@ -86,9 +85,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Vendor updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Vendor not found")]
-        public async Task<IActionResult> PutVendor(string id, VendorUpdateDto vendorUpdateDto, [FromServices] IValidator<VendorUpdateDto> validator)
+        public async Task<IActionResult> UpdateVendor(string id, Vendor vendorUpdate, [FromServices] IValidator<VendorUpdateDto> validator)
         {
-            var validationResult = await validator.ValidateAsync(vendorUpdateDto);
+            var validationResult = await validator.ValidateAsync(vendorUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -102,7 +101,7 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
             
-            if (id != vendorUpdateDto.Id)
+            if (id != vendorUpdate.Id)
             {
                 return BadRequest("Id does not match");
             }
@@ -113,7 +112,7 @@ namespace Inventory.Controllers
                 return NotFound("Vendor not found");
             }
 
-            await _vendorService.UpdateVendorAsync(vendorUpdateDto);
+            await _vendorService.UpdateVendorAsync(vendorUpdate);
 
             return NoContent();
         }

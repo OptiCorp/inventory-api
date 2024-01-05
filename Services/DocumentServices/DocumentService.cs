@@ -1,31 +1,30 @@
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Inventory.Models;
-using Inventory.Models.DTOs.DocumentationDtos;
-using Inventory.Utilities.DocumentationUtilities;
+using Inventory.Utilities.DocumentUtilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
-    public class DocumentationService : IDocumentationService
+    public class DocumentService : IDocumentService
     {
         private readonly InventoryDbContext _context;
-        private readonly IDocumentationUtilities _documentationUtilities;
+        private readonly IDocumentUtilities _documentUtilities;
 
-        public DocumentationService(InventoryDbContext context, IDocumentationUtilities documentationUtilities)
+        public DocumentService(InventoryDbContext context, IDocumentUtilities documentUtilities)
         {
             _context = context;
-            _documentationUtilities = documentationUtilities;
+            _documentUtilities = documentUtilities;
         }
 
-        public async Task<IEnumerable<DocumentationResponseDto>> GetDocumentationByItemId(string id)
+        public async Task<IEnumerable<UploadDocumentDto>> GetDocumentsByItemId(string id)
         {
             var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
             BlobContainerClient containerClient =
                 new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
-            var documentationList = new List<DocumentationResponseDto>();
-
-            var documents = _context.Documentations.Where(d => d.ItemId == id);
+            var documentList = new List<Document>();
+            
+            var documents = _context.Documents.Where(d => d.ItemId == id);
 
             foreach (var document in documents)
             {
@@ -35,34 +34,34 @@ namespace Inventory.Services
 
                 await blobClient.DownloadToAsync(stream);
 
-                var documentationResponse =
-                    _documentationUtilities.DocumentationToResponseDto(document, stream.ToArray());
+                var documentResponse =
+                    _documentUtilities.DocumentToResponseDto(document, stream.ToArray());
                 
-                documentationList.Add(documentationResponse);
+                documentList.Add(documentResponse);
             }
 
-            return documentationList;
+            return documentList;
         }
 
-        public async Task<Documentation> GetDocumentationById(string id)
+        public async Task<Document> GetDocumentById(string id)
         {
-            return await _context.Documentations.FirstOrDefaultAsync(documentation => documentation.Id == id);
+            return await _context.Documents.FirstOrDefaultAsync(document => document.Id == id);
         }
 
-        public async Task<string[]> UploadDocumentationAsync(DocumentationCreateDto documentation)
+        public async Task<string[]> UploadDocumentAsync(DocumentCreateDto document)
         {
             var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
 
             BlobContainerClient containerClient =
                 new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
 
-            var documentationIds = new List<string>();
+            var documentIds = new List<string>();
             
-            foreach (var file in documentation.Files)
+            foreach (var file in document.Files)
             {
-                var newDocumentation = new Documentation
+                var newDocument = new Document
                 {
-                    ItemId = documentation.ItemId,
+                    ItemId = document.ItemId,
                     Name = file.FileName,
                     ContentType = file.ContentType,
                     BlobRef = Guid.NewGuid().ToString()
@@ -76,7 +75,7 @@ namespace Inventory.Services
                     {
                         await file.CopyToAsync(stream);
                         stream.Position = 0;
-                        await containerClient.UploadBlobAsync(newDocumentation.BlobRef, stream);
+                        await containerClient.UploadBlobAsync(newDocument.BlobRef, stream);
                     }
                 }
                 catch (Exception e)
@@ -84,17 +83,17 @@ namespace Inventory.Services
                     throw;
                 }
 
-                await _context.Documentations.AddAsync(newDocumentation);
+                await _context.Documents.AddAsync(newDocument);
                 await _context.SaveChangesAsync();
                 
-                documentationIds.Add(newDocumentation.Id);
+                documentIds.Add(newDocument.Id);
                 
             }
             
-            return documentationIds.ToArray();
+            return documentIds.ToArray();
         }
 
-        public async Task DeleteDocumentFromItem(Documentation document)
+        public async Task DeleteDocumentFromItem(Document document)
         {
             var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
             
@@ -105,7 +104,7 @@ namespace Inventory.Services
             
             await blobClient.DeleteAsync();
                 
-            _context.Documentations.Remove(document);
+            _context.Documents.Remove(document);
             await _context.SaveChangesAsync();
             
         }

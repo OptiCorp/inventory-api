@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
@@ -7,11 +6,9 @@ namespace Inventory.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
-
-        [Required]
+        
         public string? WpId { get; set; }
-
-        [Required]
+        
         public string? SerialNumber { get; set; }
         
         public string? CategoryId { get; set; }
@@ -22,19 +19,16 @@ namespace Inventory.Models
         
         public string? LocationId { get; set; }
         
-        public string? UserId { get; set; }
+        public string? CreatedById { get; set; }
 
         public string? Comment { get; set; }
         
         public string? ListId { get; set; }
         
-        [Required]
         public string? ItemTemplateId { get; set; }
         
-        [Required]
         public string? PreCheckId { get; set; }
-
-        [Required]
+        
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
@@ -51,23 +45,12 @@ namespace Inventory.Models
         
         public IEnumerable<LogEntry>? LogEntries { get; set; }
 
-        public User? User { get; set; }
+        public User? CreatedBy { get; set; }
         
         public PreCheck? PreCheck { get; set; }
         
         public ItemTemplate? ItemTemplate { get; set; }
         
         public IEnumerable<Document>? Documents { get; set; }
-        
-        [Required]
-        public string? Type { get; set; }
-        
-        [Required]
-        public string? ProductNumber { get; set; }
-        
-        public string? Revision { get; set; }
-        
-        [Required]
-        public string? Description { get; set; }
     }
 }

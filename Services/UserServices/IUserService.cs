@@ -1,14 +1,25 @@
-﻿using Inventory.Models.DTO;
+﻿using System.ComponentModel.DataAnnotations;
 using Inventory.Models;
 
 namespace Inventory.Services
 {
+    public enum DeleteMode
+    {
+        [Display(Name = "Soft")]
+        Soft,
+        [Display(Name = "Hard")]
+        Hard
+    }
+
     public interface IUserService
     {
-        Task<IEnumerable<UserDto>> GetAllUsersAsync();
-        Task<IEnumerable<UserDto>> GetAllUsersAdminAsync();
-        Task<UserDto> GetUserByUsernameAsync(string name);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<User> GetUserByUsernameAsync(string name);
         Task<User> GetUserByAzureAdUserIdAsync(string azureAdUserId);
-        Task<UserDto> GetUserByIdAsync(string id);
+        Task<User> GetUserByIdAsync(string id);
+        Task UpdateUserAsync(User user);
+        Task<string> CreateUserAsync(User user);
+        Task DeleteUserAsync(string id);
+        Task HardDeleteUserAsync(string id);
     }
 }

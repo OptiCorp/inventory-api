@@ -1,18 +1,18 @@
+using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
 {
-    public class Vendor
+    public class UserRole
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [StringLength(50)]
         public string? Id { get; set; }
-        
+
+        [StringLength(150)]
         public string? Name { get; set; }
         
-        public string? CreatedById { get; set; }
-        
-        public DateTime? CreatedDate { get; set; }
-
-        public DateTime? UpdatedDate { get; set; }
+        public IEnumerable<User>? Users { get; set; }
     }
 }

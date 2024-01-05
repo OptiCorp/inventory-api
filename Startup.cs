@@ -55,7 +55,7 @@ namespace inventory
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IVendorService, VendorService>();
-            services.AddScoped<IDocumentationService, DocumentationService>();
+            services.AddScoped<IDocumentService, DocumentService>();
             
             services.AddScoped<IUserUtilities, UserUtilities>();
             services.AddScoped<IItemUtilities, ItemUtilities>();

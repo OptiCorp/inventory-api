@@ -1,18 +1,17 @@
-using Inventory.Models.DTOs.ItemDTOs;
-
+using Inventory.Models;
 
 namespace Inventory.Services
 {
     public interface IItemService
     {
-        Task<IEnumerable<ItemResponseDto>> GetAllItemsAsync();
-        Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type);
-        Task<IEnumerable<ItemResponseDto>> GetAllItemsNotInListBySearchStringAsync(string searchString,string listId, int page);
-        Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id, int page);
-        Task<ItemResponseDto> GetItemByIdAsync(string id);
-        Task<IEnumerable<ItemResponseDto>> GetChildrenAsync(string id);
-        Task<List<string?>> CreateItemAsync(List<ItemCreateDto> item);
-        Task UpdateItemAsync(string updatedById, ItemUpdateDto item);
+        Task<IEnumerable<Item>> GetAllItemsAsync();
+        Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type);
+        Task<IEnumerable<Item>> GetAllItemsNotInListBySearchStringAsync(string searchString,string listId, int page);
+        Task<IEnumerable<Item>> GetAllItemsByUserIdAsync(string id, int page);
+        Task<Item> GetItemByIdAsync(string id);
+        Task<IEnumerable<Item>> GetChildrenAsync(string id);
+        Task<List<string?>> CreateItemAsync(List<Item> item);
+        Task UpdateItemAsync(string updatedById, Item item);
         Task DeleteItemAsync(string id);
         Task<bool> IsWpIdUnique(string id);
     }

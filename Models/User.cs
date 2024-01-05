@@ -18,38 +18,30 @@ namespace Inventory.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
 
-        public string? UmId { get; set; }
-
         public string? AzureAdUserId { get; set; }
 
-        [Required]
-        [StringLength(150)]
-        public string? UserRole { get; set; }
+        public string? UserRoleId { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string? FirstName { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string? LastName { get; set; }
 
-        [Required]
         [EmailAddress]
         [StringLength(100)]
         public string? Email { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string? Username { get; set; }
 
-        [Required]
         [EnumDataType(typeof(UserStatus))]
         public UserStatus Status { get; set; }
 
-        [Required]
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
+        
+        public UserRole? UserRole { get; set; }
     }
 }

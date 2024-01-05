@@ -1,5 +1,4 @@
 using Inventory.Models;
-using Inventory.Models.DTO;
 using Inventory.Services;
 using Inventory.Utilities;
 using Xunit;
@@ -21,7 +20,7 @@ namespace Inventory.Tests.Services
             var users = await userService.GetAllUsersAsync();
 
             //Assert
-            Assert.IsType<List<UserDto>>(users);
+            Assert.IsType<List<User>>(users);
             Assert.Equal(8, users.Count());
         }
 
@@ -38,7 +37,7 @@ namespace Inventory.Tests.Services
             var users = await userService.GetAllUsersAdminAsync();
 
             //Assert
-            Assert.IsType<List<UserDto>>(users);
+            Assert.IsType<List<User>>(users);
             Assert.Equal(10, users.Count());
         }
 
@@ -55,7 +54,7 @@ namespace Inventory.Tests.Services
             var user = await userService.GetUserByIdAsync("User 1");
 
             //Assert
-            Assert.IsType<UserDto>(user);
+            Assert.IsType<User>(user);
             Assert.Equal("Username 1", user.Username);
             Assert.Equal("User 1", user.Id);
         }
@@ -90,7 +89,7 @@ namespace Inventory.Tests.Services
             var user = await userService.GetUserByUsernameAsync("Username 1");
 
             //Assert
-            Assert.IsType<UserDto>(user);
+            Assert.IsType<User>(user);
             Assert.Equal("User 1", user.Id);
         }
     }

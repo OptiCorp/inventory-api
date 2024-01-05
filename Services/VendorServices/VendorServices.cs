@@ -1,6 +1,5 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.VendorDTOs;
 using Inventory.Utilities;
 
 namespace Inventory.Services
@@ -8,52 +7,35 @@ namespace Inventory.Services
     public class VendorService : IVendorService
     {
         private readonly InventoryDbContext _context;
-        private readonly IVendorUtilities _vendorUtilities;
 
-        public VendorService(InventoryDbContext context, IVendorUtilities vendorUtilities)
+        public VendorService(InventoryDbContext context)
         {
             _context = context;
-            _vendorUtilities = vendorUtilities;
         }
 
-        public async Task<IEnumerable<VendorResponseDto>> GetAllVendorsAsync()
+        public async Task<IEnumerable<Vendor>> GetAllVendorsAsync()
         {
-            return await _context.Vendors.Include(c => c.User)
-                                            .Select(c => _vendorUtilities.VendorToResponseDto(c))
-                                            .ToListAsync();
+            return await _context.Vendors.ToListAsync();
         }
         
-        public async Task<IEnumerable<VendorResponseDto>> GetAllVendorsBySearchStringAsync(string searchString)
+        public async Task<IEnumerable<Vendor>> GetAllVendorsBySearchStringAsync(string searchString)
         {   
             return await _context.Vendors.Where(vendor => vendor.Name.Contains(searchString))
-                                        .Include(c => c.User)
-                                        .Select(vendor => _vendorUtilities.VendorToResponseDto(vendor))
                                         .ToListAsync();
         }
         
-        public async Task<VendorResponseDto> GetVendorByIdAsync(string id)
+        public async Task<Vendor> GetVendorByIdAsync(string id)
         {
-            var vendor = await _context.Vendors.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
-        
-            if (vendor == null) return null;
-        
-            return _vendorUtilities.VendorToResponseDto(vendor);
+            return await _context.Vendors.FirstOrDefaultAsync(c => c.Id == id);
         }
         
-        public async Task<string?> CreateVendorAsync(VendorCreateDto vendorCreateDto)
+        public async Task<string?> CreateVendorAsync(Vendor vendorCreate)
         {
             try
             {
-                var vendor = new Vendor
-                {
-                    Name = vendorCreateDto.Name,
-                    UserId = vendorCreateDto.AddedById,
-                    CreatedDate = DateTime.Now
-                };
-                
-                await _context.Vendors.AddAsync(vendor);
+                await _context.Vendors.AddAsync(vendorCreate);
                 await _context.SaveChangesAsync();
-                return vendor.Id;
+                return vendorCreate.Id;
             }
             catch (Exception e)
             {
@@ -62,13 +44,13 @@ namespace Inventory.Services
             }
         }
 
-        public async Task UpdateVendorAsync(VendorUpdateDto updatedVendor)
+        public async Task UpdateVendorAsync(Vendor vendorUpdate)
         {
-            var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedVendor.Id);
+            var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == vendorUpdate.Id);
         
             if (vendor != null)
             {
-                vendor.Name = updatedVendor.Name;
+                vendor.Name = vendorUpdate.Name;
                 vendor.UpdatedDate = DateTime.Now;
         
                 await _context.SaveChangesAsync();

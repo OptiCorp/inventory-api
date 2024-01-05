@@ -10,15 +10,13 @@ public class InventoryDbContext : DbContext
     {
     }
     public DbSet<User> User { get; set; } = null!;
+    public DbSet<UserRole> UserRoles { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;
     public DbSet<List> Lists { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<Vendor> Vendors { get; set; } = null!;
     public DbSet<Location> Locations { get; set; } = null!;
     public DbSet<LogEntry> LogEntries { get; set; } = null!;
-    public DbSet<Documentation> Documentations { get; set; } = null!;
-    
-    
     public DbSet<Document> Documents { get; set; } = null!;
     public DbSet<DocumentType> DocumentTypes { get; set; } = null!;
     public DbSet<ItemTemplate> ItemTemplates { get; set; } = null!;
@@ -30,9 +28,9 @@ public class InventoryDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         UserConfigurations.Configure(modelBuilder);
+        UserRoleConfigurations.Configure(modelBuilder);
         ItemConfigurations.Configure(modelBuilder);
         ListConfigurations.Configure(modelBuilder);
-        DocumentationConfigurations.Configure(modelBuilder);
         DocumentConfigurations.Configure(modelBuilder);
         DocumentTypeConfigurations.Configure(modelBuilder);
         ItemTemplateConfigurations.Configure(modelBuilder);

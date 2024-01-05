@@ -1,8 +1,8 @@
 using FluentValidation;
 using FluentValidation.Results;
+using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.CategoryDTOs;
 using Inventory.Services;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -21,17 +21,17 @@ namespace Inventory.Controllers
         
         [HttpGet]
         [SwaggerOperation(Summary = "Get all categories", Description = "Retrieves a list of all categories.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<CategoryResponseDto>))]
-        public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetCategory()
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<Category>))]
+        public async Task<ActionResult<IEnumerable<Category>>> GetAllCategories()
         {
             return Ok(await _categoryService.GetAllCategoriesAsync());
         }
         
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get category", Description = "Retrieves a category.")]
-        [SwaggerResponse(200, "Success", typeof(CategoryResponseDto))]
+        [SwaggerResponse(200, "Success", typeof(Category))]
         [SwaggerResponse(404, "Category not found")]
-        public async Task<ActionResult<CategoryResponseDto>> GetCategory(string id)
+        public async Task<ActionResult<Category>> GetCategory(string id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null)
@@ -44,19 +44,19 @@ namespace Inventory.Controllers
         
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get categories containing search string", Description = "Retrieves categories containing search string in title.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<CategoryResponseDto>))]
-        public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetCategoryBySearchString(string searchString)
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<Category>))]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategoryBySearchString(string searchString)
         {
             return Ok(await _categoryService.GetAllCategoriesBySearchStringAsync(searchString));
         }
         
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new category", Description = "Creates a new category.")]
-        [SwaggerResponse(201, "Category created", typeof(CategoryResponseDto))]
+        [SwaggerResponse(201, "Category created", typeof(Category))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<CategoryResponseDto>> PostCategory(CategoryCreateDto categoryCreateDto, [FromServices] IValidator<CategoryCreateDto> validator)
+        public async Task<ActionResult<Category>> CreateCategory(Category categoryCreate, [FromServices] IValidator<CategoryCreateDto> validator)
         {
-            var validationResult = await validator.ValidateAsync(categoryCreateDto);
+            var validationResult = await validator.ValidateAsync(categoryCreate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -70,7 +70,7 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
             
-            var categoryId = await _categoryService.CreateCategoryAsync(categoryCreateDto);
+            var categoryId = await _categoryService.CreateCategoryAsync(categoryCreate);
             if (categoryId == null)
             {
                 return BadRequest("Category creation failed");
@@ -86,9 +86,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Category updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Category not found")]
-        public async Task<IActionResult> PutCategory(string id, CategoryUpdateDto categoryUpdateDto, [FromServices] IValidator<CategoryUpdateDto> validator)
+        public async Task<IActionResult> UpdateCategory(string id, Category categoryUpdate, [FromServices] IValidator<CategoryUpdateDto> validator)
         {
-            var validationResult = await validator.ValidateAsync(categoryUpdateDto);
+            var validationResult = await validator.ValidateAsync(categoryUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -102,7 +102,7 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
             
-            if (id != categoryUpdateDto.Id)
+            if (id != categoryUpdate.Id)
             {
                 return BadRequest("Id does not match");
             }
@@ -113,7 +113,7 @@ namespace Inventory.Controllers
                 return NotFound("Category not found");
             }
 
-            await _categoryService.UpdateCategoryAsync(categoryUpdateDto);
+            await _categoryService.UpdateCategoryAsync(categoryUpdate);
 
             return NoContent();
         }

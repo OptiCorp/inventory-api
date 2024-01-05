@@ -1,6 +1,5 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.CategoryDTOs;
 using Inventory.Utilities;
 
 namespace Inventory.Services
@@ -8,52 +7,35 @@ namespace Inventory.Services
     public class CategoryService : ICategoryService
     {
         private readonly InventoryDbContext _context;
-        private readonly ICategoryUtilities _categoryUtilities;
 
-        public CategoryService(InventoryDbContext context, ICategoryUtilities categoryUtilities)
+        public CategoryService(InventoryDbContext context)
         {
             _context = context;
-            _categoryUtilities = categoryUtilities;
         }
 
-        public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesAsync()
+        public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
         {
-            return await _context.Categories.Include(c => c.User)
-                                            .Select(c => _categoryUtilities.CategoryToResponseDto(c))
-                                            .ToListAsync();
+            return await _context.Categories.ToListAsync();
         }
         
-        public async Task<IEnumerable<CategoryResponseDto>> GetAllCategoriesBySearchStringAsync(string searchString)
+        public async Task<IEnumerable<Category>> GetAllCategoriesBySearchStringAsync(string searchString)
         {   
             return await _context.Categories.Where(category => category.Name.Contains(searchString))
-                                            .Include(c => c.User)
-                                            .Select(category => _categoryUtilities.CategoryToResponseDto(category))
                                             .ToListAsync();
         }
         
-        public async Task<CategoryResponseDto> GetCategoryByIdAsync(string id)
+        public async Task<Category> GetCategoryByIdAsync(string id)
         {
-            var category = await _context.Categories.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
-        
-            if (category == null) return null;
-        
-            return _categoryUtilities.CategoryToResponseDto(category);
+            return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
         }
         
-        public async Task<string?> CreateCategoryAsync(CategoryCreateDto categoryCreateDto)
+        public async Task<string?> CreateCategoryAsync(Category categoryCreate)
         {
             try
             {
-                var category = new Category
-                {
-                    Name = categoryCreateDto.Name,
-                    UserId = categoryCreateDto.AddedById,
-                    CreatedDate = DateTime.Now
-                };
-                
-                await _context.Categories.AddAsync(category);
+                await _context.Categories.AddAsync(categoryCreate);
                 await _context.SaveChangesAsync();
-                return category.Id;
+                return categoryCreate.Id;
             }
             catch (Exception e)
             {
@@ -62,13 +44,13 @@ namespace Inventory.Services
             }
         }
 
-        public async Task UpdateCategoryAsync(CategoryUpdateDto updatedCategory)
+        public async Task UpdateCategoryAsync(Category categoryUpdate)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updatedCategory.Id);
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryUpdate.Id);
         
             if (category != null)
             {
-                category.Name = updatedCategory.Name;
+                category.Name = categoryUpdate.Name;
                 category.UpdatedDate = DateTime.Now;
         
                 await _context.SaveChangesAsync();

@@ -1,5 +1,5 @@
 
-using Inventory.Models.DTO;
+using Inventory.Models;
 using Inventory.Utilities;
 using Xunit;
 
@@ -42,8 +42,8 @@ namespace Inventory.Tests
         [Fact]
         public void IsUsernameTaken_sameName_True()
         {
-            List<UserDto> users = new List<UserDto>();
-            var user1 = new UserDto
+            List<User> users = new List<User>();
+            var user1 = new User
             {
                 Id = "1",
                 AzureAdUserId = "azure1",
@@ -51,10 +51,9 @@ namespace Inventory.Tests
                 LastName = "lastname1",
                 Email = "email1",
                 Username = "username1",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
-            var user2 = new UserDto
+            var user2 = new User
             {
                 Id = "2",
                 AzureAdUserId = "azure2",
@@ -62,10 +61,9 @@ namespace Inventory.Tests
                 LastName = "lastname2",
                 Email = "email2",
                 Username = "username2",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
-            var user3 = new UserDto
+            var user3 = new User
             {
                 Id = "3",
                 AzureAdUserId = "azure3",
@@ -73,7 +71,6 @@ namespace Inventory.Tests
                 LastName = "lastname3",
                 Email = "email3",
                 Username = "username3",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -81,7 +78,7 @@ namespace Inventory.Tests
             users.Add(user2);
             users.Add(user3);
 
-            var user4 = new UserDto
+            var user4 = new User
             {
                 Id = "4",
                 AzureAdUserId = "azure4",
@@ -89,7 +86,6 @@ namespace Inventory.Tests
                 LastName = "lastname4",
                 Email = "email4",
                 Username = "username1",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -99,8 +95,8 @@ namespace Inventory.Tests
         [Fact]
         public void IsUsernameTaken_differentName_False()
         {
-            List<UserDto> users = new List<UserDto>();
-            var user1 = new UserDto
+            List<User> users = new List<User>();
+            var user1 = new User
             {
                 Id = "1",
                 AzureAdUserId = "azure1",
@@ -108,10 +104,9 @@ namespace Inventory.Tests
                 LastName = "lastname1",
                 Email = "email1",
                 Username = "username1",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
-            var user2 = new UserDto
+            var user2 = new User
             {
                 Id = "2",
                 AzureAdUserId = "azure2",
@@ -119,10 +114,9 @@ namespace Inventory.Tests
                 LastName = "lastname2",
                 Email = "email2",
                 Username = "username2",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
-            var user3 = new UserDto
+            var user3 = new User
             {
                 Id = "3",
                 AzureAdUserId = "azure3",
@@ -130,7 +124,6 @@ namespace Inventory.Tests
                 LastName = "lastname3",
                 Email = "email3",
                 Username = "username3",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -138,7 +131,7 @@ namespace Inventory.Tests
             users.Add(user2);
             users.Add(user3);
 
-            var user4 = new UserDto
+            var user4 = new User
             {
                 Id = "4",
                 AzureAdUserId = "azure4",
@@ -146,7 +139,6 @@ namespace Inventory.Tests
                 LastName = "lastname4",
                 Email = "email4",
                 Username = "username4",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -156,8 +148,8 @@ namespace Inventory.Tests
         [Fact]
         public void IsEmailTaken_sameEmail_True()
         {
-            List<UserDto> users = new List<UserDto>();
-            var user1 = new UserDto
+            List<User> users = new List<User>();
+            var user1 = new User
             {
                 Id = "1",
                 AzureAdUserId = "azure1",
@@ -165,10 +157,9 @@ namespace Inventory.Tests
                 LastName = "lastname1",
                 Email = "email1",
                 Username = "username1",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
-            var user2 = new UserDto
+            var user2 = new User
             {
                 Id = "2",
                 AzureAdUserId = "azure2",
@@ -176,10 +167,9 @@ namespace Inventory.Tests
                 LastName = "lastname2",
                 Email = "email2",
                 Username = "username2",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
-            var user3 = new UserDto
+            var user3 = new User
             {
                 Id = "3",
                 AzureAdUserId = "azure3",
@@ -187,7 +177,6 @@ namespace Inventory.Tests
                 LastName = "lastname3",
                 Email = "email3",
                 Username = "username3",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -195,7 +184,7 @@ namespace Inventory.Tests
             users.Add(user2);
             users.Add(user3);
 
-            var user4 = new UserDto
+            var user4 = new User
             {
                 Id = "4",
                 AzureAdUserId = "azure4",
@@ -203,7 +192,6 @@ namespace Inventory.Tests
                 LastName = "lastname4",
                 Email = "email1",
                 Username = "username4",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -213,8 +201,8 @@ namespace Inventory.Tests
         [Fact]
         public void IsEmailTaken_differentEmail_False()
         {
-            List<UserDto> users = new List<UserDto>();
-            var user1 = new UserDto
+            List<User> users = new List<User>();
+            var user1 = new User
             {
                 Id = "1",
                 AzureAdUserId = "azure1",
@@ -222,10 +210,9 @@ namespace Inventory.Tests
                 LastName = "lastname1",
                 Email = "email1",
                 Username = "username1",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
-            var user2 = new UserDto
+            var user2 = new User
             {
                 Id = "2",
                 AzureAdUserId = "azure2",
@@ -233,10 +220,9 @@ namespace Inventory.Tests
                 LastName = "lastname2",
                 Email = "email2",
                 Username = "username2",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
-            var user3 = new UserDto
+            var user3 = new User
             {
                 Id = "3",
                 AzureAdUserId = "azure3",
@@ -244,7 +230,6 @@ namespace Inventory.Tests
                 LastName = "lastname3",
                 Email = "email3",
                 Username = "username3",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
@@ -252,7 +237,7 @@ namespace Inventory.Tests
             users.Add(user2);
             users.Add(user3);
 
-            var user4 = new UserDto
+            var user4 = new User
             {
                 Id = "4",
                 AzureAdUserId = "azure4",
@@ -260,7 +245,6 @@ namespace Inventory.Tests
                 LastName = "lastname4",
                 Email = "email4",
                 Username = "username4",
-                Status = "active",
                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
             };
 
