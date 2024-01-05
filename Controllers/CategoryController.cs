@@ -86,6 +86,8 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Category updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Category not found")]
+        
+        
         public async Task<IActionResult> UpdateCategory(string id, Category categoryUpdate, [FromServices] IValidator<CategoryUpdateDto> validator)
         {
             var validationResult = await validator.ValidateAsync(categoryUpdate);
