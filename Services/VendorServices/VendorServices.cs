@@ -33,6 +33,7 @@ namespace Inventory.Services
         {
             try
             {
+                vendorCreate.CreatedDate = DateTime.Now;
                 await _context.Vendors.AddAsync(vendorCreate);
                 await _context.SaveChangesAsync();
                 return vendorCreate.Id;

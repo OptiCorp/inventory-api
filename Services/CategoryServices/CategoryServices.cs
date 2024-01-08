@@ -33,6 +33,7 @@ namespace Inventory.Services
         {
             try
             {
+                categoryCreate.CreatedDate = DateTime.Now;
                 await _context.Categories.AddAsync(categoryCreate);
                 await _context.SaveChangesAsync();
                 return categoryCreate.Id;

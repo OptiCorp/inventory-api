@@ -53,7 +53,8 @@ namespace Inventory.Services
         }
 
         public async Task<string> CreateUserAsync(User userCreate)
-        {
+        {   
+            userCreate.CreatedDate = DateTime.Now;
             _context.User.Add(userCreate);
             await _context.SaveChangesAsync();
 

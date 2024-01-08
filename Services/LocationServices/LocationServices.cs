@@ -33,6 +33,7 @@ namespace Inventory.Services
         {
             try
             {
+                locationCreate.CreatedDate = DateTime.Now;
                 await _context.Locations.AddAsync(locationCreate);
                 await _context.SaveChangesAsync();
                 return locationCreate.Id;

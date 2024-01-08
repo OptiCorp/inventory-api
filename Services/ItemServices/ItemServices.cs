@@ -1,7 +1,6 @@
 using Duende.IdentityServer.Extensions;
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Utilities;
 
 namespace Inventory.Services
 {
@@ -121,7 +120,7 @@ namespace Inventory.Services
                 List<string> createdItemIds = new List<string>();
                 foreach (var item in itemsCreate)
                 {
-                   
+                   item.CreatedDate = DateTime.Now;
                     await _context.Items.AddAsync(item);
                     createdItemIds.Add(item.Id);
 

@@ -61,6 +61,7 @@ namespace Inventory.Services
         {
             try
             {
+                listCreate.CreatedDate = DateTime.Now;
                 await _context.Lists.AddAsync(listCreate);
                 await _context.SaveChangesAsync();
                 return listCreate.Id;

@@ -23,13 +23,8 @@ namespace Inventory.Services
 
         }
 
-        public async Task<string> CreateUserRoleAsync(UserRole userRoleDto)
+        public async Task<string> CreateUserRoleAsync(UserRole userRole)
         {
-            var userRole = new UserRole
-            {
-                Name = userRoleDto.Name,
-            };
-
             _context.UserRoles.Add(userRole);
             await _context.SaveChangesAsync();
 
