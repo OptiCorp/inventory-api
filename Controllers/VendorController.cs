@@ -3,6 +3,7 @@ using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
+using Inventory.Validations.VendorValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
@@ -12,10 +13,14 @@ namespace Inventory.Controllers
     public class VendorController : ControllerBase
     {
         private readonly IVendorService _vendorService;
+        private readonly IVendorCreateValidator _createValidator;
+        private readonly IVendorUpdateValidator _updateValidator;
 
-        public VendorController(IVendorService vendorService)
+        public VendorController(IVendorService vendorService, IVendorCreateValidator createValidator, IVendorUpdateValidator updateValidator)
         {
             _vendorService = vendorService;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         
         [HttpGet]
@@ -53,9 +58,9 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new vendor", Description = "Creates a new vendor.")]
         [SwaggerResponse(201, "Vendor created", typeof(Vendor))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<Vendor>> CreateVendor(Vendor vendorCreate, [FromServices] IValidator<VendorCreateDto> validator)
+        public async Task<ActionResult<Vendor>> CreateVendor(Vendor vendorCreate)
         {
-            var validationResult = await validator.ValidateAsync(vendorCreate);
+            var validationResult = await _createValidator.ValidateAsync(vendorCreate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -85,9 +90,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Vendor updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Vendor not found")]
-        public async Task<IActionResult> UpdateVendor(string id, Vendor vendorUpdate, [FromServices] IValidator<VendorUpdateDto> validator)
+        public async Task<IActionResult> UpdateVendor(string id, Vendor vendorUpdate)
         {
-            var validationResult = await validator.ValidateAsync(vendorUpdate);
+            var validationResult = await _updateValidator.ValidateAsync(vendorUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();

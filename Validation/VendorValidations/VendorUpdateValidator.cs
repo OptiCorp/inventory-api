@@ -1,9 +1,10 @@
 using FluentValidation;
-using Inventory.Models.DTOs.VendorDTOs;
+using FluentValidation.Results;
+using Inventory.Models;
 
 namespace Inventory.Validations.VendorValidations
 {
-    public class VendorUpdateValidator : AbstractValidator<VendorUpdateDto>
+    public class VendorUpdateValidator : AbstractValidator<Vendor>, IVendorUpdateValidator
     {
 
         public VendorUpdateValidator()
@@ -16,6 +17,12 @@ namespace Inventory.Validations.VendorValidations
             
             RuleFor(vendor => vendor.Id).NotEmpty().WithMessage("Vendor Id is required.")
                 .NotNull().WithMessage("Vendor Id cannot be null.");
+        }
+        
+        public async Task<ValidationResult> ValidateAsync(Vendor vendor)
+        {
+            var result = await ValidateAsync(vendor);
+            return result;
         }
     }
 }

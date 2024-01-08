@@ -3,6 +3,7 @@ using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
+using Inventory.Validations.LocationValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
@@ -12,10 +13,14 @@ namespace Inventory.Controllers
     public class LocationController : ControllerBase
     {
         private readonly ILocationService _locationService;
+        private readonly ILocationCreateValidator _createValidator;
+        private readonly ILocationUpdateValidator _updateValidator;
 
-        public LocationController(ILocationService locationService)
+        public LocationController(ILocationService locationService, ILocationCreateValidator createValidator, ILocationUpdateValidator updateValidator)
         {
             _locationService = locationService;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         
         [HttpGet]
@@ -54,9 +59,9 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new location", Description = "Creates a new location.")]
         [SwaggerResponse(201, "Location created", typeof(Location))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<Location>> CreateLocation(Location locationCreate, [FromServices] IValidator<LocationCreateDto> validator)
+        public async Task<ActionResult<Location>> CreateLocation(Location locationCreate)
         {
-            var validationResult = await validator.ValidateAsync(locationCreate);
+            var validationResult = await _createValidator.ValidateAsync(locationCreate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -86,9 +91,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Location updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Location not found")]
-        public async Task<IActionResult> UpdateLocation(string id, Location locationUpdate, [FromServices] IValidator<LocationUpdateDto> validator)
+        public async Task<IActionResult> UpdateLocation(string id, Location locationUpdate)
         {
-            var validationResult = await validator.ValidateAsync(locationUpdate);
+            var validationResult = await _updateValidator.ValidateAsync(locationUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();

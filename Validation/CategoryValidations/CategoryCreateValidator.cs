@@ -1,9 +1,10 @@
 using FluentValidation;
-using Inventory.Models.DTOs.CategoryDTOs;
+using FluentValidation.Results;
+using Inventory.Models;
 
 namespace Inventory.Validations.CategoryValidations
 {
-    public class CategoryCreateValidator : AbstractValidator<CategoryCreateDto>
+    public class CategoryCreateValidator : AbstractValidator<Category>, ICategoryCreateValidator
     {
 
         public CategoryCreateValidator()
@@ -14,8 +15,14 @@ namespace Inventory.Validations.CategoryValidations
                 .MaximumLength(40).WithMessage("Category name cannot exceed 40 characters.")
                 .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Category name can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
 
-            RuleFor(category => category.AddedById).NotEmpty().WithMessage("AddedById is required.")
+            RuleFor(category => category.CreatedById).NotEmpty().WithMessage("AddedById is required.")
                 .NotNull().WithMessage("AddedById cannot be null.");
+        }
+        
+        public async Task<ValidationResult> ValidateAsync(Category category)
+        {
+            var result = await ValidateAsync(category);
+            return result;
         }
     }
 }

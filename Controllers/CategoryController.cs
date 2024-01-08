@@ -4,6 +4,8 @@ using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
+using Inventory.Validations.CategoryValidations;
+using Inventory.Validations.VendorValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
@@ -13,10 +15,14 @@ namespace Inventory.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
+        private readonly ICategoryCreateValidator _createValidator;
+        private readonly ICategoryUpdateValidator _updateValidator;
 
-        public CategoryController(ICategoryService categoryService)
+        public CategoryController(ICategoryService categoryService, ICategoryCreateValidator createValidator, ICategoryUpdateValidator updateValidator)
         {
             _categoryService = categoryService;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         
         [HttpGet]
@@ -54,9 +60,9 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new category", Description = "Creates a new category.")]
         [SwaggerResponse(201, "Category created", typeof(Category))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<Category>> CreateCategory(Category categoryCreate, [FromServices] IValidator<CategoryCreateDto> validator)
+        public async Task<ActionResult<Category>> CreateCategory(Category categoryCreate)
         {
-            var validationResult = await validator.ValidateAsync(categoryCreate);
+            var validationResult = await _createValidator.ValidateAsync(categoryCreate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -88,9 +94,10 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "Category not found")]
         
         
-        public async Task<IActionResult> UpdateCategory(string id, Category categoryUpdate, [FromServices] IValidator<CategoryUpdateDto> validator)
+        public async Task<IActionResult> UpdateCategory(string id, Category categoryUpdate)
         {
-            var validationResult = await validator.ValidateAsync(categoryUpdate);
+            var validator1 = new VendorCreateValidator();
+            var validationResult = await _updateValidator.ValidateAsync(categoryUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();

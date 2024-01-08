@@ -61,8 +61,6 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Validation\DocumentationValidations\" />
-    <Folder Include="Validation\UserValidations\" />
-    <Folder Include="Validation\UserRoleValidations\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="WeatherForecast.cs" />

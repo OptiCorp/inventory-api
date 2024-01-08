@@ -1,9 +1,10 @@
 using FluentValidation;
-using Inventory.Models.DTOs.ListDTOs;
+using FluentValidation.Results;
+using Inventory.Models;
 
 namespace Inventory.Validations.ListValidations
 {
-    public class ListUpdateValidator : AbstractValidator<ListUpdateDto>
+    public class ListUpdateValidator : AbstractValidator<List>, IListUpdateValidator
     {
 
         public ListUpdateValidator()
@@ -16,6 +17,12 @@ namespace Inventory.Validations.ListValidations
             
             RuleFor(list => list.Id).NotEmpty().WithMessage("List Id is required.")
                 .NotNull().WithMessage("List Id cannot be null.");
+        }
+        
+        public async Task<ValidationResult> ValidateAsync(List list)
+        {
+            var result = await ValidateAsync(list);
+            return result;
         }
     }
 }

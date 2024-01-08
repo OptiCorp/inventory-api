@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Azure.Identity;
 using Inventory.Models;
 using Inventory.Services;
 using Inventory.Utilities;
+using Inventory.Validations.UserValidations;
 using Microsoft.Graph;
 
 namespace Inventory.Controllers
@@ -18,14 +16,16 @@ namespace Inventory.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IUserRoleService _userRoleService;
         private readonly IUserUtilities _userUtilities;
+        private readonly IUserCreateValidator _createValidator;
+        private readonly IUserUpdateValidator _updateValidator;
 
-        public UserController(IUserService userService, IUserRoleService userRoleService, IUserUtilities userUtilities)
+        public UserController(IUserService userService, IUserUtilities userUtilities, IUserCreateValidator createValidator, IUserUpdateValidator updateValidator)
         {
             _userService = userService;
-            _userRoleService = userRoleService;
             _userUtilities = userUtilities;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         [HttpGet]
@@ -88,8 +88,28 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new user", Description = "Creates a new user.")]
         [SwaggerResponse(201, "User created", typeof(User))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<IActionResult> CreateUser(User userCreate, [FromServices] IValidator<UserCreateDto> validator)
+        public async Task<IActionResult> CreateUser(User userCreate)
         {
+            if (!string.IsNullOrEmpty(userCreate.UserRoleId))
+            {
+                ValidationResult validationResult = await _createValidator.ValidateAsync(userCreate);
+
+                if (!validationResult.IsValid)
+                {
+                    var modelStateDictionary = new ModelStateDictionary();
+
+                    foreach (ValidationFailure failure in validationResult.Errors)
+                    {
+                        modelStateDictionary.AddModelError(
+                            failure.PropertyName,
+                            failure.ErrorMessage
+                        );
+                    }
+
+                    return ValidationProblem(modelStateDictionary);
+                }
+            }
+            
             try {
                 string[] scopes = new[] { "https://graph.microsoft.com/.default" };
                 var graphClient = new GraphServiceClient(new ChainedTokenCredential(
@@ -107,27 +127,6 @@ namespace Inventory.Controllers
                 throw;
             }
 
-
-            if (!string.IsNullOrEmpty(userCreate.UserRoleId))
-            {
-                ValidationResult validationResult = validator.Validate(userCreate);
-
-                if (!validationResult.IsValid)
-                {
-                    var modelStateDictionary = new ModelStateDictionary();
-
-                    foreach (ValidationFailure failure in validationResult.Errors)
-                    {
-                        modelStateDictionary.AddModelError(
-                            failure.PropertyName,
-                            failure.ErrorMessage
-                            );
-                    }
-
-                    return ValidationProblem(modelStateDictionary);
-                }
-            }
-
             var users = await _userService.GetAllUsersAsync();
 
 
@@ -140,13 +139,11 @@ namespace Inventory.Controllers
             {
                 return Conflict("Invalid email");
             }
-
-
+            
             var newUserId = await _userService.CreateUserAsync(userCreate);
             var newUser = await _userService.GetUserByUsernameAsync(userCreate.Username);
-
-            await _userService.UserCreated(newUserId);
-            return CreatedAtAction(nameof(GetUserByIdAsync), new { id = newUserId }, newUser);
+            
+            return CreatedAtAction(nameof(GetUserById), new { id = newUserId }, newUser);
         }
 
         [HttpPut]
@@ -154,12 +151,12 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "User updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "User not found")]
-        public async Task<IActionResult> UpdateUser(User userUpdate, [FromServices] IValidator<UserUpdateDto> validator)
+        public async Task<IActionResult> UpdateUser(User userUpdate)
         {
             var users = await _userService.GetAllUsersAsync();
             users = users.Where(u => u.Id != userUpdate.Id);
 
-            ValidationResult validationResult = validator.Validate(userUpdate);
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(userUpdate);
 
             if (!validationResult.IsValid)
             {
@@ -187,8 +184,6 @@ namespace Inventory.Controllers
 
             await _userService.UpdateUserAsync(userUpdate);
 
-            await _userService.UserUpdated(userUpdate.Id);
-
             return Ok("User updated");
         }
 
@@ -209,7 +204,6 @@ namespace Inventory.Controllers
             }
 
             await _userService.DeleteUserAsync(id);
-            await _userService.UserDeleted(id, DeleteMode.Soft);
 
             return Ok($"User: '{user.Username}' deleted");
         }
@@ -228,7 +222,6 @@ namespace Inventory.Controllers
             }
 
             await _userService.HardDeleteUserAsync(id);
-            await _userService.UserDeleted(id, DeleteMode.Hard);
 
             return Ok($"User: '{user.Username}' deleted");
         }

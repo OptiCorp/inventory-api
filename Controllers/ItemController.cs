@@ -3,6 +3,7 @@ using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
+using Inventory.Validations.ItemValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
@@ -13,11 +14,15 @@ namespace Inventory.Controllers
     {
         private readonly IItemService _itemService;
         private readonly IListService _listService;
+        private readonly IItemCreateValidator _createValidator;
+        private IItemUpdateValidator _updateValidator;
 
-        public ItemController(IItemService itemService, IListService listService)
+        public ItemController(IItemService itemService, IListService listService, IItemCreateValidator createValidator, IItemUpdateValidator updateValidator)
         {
             _itemService = itemService;
             _listService = listService;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         
         [HttpGet]
@@ -47,11 +52,11 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
         [SwaggerResponse(201, "Item created", typeof(Item))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<Item>> CreateItem(List<Item> itemCreateList, [FromServices] IValidator<ItemCreateDto> validator)
+        public async Task<ActionResult<Item>> CreateItem(List<Item> itemCreateList)
         {
             foreach (var itemCreate in itemCreateList)
             {
-                var validationResult = await validator.ValidateAsync(itemCreateDto);
+                var validationResult = await _createValidator.ValidateAsync(itemCreate);
                 if (!validationResult.IsValid)
                 {
                     var modelStateDictionary = new ModelStateDictionary();
@@ -117,9 +122,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Item updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Item not found")]
-        public async Task<IActionResult> UpdateItem(string id, string updatedById, Item itemUpdate, [FromServices] IValidator<ItemUpdateDto> validator)
+        public async Task<IActionResult> UpdateItem(string id, string updatedById, Item itemUpdate)
         {
-            var validationResult = await validator.ValidateAsync(itemUpdate);
+            var validationResult = await _updateValidator.ValidateAsync(itemUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();

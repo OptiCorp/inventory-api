@@ -3,6 +3,7 @@ using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
+using Inventory.Validations.ListValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
@@ -13,11 +14,15 @@ namespace Inventory.Controllers
     {
         private readonly IListService _listService;
         private readonly IUserService _userService;
+        private readonly IListCreateValidator _createValidator;
+        private IListUpdateValidator _updateValidator;
 
-        public ListController(IListService listService, IUserService userService)
+        public ListController(IListService listService, IUserService userService, IListCreateValidator createValidator, IListUpdateValidator updateValidator)
         {
             _listService = listService;
             _userService = userService;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         
         [HttpGet]
@@ -69,9 +74,9 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new list", Description = "Creates a new list.")]
         [SwaggerResponse(201, "List created", typeof(List))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<List>> CreateList(List listCreate, [FromServices] IValidator<ListCreateDto> validator)
+        public async Task<ActionResult<List>> CreateList(List listCreate)
         {
-            var validationResult = await validator.ValidateAsync(listCreate);
+            var validationResult = await _createValidator.ValidateAsync(listCreate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -135,9 +140,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "List updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
-        public async Task<IActionResult> UpdateList(string id, List listUpdate, [FromServices] IValidator<ListUpdateDto> validator)
+        public async Task<IActionResult> UpdateList(string id, List listUpdate)
         {
-            var validationResult = await validator.ValidateAsync(listUpdate);
+            var validationResult = await _updateValidator.ValidateAsync(listUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();

@@ -11,6 +11,14 @@ using Inventory.Models;
 using Inventory.Services;
 using Inventory.Utilities;
 using Inventory.Utilities.DocumentationUtilities;
+using Inventory.Validation.UserValidations;
+using Inventory.Validations.CategoryValidations;
+using Inventory.Validations.ItemValidations;
+using Inventory.Validations.ListValidations;
+using Inventory.Validations.LocationValidations;
+using Inventory.Validations.UserRoleValidations;
+using Inventory.Validations.UserValidations;
+using Inventory.Validations.VendorValidations;
 
 namespace inventory
 
@@ -58,18 +66,23 @@ namespace inventory
             services.AddScoped<IDocumentService, DocumentService>();
             
             services.AddScoped<IUserUtilities, UserUtilities>();
-            services.AddScoped<IItemUtilities, ItemUtilities>();
-            services.AddScoped<IListUtilities, ListUtilities>();
-            services.AddScoped<ICategoryUtilities, CategoryUtilities>();
-            services.AddScoped<ILocationUtilities, LocationUtilities>();
-            services.AddScoped<IVendorUtilities, VendorUtilities>();
             services.AddScoped<IDocumentationUtilities, DocumentationUtilities>();
             
             services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
-
-            services.AddHostedService<UserCreateHandler>();
-            services.AddHostedService<UserUpdateHandler>();
-            services.AddHostedService<UserDeleteHandler>();
+            services.AddScoped<ICategoryCreateValidator, CategoryCreateValidator>();
+            services.AddScoped<ICategoryUpdateValidator, CategoryUpdateValidator>();
+            services.AddScoped<IItemCreateValidator, ItemCreateValidator>();
+            services.AddScoped<IItemUpdateValidator, ItemUpdateValidator>();
+            services.AddScoped<IListCreateValidator, ListCreateValidator>();
+            services.AddScoped<IListUpdateValidator, ListUpdateValidator>();
+            services.AddScoped<ILocationCreateValidator, LocationCreateValidator>();
+            services.AddScoped<ILocationUpdateValidator, LocationUpdateValidator>();
+            services.AddScoped<IVendorCreateValidator, VendorCreateValidator>();
+            services.AddScoped<IVendorUpdateValidator, VendorUpdateValidator>();
+            services.AddScoped<IUserCreateValidator, UserCreateValidator>();
+            services.AddScoped<IUserUpdateValidator, UserUpdateValidator>();
+            services.AddScoped<IUserRoleCreateValidator, UserRoleCreateValidator>();
+            services.AddScoped<IUserRoleUpdateValidator, UserRoleUpdateValidator>();
 
             services.AddControllers();
 

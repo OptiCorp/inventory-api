@@ -1,9 +1,10 @@
 using FluentValidation;
-using Inventory.Models.DTOs.ListDTOs;
+using FluentValidation.Results;
+using Inventory.Models;
 
 namespace Inventory.Validations.ListValidations
 {
-    public class ListCreateValidator : AbstractValidator<ListCreateDto>
+    public class ListCreateValidator : AbstractValidator<List>, IListCreateValidator
     {
 
         public ListCreateValidator()
@@ -16,6 +17,12 @@ namespace Inventory.Validations.ListValidations
             
             RuleFor(list => list.CreatedById).NotEmpty().WithMessage("CreatedById is required.")
                 .NotNull().WithMessage("CreatedById cannot be null.");
+        }
+        
+        public async Task<ValidationResult> ValidateAsync(List list)
+        {
+            var result = await ValidateAsync(list);
+            return result;
         }
     }
 }

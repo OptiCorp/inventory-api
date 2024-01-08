@@ -1,9 +1,10 @@
 using FluentValidation;
-using Inventory.Models.DTOs.CategoryDTOs;
+using FluentValidation.Results;
+using Inventory.Models;
 
 namespace Inventory.Validations.CategoryValidations
 {
-    public class CategoryUpdateValidator : AbstractValidator<CategoryUpdateDto>
+    public class CategoryUpdateValidator : AbstractValidator<Category>, ICategoryUpdateValidator
     {
 
         public CategoryUpdateValidator()
@@ -16,6 +17,12 @@ namespace Inventory.Validations.CategoryValidations
             
             RuleFor(category => category.Id).NotEmpty().WithMessage("Category Id is required.")
                 .NotNull().WithMessage("Category Id cannot be null.");
+        }
+        
+        public async Task<ValidationResult> ValidateAsync(Category category)
+        {
+            var result = await ValidateAsync(category);
+            return result;
         }
     }
 }
