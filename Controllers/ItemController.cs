@@ -149,8 +149,8 @@ namespace Inventory.Controllers
 
             return NoContent();
         }
-        [HttpPut]
-        [SwaggerOperation(Summary = "Set parentId to null.", Description = "Set parentId to null.")]
+        [HttpPost]
+        [SwaggerOperation(Summary = "Removes parent id from item.", Description = "Removes parent id from item.")]
         [SwaggerResponse(200, "Item updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Item not found")]
