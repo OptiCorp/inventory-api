@@ -32,8 +32,8 @@ namespace Inventory.Services
         }
 
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type)
-        {   
-            return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
+        {
+            return await _context.Items.Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
                             || c.Description.Contains(searchString))
                             && (type.IsNullOrEmpty() || c.Type == type))
                             .Include(c => c.Parent)
@@ -50,10 +50,10 @@ namespace Inventory.Services
                             .Select(c => _itemUtilities.ItemToResponseDto(c))
                             .ToListAsync();
         }
-        
+
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
-        {   
-            return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
+        {
+            return await _context.Items.Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
                     || c.Description.Contains(searchString)
                     && c.ListId != listId)
                     .Include(c => c.Parent)
@@ -70,7 +70,7 @@ namespace Inventory.Services
                     .Select(c => _itemUtilities.ItemToResponseDto(c))
                     .ToListAsync();
         }
-        
+
         public async Task<IEnumerable<ItemResponseDto>> GetAllItemsByUserIdAsync(string id, int page)
         {
             return await _context.Items.Where(c => c.UserId == id)
@@ -116,12 +116,12 @@ namespace Inventory.Services
                 .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(c => c.Id == id);
-        
+
             if (item == null) return null;
-        
+
             return _itemUtilities.ItemToResponseDto(item);
         }
-        
+
         public async Task<List<string>?> CreateItemAsync(List<ItemCreateDto> itemsDto)
         {
             try
@@ -166,11 +166,11 @@ namespace Inventory.Services
                 return null;
             }
         }
-        
+
         public async Task UpdateItemAsync(string updatedById, ItemUpdateDto updatedItem)
         {
             var item = await _context.Items.Include(c => c.Category).FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
-        
+
             if (item != null)
             {
                 LogEntry logEntry;
@@ -186,7 +186,7 @@ namespace Inventory.Services
                     item.WpId = updatedItem.WpId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
                 if (updatedItem.SerialNumber != item.SerialNumber)
                 {
                     logEntry = new LogEntry
@@ -199,7 +199,7 @@ namespace Inventory.Services
                     item.SerialNumber = updatedItem.SerialNumber;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
                 if (updatedItem.ProductNumber != item.ProductNumber)
                 {
                     logEntry = new LogEntry
@@ -212,7 +212,7 @@ namespace Inventory.Services
                     item.ProductNumber = updatedItem.ProductNumber;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
                 if (updatedItem.Type != item.Type)
                 {
                     logEntry = new LogEntry
@@ -225,7 +225,7 @@ namespace Inventory.Services
                     item.Type = updatedItem.Type;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
                 if (updatedItem.CategoryId != item.CategoryId && updatedItem.CategoryId != null)
                 {
                     var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updatedItem.CategoryId);
@@ -239,7 +239,7 @@ namespace Inventory.Services
                     item.CategoryId = updatedItem.CategoryId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
                 if (updatedItem.LocationId != item.LocationId && updatedItem.LocationId != null)
                 {
                     var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == updatedItem.LocationId);
@@ -253,7 +253,7 @@ namespace Inventory.Services
                     item.LocationId = updatedItem.LocationId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-               
+
                 if (updatedItem.Description != item.Description)
                 {
                     logEntry = new LogEntry
@@ -266,7 +266,7 @@ namespace Inventory.Services
                     item.Description = updatedItem.Description;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
                 if (updatedItem.ParentId != item.ParentId)
                 {
                     logEntry = new LogEntry
@@ -279,7 +279,7 @@ namespace Inventory.Services
                     item.ParentId = updatedItem.ParentId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
-                
+
                 if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
                 {
                     var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedItem.VendorId);
@@ -298,9 +298,21 @@ namespace Inventory.Services
                 item.Comment = updatedItem.Comment;
                 item.ListId = updatedItem.ListId;
                 item.UpdatedDate = DateTime.Now;
-                
+
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task RemoveParentIdAsync(string itemId)
+        {
+            var item = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+
+            if (item != null)
+            {
+                item.ParentId = null;
+                await _context.SaveChangesAsync();
+            }
+
         }
 
         public async Task DeleteItemAsync(string id)
@@ -312,12 +324,12 @@ namespace Inventory.Services
                 {
                     child.ParentId = null;
                 }
-                    
+
                 _context.Items.Remove(item);
                 await _context.SaveChangesAsync();
             }
         }
-        
+
         public async Task<bool> IsWpIdUnique(string id)
         {
             var item = await _context.Items.FirstOrDefaultAsync(c => c.WpId == id);
