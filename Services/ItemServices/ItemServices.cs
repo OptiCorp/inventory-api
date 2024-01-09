@@ -3,6 +3,7 @@ using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Models.DTOs.ItemDTOs;
 using Inventory.Utilities;
+using System.Collections.ObjectModel;
 
 namespace Inventory.Services
 {
@@ -174,6 +175,10 @@ namespace Inventory.Services
 
             if (parentItem != null && childItem != null)
             {
+                if (parentItem.Children == null)
+                {
+                    parentItem.Children = new Collection<Item>();
+                }
                 parentItem.Children.Add(childItem);
                 await _context.SaveChangesAsync();
             }
