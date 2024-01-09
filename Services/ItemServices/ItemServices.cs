@@ -3,6 +3,7 @@ using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Models.DTOs.ItemDTOs;
 using Inventory.Utilities;
+using System.Collections.ObjectModel;
 
 namespace Inventory.Services
 {
@@ -164,6 +165,22 @@ namespace Inventory.Services
             {
                 Console.WriteLine(e);
                 return null;
+            }
+        }
+
+        public async Task AddChildItemToParentAsync(string parentItemId, string childItemId)
+        {
+            var parentItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == parentItemId);
+            var childItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == childItemId);
+
+            if (parentItem != null && childItem != null)
+            {
+                if (parentItem.Children == null)
+                {
+                    parentItem.Children = new Collection<Item>();
+                }
+                parentItem.Children.Add(childItem);
+                await _context.SaveChangesAsync();
             }
         }
 
