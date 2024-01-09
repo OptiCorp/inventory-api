@@ -167,6 +167,18 @@ namespace Inventory.Services
             }
         }
 
+        public async Task AddChildItemToParentAsync(string parentItemId, string childItemId)
+        {
+            var parentItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == parentItemId);
+            var childItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == childItemId);
+
+            if (parentItem != null && childItem != null)
+            {
+                parentItem.Children.Add(childItem);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task UpdateItemAsync(string updatedById, ItemUpdateDto updatedItem)
         {
             var item = await _context.Items.Include(c => c.Category).FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
