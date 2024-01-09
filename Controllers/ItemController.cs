@@ -149,12 +149,12 @@ namespace Inventory.Controllers
 
             return NoContent();
         }
-        [HttpPost]
+        [HttpPost("RemoveParentId")]
         [SwaggerOperation(Summary = "Removes parent id from item.", Description = "Removes parent id from item.")]
         [SwaggerResponse(200, "Item updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Item not found")]
-        public async Task<IActionResult> PutItem(string itemId)
+        public async Task<IActionResult> RemoveParentId(string itemId)
         {
             var item = await _itemService.GetItemByIdAsync(itemId);
             if (item == null)
