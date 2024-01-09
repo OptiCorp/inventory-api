@@ -13,9 +13,12 @@ using Inventory.Utilities;
 using Inventory.Utilities.DocumentationUtilities;
 using Inventory.Validation.UserValidations;
 using Inventory.Validations.CategoryValidations;
+using Inventory.Validations.ItemTemplateValidations;
 using Inventory.Validations.ItemValidations;
 using Inventory.Validations.ListValidations;
 using Inventory.Validations.LocationValidations;
+using Inventory.Validations.PreCheckValidations;
+using Inventory.Validations.SizeValidations;
 using Inventory.Validations.UserRoleValidations;
 using Inventory.Validations.UserValidations;
 using Inventory.Validations.VendorValidations;
@@ -73,6 +76,8 @@ namespace inventory
             services.AddScoped<ICategoryUpdateValidator, CategoryUpdateValidator>();
             services.AddScoped<IItemCreateValidator, ItemCreateValidator>();
             services.AddScoped<IItemUpdateValidator, ItemUpdateValidator>();
+            services.AddScoped<IItemTemplateCreateValidator, ItemTemplateCreateValidator>();
+            services.AddScoped<IItemTemplateUpdateValidator, ItemTemplateUpdateValidator>();
             services.AddScoped<IListCreateValidator, ListCreateValidator>();
             services.AddScoped<IListUpdateValidator, ListUpdateValidator>();
             services.AddScoped<ILocationCreateValidator, LocationCreateValidator>();
@@ -83,6 +88,10 @@ namespace inventory
             services.AddScoped<IUserUpdateValidator, UserUpdateValidator>();
             services.AddScoped<IUserRoleCreateValidator, UserRoleCreateValidator>();
             services.AddScoped<IUserRoleUpdateValidator, UserRoleUpdateValidator>();
+            services.AddScoped<IPreCheckCreateValidator, PreCheckCreateValidator>();
+            services.AddScoped<IPreCheckUpdateValidator, PreCheckUpdateValidator>();
+            services.AddScoped<ISizeCreateValidator, SizeCreateValidator>();
+            services.AddScoped<ISizeUpdateValidator, SizeUpdateValidator>();
 
             services.AddControllers();
 

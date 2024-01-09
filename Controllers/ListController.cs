@@ -1,4 +1,3 @@
-using FluentValidation;
 using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

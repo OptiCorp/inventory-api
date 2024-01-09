@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Azure.Messaging.ServiceBus;
-using System.Text.Json;
 using Inventory.Models;
 using Inventory.Utilities;
 

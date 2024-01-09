@@ -1,5 +1,3 @@
-using FluentValidation;
-using FluentValidation.Results;
 using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -96,7 +94,6 @@ namespace Inventory.Controllers
         
         public async Task<IActionResult> UpdateCategory(string id, Category categoryUpdate)
         {
-            var validator1 = new VendorCreateValidator();
             var validationResult = await _updateValidator.ValidateAsync(categoryUpdate);
             if (!validationResult.IsValid)
             {
