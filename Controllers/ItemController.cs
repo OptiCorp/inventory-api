@@ -20,7 +20,7 @@ namespace Inventory.Controllers
             _itemService = itemService;
             _listService = listService;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all items", Description = "Retrieves a list of all items.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
@@ -28,7 +28,7 @@ namespace Inventory.Controllers
         {
             return Ok(await _itemService.GetAllItemsAsync());
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get item", Description = "Retrieves an item.")]
         [SwaggerResponse(200, "Success", typeof(ItemResponseDto))]
@@ -43,7 +43,7 @@ namespace Inventory.Controllers
 
             return Ok(item);
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
         [SwaggerResponse(201, "Item created", typeof(ItemResponseDto))]
@@ -66,7 +66,7 @@ namespace Inventory.Controllers
                     return ValidationProblem(modelStateDictionary);
                 }
             }
-            
+
             var itemIds = await _itemService.CreateItemAsync(itemCreateDtoList);
             if (itemIds == null)
             {
@@ -79,7 +79,7 @@ namespace Inventory.Controllers
                 var item = await _itemService.GetItemByIdAsync(itemId);
                 items.Add(item);
             }
-            
+
             return CreatedAtAction(nameof(GetItem), new { ids = itemIds }, items);
         }
 
@@ -90,7 +90,7 @@ namespace Inventory.Controllers
         {
             return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString, page, type));
         }
-        
+
         [HttpGet("BySearchStringNotInList/{searchString}")]
         [SwaggerOperation(Summary = "Get items not in list containing search string", Description = "Retrieves items not in list containing search string in WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
@@ -104,7 +104,7 @@ namespace Inventory.Controllers
             }
             return Ok(await _itemService.GetAllItemsNotInListBySearchStringAsync(searchString, listId, page));
         }
-        
+
         [HttpGet("ByUserId/{id}")]
         [SwaggerOperation(Summary = "Get items added by user", Description = "Retrieves items added by the user.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
@@ -112,7 +112,7 @@ namespace Inventory.Controllers
         {
             return Ok(await _itemService.GetAllItemsByUserIdAsync(id, page));
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update item", Description = "Updates an item.")]
         [SwaggerResponse(200, "Item updated")]
@@ -133,7 +133,7 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
+
             if (id != itemUpdateDto.Id)
             {
                 return BadRequest("Id does not match");
@@ -149,7 +149,24 @@ namespace Inventory.Controllers
 
             return NoContent();
         }
-        
+        [HttpPost("RemoveParentId")]
+        [SwaggerOperation(Summary = "Removes parent id from item.", Description = "Removes parent id from item.")]
+        [SwaggerResponse(200, "Item updated")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<IActionResult> RemoveParentId(string itemId)
+        {
+            var item = await _itemService.GetItemByIdAsync(itemId);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            await _itemService.RemoveParentIdAsync(itemId);
+
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete item", Description = "Deletes an item.")]
         [SwaggerResponse(200, "Item deleted")]
@@ -166,7 +183,7 @@ namespace Inventory.Controllers
 
             return NoContent();
         }
-        
+
         [HttpGet("IsWpIdUnique/{wpId}")]
         [SwaggerOperation(Summary = "Unique WellPartner Id check", Description = "Checks if WellPartner Id is unique.")]
         [SwaggerResponse(200, "Success", typeof(bool))]
