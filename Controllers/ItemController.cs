@@ -83,6 +83,30 @@ namespace Inventory.Controllers
             return CreatedAtAction(nameof(GetItem), new { ids = itemIds }, items);
         }
 
+        [HttpPost("AddChildItemToParent")]
+        [SwaggerOperation(Summary = "Add child item to given item.", Description = "Add child item to given item.")]
+        [SwaggerResponse(200, "Item updated")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<IActionResult> AddChildItemToParent(string itemId, string childItemId)
+        {
+            var item = await _itemService.GetItemByIdAsync(itemId);
+            var childItem = await _itemService.GetItemByIdAsync(childItemId);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            if (childItem == null)
+            {
+                return NotFound("Child item not found");
+            }
+
+            await _itemService.AddChildItemToParentAsync(itemId, childItemId);
+
+            return NoContent();
+        }
+
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemResponseDto>))]
