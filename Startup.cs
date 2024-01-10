@@ -10,7 +10,6 @@ using Serilog;
 using Inventory.Models;
 using Inventory.Services;
 using Inventory.Utilities;
-using Inventory.Utilities.DocumentationUtilities;
 using Inventory.Validation.UserValidations;
 using Inventory.Validations.CategoryValidations;
 using Inventory.Validations.ItemTemplateValidations;
@@ -61,6 +60,7 @@ namespace inventory
             });
             
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserRoleService, UserRoleService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IListService, ListService>();
             services.AddScoped<ICategoryService, CategoryService>();
@@ -69,9 +69,8 @@ namespace inventory
             services.AddScoped<IDocumentService, DocumentService>();
             
             services.AddScoped<IUserUtilities, UserUtilities>();
-            services.AddScoped<IDocumentationUtilities, DocumentationUtilities>();
             
-            services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
+            // services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
             services.AddScoped<ICategoryCreateValidator, CategoryCreateValidator>();
             services.AddScoped<ICategoryUpdateValidator, CategoryUpdateValidator>();
             services.AddScoped<IItemCreateValidator, ItemCreateValidator>();
@@ -102,8 +101,7 @@ namespace inventory
 
 
             services.AddDbContext<InventoryDbContext>(options =>
-                options.UseSqlServer(connectionString
-            ));
+                options.UseInMemoryDatabase("temporaryDatabase"));
 
 
 
@@ -161,7 +159,7 @@ namespace inventory
                 .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
-            dbContext.Database.Migrate();
+            // dbContext.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

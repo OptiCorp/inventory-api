@@ -50,11 +50,5 @@ namespace Inventory.Validations.ItemValidations
             RuleFor(item => item.Comment)
                 .MaximumLength(200).WithMessage("Comment cannot exceed 200 characters.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(Item item)
-        {
-            var result = await ValidateAsync(item);
-            return result;
-        }
     }
 }

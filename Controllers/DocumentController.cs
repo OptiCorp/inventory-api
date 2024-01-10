@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DocumentDtos;
 using Inventory.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -28,14 +29,15 @@ namespace Inventory.Controllers
             {
                 return NotFound("Item not found");
             }
-            return Ok(await _documentService.GetDocumentationByItemId(id));
+
+            return Ok(item.Documents);
         }
 
         [HttpPost]
         [SwaggerOperation(Summary = "Upload documentation for item", Description = "Uploads documents for item")]
         [SwaggerResponse(201, "Document uploaded", typeof(Document))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult> UploadDocument([FromForm] UploadDocumentDto document)
+        public async Task<ActionResult> UploadDocument([FromForm] DocumentUploadDto document)
         {
             var item = await _itemService.GetItemByIdAsync(document.ItemId);
             if (item == null)
@@ -43,14 +45,12 @@ namespace Inventory.Controllers
                 return NotFound("Item not found");
             }
 
-            string[] newDocumentationIds = await _documentService.UploadDocumentationAsync(document);
-            var documentations = new List<Document>();
-            foreach (var id in newDocumentationIds)
-            {
-                Document newDocumentation = await _documentService.GetDocumentationById(id); 
-            }
+            string newDocumentId = await _documentService.UploadDocumentAsync(document);
+            
+            Document newDocument = await _documentService.GetDocumentByIdAsync(newDocumentId); 
+            
 
-            return CreatedAtAction(nameof(PostDocumentation), new { ids = newDocumentationIds }, documentations);
+            return CreatedAtAction(nameof(UploadDocument), new { id = newDocumentId }, newDocument);
         }
 
         [HttpDelete("{documentId}")]
@@ -59,17 +59,13 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "User or document not found")]
         public async Task<IActionResult> DeleteDocumentFromItem(string documentId, string itemId)
         {
-            var document = await _documentService.GetDocumentationById(documentId);
+            var document = await _documentService.GetDocumentByIdAsync(documentId);
             if (document == null)
             {
                 return NotFound("Document not found");
             }
-            if (document.ItemId != itemId)
-            {
-                return NotFound("Document not in item");
-            }
 
-            await _documentService.DeleteDocumentFromItem(document);
+            await _documentService.DeleteDocumentFromItemAsync(document, itemId);
 
             return Ok();
         }

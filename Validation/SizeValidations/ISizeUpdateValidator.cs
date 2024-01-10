@@ -1,9 +1,9 @@
+using FluentValidation;
 using FluentValidation.Results;
 using Inventory.Models;
 
 namespace Inventory.Validations.SizeValidations;
 
-public interface ISizeUpdateValidator
+public interface ISizeUpdateValidator : IValidator<Size>
 {
-    Task<ValidationResult> ValidateAsync(Size size);
 }

@@ -18,11 +18,5 @@ namespace Inventory.Validations.VendorValidations
             RuleFor(vendor => vendor.Id).NotEmpty().WithMessage("Vendor Id is required.")
                 .NotNull().WithMessage("Vendor Id cannot be null.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(Vendor vendor)
-        {
-            var result = await ValidateAsync(vendor);
-            return result;
-        }
     }
 }

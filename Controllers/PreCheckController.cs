@@ -81,8 +81,6 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "PreCheck updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "PreCheck not found")]
-        
-        
         public async Task<IActionResult> UpdatePreCheck(string id, PreCheck preCheckUpdate)
         {
             var validationResult = await _updateValidator.ValidateAsync(preCheckUpdate);

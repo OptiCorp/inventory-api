@@ -18,11 +18,5 @@ namespace Inventory.Validations.ListValidations
             RuleFor(list => list.Id).NotEmpty().WithMessage("List Id is required.")
                 .NotNull().WithMessage("List Id cannot be null.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(List list)
-        {
-            var result = await ValidateAsync(list);
-            return result;
-        }
     }
 }

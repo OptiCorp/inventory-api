@@ -1,9 +1,9 @@
+using FluentValidation;
 using FluentValidation.Results;
 using Inventory.Models;
 
 namespace Inventory.Validations.VendorValidations;
 
-public interface IVendorCreateValidator
+public interface IVendorCreateValidator : IValidator<Vendor>
 {
-    Task<ValidationResult> ValidateAsync(Vendor vendor);
 }

@@ -18,11 +18,5 @@ namespace Inventory.Validations.LocationValidations
             RuleFor(location => location.CreatedById).NotEmpty().WithMessage("AddedById is required.")
                 .NotNull().WithMessage("AddedById cannot be null.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(Location location)
-        {
-            var result = await ValidateAsync(location);
-            return result;
-        }
     }
 }

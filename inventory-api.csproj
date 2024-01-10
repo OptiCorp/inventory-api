@@ -59,7 +59,6 @@
     <None Remove="Validation\ChecklistTaskValidations\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Validation\DocumentationValidations\" />
   </ItemGroup>
   <ItemGroup>

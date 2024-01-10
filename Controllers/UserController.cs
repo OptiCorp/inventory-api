@@ -3,6 +3,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Azure.Identity;
+using FluentValidation;
 using Inventory.Models;
 using Inventory.Services;
 using Inventory.Utilities;
@@ -12,7 +13,7 @@ using Microsoft.Graph;
 namespace Inventory.Controllers
 {
     [ApiController]
-    [Route("api")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -90,14 +91,17 @@ namespace Inventory.Controllers
         [SwaggerResponse(400, "Invalid request")]
         public async Task<IActionResult> CreateUser(User userCreate)
         {
-            if (!string.IsNullOrEmpty(userCreate.UserRoleId))
-            {
-                ValidationResult validationResult = await _createValidator.ValidateAsync(userCreate);
+            
 
+
+                ValidationResult validationResult = await _createValidator.ValidateAsync(userCreate);
+                
+                // Console.WriteLine(validationResult.IsValid);
+                
                 if (!validationResult.IsValid)
                 {
                     var modelStateDictionary = new ModelStateDictionary();
-
+                
                     foreach (ValidationFailure failure in validationResult.Errors)
                     {
                         modelStateDictionary.AddModelError(
@@ -105,37 +109,34 @@ namespace Inventory.Controllers
                             failure.ErrorMessage
                         );
                     }
-
+                
                     return ValidationProblem(modelStateDictionary);
                 }
-            }
             
-            try {
-                string[] scopes = new[] { "https://graph.microsoft.com/.default" };
-                var graphClient = new GraphServiceClient(new ChainedTokenCredential(
-                                    new ManagedIdentityCredential(Environment.GetEnvironmentVariable("AZURE_CLIENT_ID")),
-                                    new EnvironmentCredential()),scopes);
-                var body = new Microsoft.Graph.Models.Invitation
-                {
-                    InvitedUserEmailAddress = userCreate.Email,
-                    InviteRedirectUrl = "https://um-app-prod.azurewebsites.net/",
-                };
-                var response = await graphClient.Invitations.PostAsync(body);
-            } catch (Exception ex) 
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
+            
+            // try {
+            //     string[] scopes = new[] { "https://graph.microsoft.com/.default" };
+            //     var graphClient = new GraphServiceClient(new ChainedTokenCredential(
+            //                         new ManagedIdentityCredential(Environment.GetEnvironmentVariable("AZURE_CLIENT_ID")),
+            //                         new EnvironmentCredential()),scopes);
+            //     var body = new Microsoft.Graph.Models.Invitation
+            //     {
+            //         InvitedUserEmailAddress = userCreate.Email,
+            //         InviteRedirectUrl = "https://um-app-prod.azurewebsites.net/",
+            //     };
+            //     var response = await graphClient.Invitations.PostAsync(body);
+            // } catch (Exception ex) 
+            // {
+            //     Console.WriteLine(ex);
+            //     throw;
+            // }
 
-            var users = await _userService.GetAllUsersAsync();
-
-
-            if (_userUtilities.IsUsernameTaken(users, userCreate.Username))
+            if (await _userService.IsUsernameTaken(userCreate.Username))
             {
                 return Conflict($"The username '{userCreate.Username}' is taken.");
             }
 
-            if (_userUtilities.IsEmailTaken(users, userCreate.Email))
+            if (await _userService.IsEmailTaken(userCreate.Email))
             {
                 return Conflict("Invalid email");
             }
@@ -157,11 +158,11 @@ namespace Inventory.Controllers
             users = users.Where(u => u.Id != userUpdate.Id);
 
             ValidationResult validationResult = await _updateValidator.ValidateAsync(userUpdate);
-
+            
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
-
+            
                 foreach (ValidationFailure failure in validationResult.Errors)
                 {
                     modelStateDictionary.AddModelError(
@@ -172,12 +173,12 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
 
-            if (_userUtilities.IsUsernameTaken(users, userUpdate.Username))
+            if (await _userService.IsUsernameTaken(userUpdate.Username))
             {
                 return BadRequest($"The username '{userUpdate.Username}' is taken.");
             }
 
-            if (_userUtilities.IsEmailTaken(users, userUpdate.Email))
+            if (await _userService.IsEmailTaken(userUpdate.Email))
             {
                 return BadRequest("Invalid email.");
             }

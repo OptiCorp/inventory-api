@@ -5,15 +5,6 @@ namespace Inventory.Utilities
 {
     public class UserUtilities : IUserUtilities
     {
-        public bool IsUsernameTaken(IEnumerable<User> users, string username)
-        {
-            return users.Any(u => u.Username == username);
-        }
-
-        public bool IsEmailTaken(IEnumerable<User> users, string userEmail)
-        {
-            return users.Any(u => u.Email == userEmail);
-        }
 
         public bool IsValidStatus(string value)
         {

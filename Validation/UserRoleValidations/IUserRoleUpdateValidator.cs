@@ -1,9 +1,9 @@
+using FluentValidation;
 using FluentValidation.Results;
 using Inventory.Models;
 
 namespace Inventory.Validations.UserRoleValidations;
 
-public interface IUserRoleUpdateValidator
+public interface IUserRoleUpdateValidator : IValidator<UserRole>
 {
-    Task<ValidationResult> ValidateAsync(UserRole role);
 }

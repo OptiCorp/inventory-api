@@ -14,11 +14,5 @@ namespace Inventory.Validations.PreCheckValidations
             RuleFor(preCheck => preCheck.Comment)
                 .MaximumLength(200).WithMessage("Comment cannot exceed 200 characters.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(PreCheck preCheck)
-        {
-            var result = await ValidateAsync(preCheck);
-            return result;
-        }
     }
 }

@@ -5,6 +5,8 @@ namespace Inventory.Services
 {
     public interface IUserRoleService
     {
+        Task<bool> IsUserRoleNameTaken(string userRoleName);
+        Task<bool> IsValidUserRole(string userRoleId);
         Task<IEnumerable<UserRole>> GetAllUserRolesAsync();
         Task<UserRole> GetUserRoleByIdAsync(string id);
         Task<string> CreateUserRoleAsync(UserRole userRole);

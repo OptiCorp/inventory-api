@@ -1,9 +1,9 @@
+using FluentValidation;
 using FluentValidation.Results;
 using Inventory.Models;
 
 namespace Inventory.Validations.ItemValidations;
 
-public interface IItemUpdateValidator
+public interface IItemUpdateValidator : IValidator<Item>
 {
-    Task<ValidationResult> ValidateAsync(Item item);
 }

@@ -18,11 +18,5 @@ namespace Inventory.Validations.CategoryValidations
             RuleFor(category => category.CreatedById).NotEmpty().WithMessage("AddedById is required.")
                 .NotNull().WithMessage("AddedById cannot be null.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(Category category)
-        {
-            var result = await ValidateAsync(category);
-            return result;
-        }
     }
 }

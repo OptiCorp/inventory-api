@@ -51,6 +51,6 @@ namespace Inventory.Models
         
         public ItemTemplate? ItemTemplate { get; set; }
         
-        public IEnumerable<Document>? Documents { get; set; }
+        public ICollection<Document>? Documents { get; set; }
     }
 }

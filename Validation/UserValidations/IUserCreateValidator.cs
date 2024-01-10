@@ -1,9 +1,9 @@
+using FluentValidation;
 using FluentValidation.Results;
 using Inventory.Models;
 
 namespace Inventory.Validations.UserValidations;
 
-public interface IUserCreateValidator
+public interface IUserCreateValidator : IValidator<User>
 {
-    Task<ValidationResult> ValidateAsync(User user);
 }

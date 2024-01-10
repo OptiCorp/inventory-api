@@ -1,9 +1,9 @@
+using FluentValidation;
 using FluentValidation.Results;
 using Inventory.Models;
 
 namespace Inventory.Validations.PreCheckValidations;
 
-public interface IPreCheckCreateValidator
+public interface IPreCheckCreateValidator : IValidator<PreCheck>
 {
-    Task<ValidationResult> ValidateAsync(PreCheck preCheck);
 }

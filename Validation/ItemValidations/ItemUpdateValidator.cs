@@ -58,11 +58,5 @@ namespace Inventory.Validations.ItemValidations
                 .MaximumLength(40).WithMessage("List Id cannot exceed 40 characters.")
                 .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("List Id can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(Item item)
-        {
-            var result = await ValidateAsync(item);
-            return result;
-        }
     }
 }

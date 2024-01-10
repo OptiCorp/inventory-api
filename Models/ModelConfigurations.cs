@@ -12,7 +12,7 @@ namespace Inventory.Configuration
             
             modelBuilder.Entity<User>()
                 .HasOne(c => c.UserRole)
-                .WithMany(c => c.Users)
+                .WithMany()
                 .HasForeignKey(c => c.UserRoleId)
                 .OnDelete(DeleteBehavior.NoAction);
         }

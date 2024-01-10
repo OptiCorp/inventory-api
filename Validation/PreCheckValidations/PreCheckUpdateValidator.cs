@@ -17,11 +17,5 @@ namespace Inventory.Validations.PreCheckValidations
             RuleFor(preCheck => preCheck.Id).NotEmpty().WithMessage("PreCheck Id is required.")
                 .NotNull().WithMessage("PreCheck Id cannot be null.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(PreCheck preCheck)
-        {
-            var result = await ValidateAsync(preCheck);
-            return result;
-        }
     }
 }

@@ -28,11 +28,5 @@ namespace Inventory.Validations.SizeValidations
                 .MinimumLength(1).WithMessage("Unit must be at least 1 character.")
                 .MaximumLength(40).WithMessage("Unit cannot exceed 40 characters.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(Size size)
-        {
-            var result = await ValidateAsync(size);
-            return result;
-        }
     }
 }

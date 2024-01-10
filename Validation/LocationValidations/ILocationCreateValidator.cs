@@ -1,9 +1,9 @@
+using FluentValidation;
 using FluentValidation.Results;
 using Inventory.Models;
 
 namespace Inventory.Validations.LocationValidations;
 
-public interface ILocationCreateValidator
+public interface ILocationCreateValidator : IValidator<Location>
 {
-    Task<ValidationResult> ValidateAsync(Location location);
 }

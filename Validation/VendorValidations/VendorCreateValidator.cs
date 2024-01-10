@@ -18,11 +18,5 @@ namespace Inventory.Validations.VendorValidations
             RuleFor(vendor => vendor.CreatedById).NotEmpty().WithMessage("AddedById is required.")
                 .NotNull().WithMessage("AddedById cannot be null.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(Vendor vendor)
-        {
-            var result = await ValidateAsync(vendor);
-            return result;
-        }
     }
 }

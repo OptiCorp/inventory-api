@@ -14,6 +14,18 @@ namespace Inventory.Services
             _context = context;
             _userUtilities = userUtilities;
         }
+
+        public async Task<bool> IsUsernameTaken(string userName)
+        {
+            var users = await _context.User.ToListAsync();
+            return users.Any(user => user.Username == userName);
+        }
+
+        public async Task<bool> IsEmailTaken(string userEmail)
+        {
+            var users = await _context.User.ToListAsync();
+            return users.Any(user => user.Email == userEmail);
+        }
         
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {

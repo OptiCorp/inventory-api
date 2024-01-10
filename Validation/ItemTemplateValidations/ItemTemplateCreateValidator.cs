@@ -39,11 +39,5 @@ namespace Inventory.Validations.ItemTemplateValidations
             RuleFor(itemTemplate => itemTemplate.Description)
                 .MaximumLength(200).WithMessage("Description cannot exceed 200 characters.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(ItemTemplate itemTemplateTemplate)
-        {
-            var result = await ValidateAsync(itemTemplateTemplate);
-            return result;
-        }
     }
 }

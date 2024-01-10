@@ -18,11 +18,5 @@ namespace Inventory.Validations.LocationValidations
             RuleFor(location => location.Id).NotEmpty().WithMessage("Location Id is required.")
                 .NotNull().WithMessage("Location Id cannot be null.");
         }
-        
-        public async Task<ValidationResult> ValidateAsync(Location location)
-        {
-            var result = await ValidateAsync(location);
-            return result;
-        }
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace Inventory.Controllers
 {
     [ApiController]
-    [Route("api")]
+    [Route("api/[controller]")]
     public class UserRoleController : ControllerBase
     {
         private readonly IUserRoleService _userRoleService;
@@ -53,11 +53,11 @@ namespace Inventory.Controllers
         public async Task<IActionResult> CreateUserRole(UserRole userRole)
         {
             ValidationResult validationResult = await _createValidator.ValidateAsync(userRole);
-
+            
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
-
+            
                 foreach (ValidationFailure failure in validationResult.Errors)
                 {
                     modelStateDictionary.AddModelError(
@@ -82,11 +82,11 @@ namespace Inventory.Controllers
         public async Task<IActionResult> UpdateUserRole(UserRole updatedUserRole)
         {
             ValidationResult validationResult = await _updateValidator.ValidateAsync(updatedUserRole);
-
+            
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
-
+            
                 foreach (ValidationFailure failure in validationResult.Errors)
                 {
                     modelStateDictionary.AddModelError(
