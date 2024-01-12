@@ -10,7 +10,7 @@ using Serilog;
 using Inventory.Models;
 using Inventory.Services;
 using Inventory.Utilities;
-using Inventory.Validation.UserValidations;
+// using Inventory.Validation.UserValidations;
 using Inventory.Validations.CategoryValidations;
 using Inventory.Validations.ItemTemplateValidations;
 using Inventory.Validations.ItemValidations;
@@ -18,8 +18,8 @@ using Inventory.Validations.ListValidations;
 using Inventory.Validations.LocationValidations;
 using Inventory.Validations.PreCheckValidations;
 using Inventory.Validations.SizeValidations;
-using Inventory.Validations.UserRoleValidations;
-using Inventory.Validations.UserValidations;
+// using Inventory.Validations.UserRoleValidations;
+// using Inventory.Validations.UserValidations;
 using Inventory.Validations.VendorValidations;
 
 namespace inventory
@@ -60,7 +60,7 @@ namespace inventory
             });
             
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUserRoleService, UserRoleService>();
+            // services.AddScoped<IUserRoleService, UserRoleService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IListService, ListService>();
             services.AddScoped<ICategoryService, CategoryService>();
@@ -70,7 +70,6 @@ namespace inventory
             
             services.AddScoped<IUserUtilities, UserUtilities>();
             
-            // services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
             services.AddScoped<ICategoryCreateValidator, CategoryCreateValidator>();
             services.AddScoped<ICategoryUpdateValidator, CategoryUpdateValidator>();
             services.AddScoped<IItemCreateValidator, ItemCreateValidator>();
@@ -83,14 +82,18 @@ namespace inventory
             services.AddScoped<ILocationUpdateValidator, LocationUpdateValidator>();
             services.AddScoped<IVendorCreateValidator, VendorCreateValidator>();
             services.AddScoped<IVendorUpdateValidator, VendorUpdateValidator>();
-            services.AddScoped<IUserCreateValidator, UserCreateValidator>();
-            services.AddScoped<IUserUpdateValidator, UserUpdateValidator>();
-            services.AddScoped<IUserRoleCreateValidator, UserRoleCreateValidator>();
-            services.AddScoped<IUserRoleUpdateValidator, UserRoleUpdateValidator>();
+            // services.AddScoped<IUserCreateValidator, UserCreateValidator>();
+            // services.AddScoped<IUserUpdateValidator, UserUpdateValidator>();
+            // services.AddScoped<IUserRoleCreateValidator, UserRoleCreateValidator>();
+            // services.AddScoped<IUserRoleUpdateValidator, UserRoleUpdateValidator>();
             services.AddScoped<IPreCheckCreateValidator, PreCheckCreateValidator>();
             services.AddScoped<IPreCheckUpdateValidator, PreCheckUpdateValidator>();
             services.AddScoped<ISizeCreateValidator, SizeCreateValidator>();
             services.AddScoped<ISizeUpdateValidator, SizeUpdateValidator>();
+            
+            services.AddHostedService<UserCreateHandler>();
+            services.AddHostedService<UserUpdateHandler>();
+            services.AddHostedService<UserDeleteHandler>();
 
             services.AddControllers();
 

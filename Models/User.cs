@@ -17,10 +17,15 @@ namespace Inventory.Models
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
+        
+        public string? UmId { get; set; }
 
         public string? AzureAdUserId { get; set; }
+        
+        [StringLength(150)]
+        public string? UserRole { get; set; }
 
-        public string? UserRoleId { get; set; }
+        // public string? UserRoleId { get; set; }
 
         [StringLength(50)]
         public string? FirstName { get; set; }
@@ -42,6 +47,6 @@ namespace Inventory.Models
 
         public DateTime? UpdatedDate { get; set; }
         
-        public UserRole? UserRole { get; set; }
+        // public UserRole? UserRole { get; set; }
     }
 }

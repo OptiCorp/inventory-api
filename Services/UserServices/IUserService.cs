@@ -19,9 +19,9 @@ namespace Inventory.Services
         Task<User> GetUserByUsernameAsync(string name);
         Task<User> GetUserByAzureAdUserIdAsync(string azureAdUserId);
         Task<User> GetUserByIdAsync(string id);
-        Task UpdateUserAsync(User user);
-        Task<string> CreateUserAsync(User user);
-        Task DeleteUserAsync(string id);
-        Task HardDeleteUserAsync(string id);
+        // Task UpdateUserAsync(User user);
+        // Task<string> CreateUserAsync(User user);
+        // Task DeleteUserAsync(string id);
+        // Task HardDeleteUserAsync(string id);
     }
 }
