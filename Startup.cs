@@ -100,9 +100,10 @@ namespace inventory
             var connectionString = GetSecretValueFromKeyVault(Configuration["AzureKeyVault:ConnectionStringSecretName"]);
 
 
-            services.AddDbContext<InventoryDbContext>(options =>
-                options.UseInMemoryDatabase("temporaryDatabase"));
+            // services.AddDbContext<InventoryDbContext>(options =>
+            //     options.UseInMemoryDatabase("temporaryDatabase"));
 
+            services.AddDbContext<InventoryDbContext>(options => options.UseSqlServer(connectionString));
 
 
 

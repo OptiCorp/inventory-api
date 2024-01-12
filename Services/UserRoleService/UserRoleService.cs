@@ -12,17 +12,6 @@ namespace Inventory.Services
             _context = context;
         }
 
-        public async Task<bool> IsUserRoleNameTaken(string userRoleName)
-        {
-            var userRoles = await _context.UserRoles.ToListAsync();
-            return userRoles.Any(userRole => userRole.Name == userRoleName);
-        }
-
-        public async Task<bool> IsValidUserRole(string userRoleId)
-        {
-            var userRoles = await _context.UserRoles.ToListAsync();
-            return userRoles.Any(userRole => userRole.Id == userRoleId);
-        }
 
         public async Task<IEnumerable<UserRole>> GetAllUserRolesAsync()
         {
@@ -69,6 +58,18 @@ namespace Inventory.Services
                 await _context.SaveChangesAsync();
             }
 
+        }
+        
+        public async Task<bool> IsUserRoleNameTaken(string userRoleName)
+        {
+            var userRoles = await _context.UserRoles.ToListAsync();
+            return userRoles.Any(userRole => userRole.Name == userRoleName);
+        }
+
+        public async Task<bool> IsValidUserRole(string userRoleId)
+        {
+            var userRoles = await _context.UserRoles.ToListAsync();
+            return userRoles.Any(userRole => userRole.Id == userRoleId);
         }
         
         public async Task<bool> IsUserRoleInUseAsync(UserRole userRole)

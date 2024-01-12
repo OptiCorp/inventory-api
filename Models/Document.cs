@@ -15,8 +15,5 @@ namespace Inventory.Models
         
         public DocumentType? DocumentType { get; set; }
         
-        public IEnumerable<ItemTemplate>? ItemTemplates { get; set; }
-        
-        public IEnumerable<Item>? Items { get; set; }
     }
 }

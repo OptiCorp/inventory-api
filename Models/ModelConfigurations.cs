@@ -60,7 +60,7 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<Item>()
                 .HasMany(c => c.Documents)
-                .WithMany(c=> c.Items);
+                .WithMany();
         }
     }
     
@@ -143,7 +143,7 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<ItemTemplate>()
                 .HasMany(d => d.Documents)
-                .WithMany(d => d.ItemTemplates);
+                .WithMany();
         }
     }
     

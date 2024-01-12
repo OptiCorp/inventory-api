@@ -101,6 +101,7 @@ namespace Inventory.Services
         public async Task<Item> GetItemByIdAsync(string id)
         {
             return await _context.Items
+                .Include(c => c.Documents)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
