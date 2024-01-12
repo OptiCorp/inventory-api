@@ -90,9 +90,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "Item not found")]
         public async Task<IActionResult> AddChildItemToParent(string itemId, string childItemId)
         {
-            var item = await _itemService.GetItemByIdAsync(itemId);
+            var parentItem = await _itemService.GetItemByIdAsync(itemId);
             var childItem = await _itemService.GetItemByIdAsync(childItemId);
-            if (item == null)
+            if (parentItem == null)
             {
                 return NotFound("Item not found");
             }
@@ -100,6 +100,11 @@ namespace Inventory.Controllers
             if (childItem == null)
             {
                 return NotFound("Child item not found");
+            }
+
+            if (parentItem.Id == childItem.Id)
+            {
+                return BadRequest("You cannot add an item as a child of itself. Please select a different item to be linked.");
             }
 
             await _itemService.AddChildItemToParentAsync(itemId, childItemId);
