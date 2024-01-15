@@ -17,6 +17,7 @@ namespace Inventory.Services
             return await _context.ItemTemplates
                 .Include(c => c.Documents)
                 .Include(c => c.Sizes)
+                .Include(c => c.CreatedBy)
                 .ToListAsync();
         }
         
@@ -26,6 +27,7 @@ namespace Inventory.Services
             return await _context.ItemTemplates
                 .Include(c => c.Documents)
                 .Include(c => c.Sizes)
+                .Include(c => c.CreatedBy)
                 .FirstOrDefaultAsync(c => c.Id == id);
             
         }

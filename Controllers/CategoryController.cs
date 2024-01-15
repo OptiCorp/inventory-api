@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
 using Inventory.Validations.CategoryValidations;
-using Inventory.Validations.VendorValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
@@ -90,8 +89,6 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Category updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Category not found")]
-        
-        
         public async Task<IActionResult> UpdateCategory(string id, Category categoryUpdate)
         {
             var validationResult = await _updateValidator.ValidateAsync(categoryUpdate);

@@ -19,21 +19,18 @@ namespace Inventory.Services
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             return await _context.User
-                            .Include(u => u.UserRole)
                             .Where(s => s.Status == UserStatus.Active)
                             .ToListAsync();
         }
         public async Task<IEnumerable<User>> GetAllUsersAdminAsync()
         {
             return await _context.User
-                            .Include(u => u.UserRole)
                             .ToListAsync();
         }
 
         public async Task<User> GetUserByIdAsync(string id)
         { 
             return await _context.User
-                            .Include(u => u.UserRole)
                             .FirstOrDefaultAsync(u => u.Id == id);
 
         }
@@ -41,13 +38,11 @@ namespace Inventory.Services
         public async Task<User> GetUserByAzureAdUserIdAsync(string azureAdUserId)
         {
             return await _context.User
-                            .Include(u => u.UserRole)
                             .FirstOrDefaultAsync(u => u.AzureAdUserId == azureAdUserId);
         }
         public async Task<User> GetUserByUsernameAsync(string username)
         {
             return await _context.User
-                            .Include(u => u.UserRole)
                             .FirstOrDefaultAsync(u => u.Username == username);
         }
 

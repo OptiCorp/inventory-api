@@ -16,12 +16,14 @@ namespace Inventory.Services
         {
             return await _context.Lists.Include(c => c.CreatedBy)
                                             .Include(c => c.Items)
+                                            .ThenInclude(c => c.ItemTemplate)
                                             .ToListAsync();
         }
         
         public async Task<IEnumerable<List>> GetAllListsBySearchStringAsync(string searchString, int page, string userId)
         {   
             return await _context.Lists.Include(c => c.Items)
+                .ThenInclude(c => c.ItemTemplate)
                 .Where(c => c.CreatedById == userId)
                 .Where(list =>
                     list.Title.Contains(searchString) ||
@@ -42,6 +44,7 @@ namespace Inventory.Services
             return await _context.Lists.Where(c => c.CreatedById == id)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Items)
+                .ThenInclude(c => c.ItemTemplate)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10)
@@ -53,6 +56,7 @@ namespace Inventory.Services
             return await _context.Lists
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Items)
+                .ThenInclude(c => c.ItemTemplate)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
         
