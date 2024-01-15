@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
-    public class PreCheckServices : IPreCheckService
+    public class PreCheckService : IPreCheckService
     {
         private readonly InventoryDbContext _context;
 
-        public PreCheckServices(InventoryDbContext context)
+        public PreCheckService(InventoryDbContext context)
         {
             _context = context;
         }

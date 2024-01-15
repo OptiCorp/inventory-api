@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
 {
-    public class SizeServices : ISizeService
+    public class SizeService : ISizeService
     {
         private readonly InventoryDbContext _context;
 
-        public SizeServices(InventoryDbContext context)
+        public SizeService(InventoryDbContext context)
         {
             _context = context;
         }
