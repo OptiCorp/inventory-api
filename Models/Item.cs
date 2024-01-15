@@ -35,8 +35,6 @@ namespace Inventory.Models
         
         public Category? Category { get; set; }
         
-        public Item? Parent { get; set; }
-        
         public IEnumerable<Item>? Children { get; set; }
         
         public Vendor? Vendor { get; set; }

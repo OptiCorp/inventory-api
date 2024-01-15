@@ -35,7 +35,7 @@ namespace Inventory.Configuration
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Item>()
-                .HasOne(c => c.Parent)
+                .HasOne<Item>()
                 .WithMany(c => c.Children)
                 .HasForeignKey(c => c.ParentId)
                 .OnDelete(DeleteBehavior.NoAction);
@@ -54,7 +54,7 @@ namespace Inventory.Configuration
             
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.ItemTemplate)
-                .WithMany( c => c.Items)
+                .WithMany()
                 .HasForeignKey(c => c.ItemTemplateId)
                 .OnDelete(DeleteBehavior.SetNull);
 

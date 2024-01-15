@@ -15,7 +15,7 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<Item>> GetAllItemsAsync()
         {
-            return await _context.Items.Include(c => c.Parent)
+            return await _context.Items
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
@@ -33,7 +33,6 @@ namespace Inventory.Services
                             .Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
                             || c.ItemTemplate.Description.Contains(searchString))
                             && (type.IsNullOrEmpty() || c.ItemTemplate.Type == type))
-                            .Include(c => c.Parent)
                             .Include(c => c.Children)
                             .Include(c => c.CreatedBy)
                             .Include(c => c.Vendor)
@@ -53,7 +52,6 @@ namespace Inventory.Services
                     .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
                     || c.ItemTemplate.Description.Contains(searchString)
                     && c.ListId != listId)
-                    .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.CreatedBy)
                     .Include(c => c.Vendor)
@@ -70,7 +68,6 @@ namespace Inventory.Services
         public async Task<IEnumerable<Item>> GetAllItemsByUserIdAsync(string id, int page)
         {
             return await _context.Items.Where(c => c.CreatedById == id)
-                .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
@@ -87,7 +84,6 @@ namespace Inventory.Services
         public async Task<IEnumerable<Item>> GetChildrenAsync(string parentId)
         {
             return await _context.Items.Where(c => c.ParentId == parentId)
-                .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
@@ -102,7 +98,6 @@ namespace Inventory.Services
         {
             return await _context.Items
                 .Include(c => c.Documents)
-                .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)

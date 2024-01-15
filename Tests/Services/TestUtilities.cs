@@ -113,7 +113,6 @@ namespace Inventory.Tests.Services
                                 LocationId = $"ItemChildLocation {i}-{j}",
                                 SerialNumber = $"ItemChildSerialNumber {i}-{j}",
                                 VendorId = $"ItemChildVendor {i}-{j}",
-                                Parent = newItem,
                                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                                     TimeZoneInfo.FindSystemTimeZoneById(("Central European Standard Time"))),
                                 

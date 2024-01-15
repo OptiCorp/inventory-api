@@ -66,14 +66,9 @@ namespace Inventory.Services
 
         public async Task DeleteItemTemplateAsync(string id)
         {
-            var itemTemplate = await _context.ItemTemplates.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == id);
+            var itemTemplate = await _context.ItemTemplates.FirstOrDefaultAsync(c => c.Id == id);
             if (itemTemplate != null)
             {
-                foreach (var item in itemTemplate.Items)
-                {
-                    item.ItemTemplateId = null;
-                }
-                    
                 _context.ItemTemplates.Remove(itemTemplate);
                 await _context.SaveChangesAsync();
             }
