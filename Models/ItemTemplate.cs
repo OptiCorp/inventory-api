@@ -29,6 +29,5 @@ namespace Inventory.Models
         
         public IEnumerable<Size>? Sizes { get; set; }
         
-        public IEnumerable<Item>? Items { get; set; }
     }
 }
