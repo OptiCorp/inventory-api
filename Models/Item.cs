@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
@@ -35,7 +36,7 @@ namespace Inventory.Models
         
         public Category? Category { get; set; }
         
-        public IEnumerable<Item>? Children { get; set; }
+        public ICollection<Item>? Children { get; set; }
         
         public Vendor? Vendor { get; set; }
         
@@ -50,5 +51,7 @@ namespace Inventory.Models
         public ItemTemplate? ItemTemplate { get; set; }
         
         public ICollection<Document>? Documents { get; set; }
+        
+        public Item? Parent { get; set; }
     }
 }

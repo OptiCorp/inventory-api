@@ -484,7 +484,7 @@ namespace inventoryapi.Migrations
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Inventory.Models.Item", null)
+                    b.HasOne("Inventory.Models.Item", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -506,6 +506,8 @@ namespace inventoryapi.Migrations
                     b.Navigation("ItemTemplate");
 
                     b.Navigation("Location");
+
+                    b.Navigation("Parent");
 
                     b.Navigation("PreCheck");
 

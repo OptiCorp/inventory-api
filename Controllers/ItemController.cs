@@ -86,6 +86,35 @@ namespace Inventory.Controllers
             return CreatedAtAction(nameof(GetItem), new { ids = itemIds }, items);
         }
 
+        [HttpPost("AddChildItemToParent")]
+        [SwaggerOperation(Summary = "Add child item to given item.", Description = "Add child item to given item.")]
+        [SwaggerResponse(200, "Item updated")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<IActionResult> AddChildItemToParent(string itemId, string childItemId)
+        {
+            var parentItem = await _itemService.GetItemByIdAsync(itemId);
+            var childItem = await _itemService.GetItemByIdAsync(childItemId);
+            if (parentItem == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            if (childItem == null)
+            {
+                return NotFound("Child item not found");
+            }
+
+            if (parentItem.Id == childItem.Id)
+            {
+                return BadRequest("You cannot add an item as a child of itself. Please select a different item to be linked.");
+            }
+
+            await _itemService.AddChildItemToParentAsync(itemId, childItemId);
+
+            return NoContent();
+        }
+
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
@@ -149,6 +178,23 @@ namespace Inventory.Controllers
             }
 
             await _itemService.UpdateItemAsync(updatedById, itemUpdate);
+
+            return NoContent();
+        }
+        [HttpPost("RemoveParentId")]
+        [SwaggerOperation(Summary = "Removes parent id from item.", Description = "Removes parent id from item.")]
+        [SwaggerResponse(200, "Item updated")]
+        [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(404, "Item not found")]
+        public async Task<IActionResult> RemoveParentId(string itemId)
+        {
+            var item = await _itemService.GetItemByIdAsync(itemId);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            await _itemService.RemoveParentIdAsync(itemId);
 
             return NoContent();
         }

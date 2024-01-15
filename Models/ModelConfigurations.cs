@@ -35,7 +35,7 @@ namespace Inventory.Configuration
                 .HasKey(c => c.Id);
 
             modelBuilder.Entity<Item>()
-                .HasOne<Item>()
+                .HasOne(c => c.Parent)
                 .WithMany(c => c.Children)
                 .HasForeignKey(c => c.ParentId)
                 .OnDelete(DeleteBehavior.NoAction);
