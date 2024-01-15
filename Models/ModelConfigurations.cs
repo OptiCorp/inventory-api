@@ -61,6 +61,24 @@ namespace Inventory.Configuration
             modelBuilder.Entity<Item>()
                 .HasMany(c => c.Documents)
                 .WithMany();
+            
+            modelBuilder.Entity<Item>()
+                .HasOne(c => c.Category)
+                .WithMany()
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            modelBuilder.Entity<Item>()
+                .HasOne(c => c.Vendor)
+                .WithMany()
+                .HasForeignKey(c => c.VendorId)
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            modelBuilder.Entity<Item>()
+                .HasOne(c => c.Location)
+                .WithMany()
+                .HasForeignKey(c => c.LocationId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
     
@@ -109,7 +127,7 @@ namespace Inventory.Configuration
                 .HasOne(d => d.DocumentType)
                 .WithMany()
                 .HasForeignKey(d => d.DocumentTypeId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
     
@@ -124,7 +142,7 @@ namespace Inventory.Configuration
                 .HasMany<Item>()
                 .WithOne(d => d.PreCheck)
                 .HasForeignKey(d => d.PreCheckId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
     
@@ -139,7 +157,7 @@ namespace Inventory.Configuration
                 .HasMany(d => d.Sizes)
                 .WithOne()
                 .HasForeignKey(d => d.ItemTemplateId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<ItemTemplate>()
                 .HasMany(d => d.Documents)
@@ -155,4 +173,32 @@ namespace Inventory.Configuration
                 .HasKey(d => d.Id);
         }
     }
+    
+    public static class LocationConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Location>()
+                .HasKey(d => d.Id);
+        }
+    }
+    
+    public static class CategoryConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>()
+                .HasKey(d => d.Id);
+        }
+    }
+    
+    public static class VendorConfigurations
+    {
+        public static void Configure(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Vendor>()
+                .HasKey(d => d.Id);
+        }
+    }
+    
 }

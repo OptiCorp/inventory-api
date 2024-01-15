@@ -10,6 +10,7 @@ using Inventory.Services;
 using Inventory.Utilities;
 // using Inventory.Validation.UserValidations;
 using Inventory.Validations.CategoryValidations;
+using Inventory.Validations.DocumentTypeValidations;
 using Inventory.Validations.ItemTemplateValidations;
 using Inventory.Validations.ItemValidations;
 using Inventory.Validations.ListValidations;
@@ -68,6 +69,7 @@ namespace inventory
             services.AddScoped<IItemTemplateService, ItemTemplateService>();
             services.AddScoped<ISizeService, SizeService>();
             services.AddScoped<IPreCheckService, PreCheckService>();
+            services.AddScoped<IDocumentTypeService, DocumentTypeService>();
             
             services.AddScoped<IUserUtilities, UserUtilities>();
             
@@ -91,6 +93,8 @@ namespace inventory
             services.AddScoped<IPreCheckUpdateValidator, PreCheckUpdateValidator>();
             services.AddScoped<ISizeCreateValidator, SizeCreateValidator>();
             services.AddScoped<ISizeUpdateValidator, SizeUpdateValidator>();
+            services.AddScoped<IDocumentTypeCreateValidator, DocumentTypeCreateValidator>();
+            services.AddScoped<IDocumentTypeUpdateValidator, DocumentTypeUpdateValidator>();
             
             services.AddHostedService<UserCreateHandler>();
             services.AddHostedService<UserUpdateHandler>();

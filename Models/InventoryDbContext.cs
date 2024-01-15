@@ -36,6 +36,9 @@ public class InventoryDbContext : DbContext
         ItemTemplateConfigurations.Configure(modelBuilder);
         PreCheckConfigurations.Configure(modelBuilder);
         SizeConfigurations.Configure(modelBuilder);
+        LocationConfigurations.Configure(modelBuilder);
+        CategoryConfigurations.Configure(modelBuilder);
+        VendorConfigurations.Configure(modelBuilder);
     }
 
 }

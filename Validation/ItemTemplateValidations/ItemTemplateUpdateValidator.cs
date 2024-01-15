@@ -39,7 +39,8 @@ namespace Inventory.Validations.ItemTemplateValidations
             RuleFor(itemTemplate => itemTemplate.CreatedById).NotEmpty().WithMessage("CreatedById is required.")
                 .NotNull().WithMessage("CreatedById cannot be null.");
 
-            RuleFor(itemTemplate => itemTemplate.Description)
+            RuleFor(itemTemplate => itemTemplate.Description).NotEmpty().WithMessage("Description is required.")
+                .NotNull().WithMessage("Description cannot be null.")
                 .MaximumLength(200).WithMessage("Description cannot exceed 200 characters.");
         }
     }
