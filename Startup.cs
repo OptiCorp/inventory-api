@@ -1,7 +1,5 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using FluentValidation;
-using Inventory.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Logging;
@@ -67,6 +65,9 @@ namespace inventory
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IVendorService, VendorService>();
             services.AddScoped<IDocumentService, DocumentService>();
+            services.AddScoped<IItemTemplateService, ItemTemplateService>();
+            services.AddScoped<ISizeService, SizeService>();
+            services.AddScoped<IPreCheckService, PreCheckService>();
             
             services.AddScoped<IUserUtilities, UserUtilities>();
             
@@ -100,7 +101,9 @@ namespace inventory
 
 
             // Add DbContext
-            var connectionString = GetSecretValueFromKeyVault(Configuration["AzureKeyVault:ConnectionStringSecretName"]);
+            // var connectionString = GetSecretValueFromKeyVault(Configuration["AzureKeyVault:ConnectionStringSecretName"]);
+            
+            var connectionString = "Server=tcp:dbserver-inventory-prod.database.windows.net,1433;Initial Catalog=db-inventory-prod_Copy;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication='Active Directory Default';";
 
 
             // services.AddDbContext<InventoryDbContext>(options =>
