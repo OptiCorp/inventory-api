@@ -26,6 +26,7 @@ namespace Inventory.Services
         {   
             return await _context.Items
                             .Include(c => c.ItemTemplate)
+                            .ThenInclude(c => c.Category)
                             .Where(c => (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString) 
                             || c.ItemTemplate.Description.Contains(searchString))
                             && (type.IsNullOrEmpty() || c.ItemTemplate.Type == type))
@@ -45,6 +46,7 @@ namespace Inventory.Services
         public async Task<IEnumerable<Item>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
         {   
             return await _context.Items.Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c.Category)
                     .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
                     || c.ItemTemplate.Description.Contains(searchString)
                     && c.ListId != listId)
@@ -65,6 +67,7 @@ namespace Inventory.Services
         {
             return await _context.Items.Where(c => c.CreatedById == id)
                 .Include(c => c.ItemTemplate)
+                .ThenInclude(c => c.Category)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
@@ -82,6 +85,7 @@ namespace Inventory.Services
         {
             return await _context.Items.Where(c => c.ParentId == parentId)
                 .Include(c => c.ItemTemplate)
+                .ThenInclude(c => c.Category)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
@@ -96,6 +100,7 @@ namespace Inventory.Services
         {
             return await _context.Items
                 .Include(c => c.ItemTemplate)
+                .ThenInclude(c => c.Category)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
