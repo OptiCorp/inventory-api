@@ -20,12 +20,6 @@ namespace Inventory.Validations.ItemValidations
                 .MaximumLength(40).WithMessage("Serial number cannot exceed 40 characters.")
                 .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Serial number can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
             
-            RuleFor(item => item.CategoryId).NotEmpty().WithMessage("Category Id is required.")
-                .NotNull().WithMessage("Category Id cannot be null.")
-                .MinimumLength(3).WithMessage("Category Id must be at least 3 characters.")
-                .MaximumLength(40).WithMessage("Category Id cannot exceed 40 characters.")
-                .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Category Id can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
-            
             RuleFor(item => item.ParentId)
                 .MinimumLength(3).WithMessage("Parent Id must be at least 3 characters.")
                 .MaximumLength(40).WithMessage("Parent Id cannot exceed 40 characters.")

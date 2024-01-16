@@ -15,6 +15,7 @@ namespace Inventory.Services
         public async Task<IEnumerable<ItemTemplate>> GetAllItemTemplatesAsync()
         {
             return await _context.ItemTemplates
+                .Include(c => c.Category)
                 .Include(c => c.Documents)
                 .Include(c => c.Sizes)
                 .Include(c => c.CreatedBy)
@@ -25,6 +26,7 @@ namespace Inventory.Services
         public async Task<ItemTemplate> GetItemTemplateByIdAsync(string id)
         {
             return await _context.ItemTemplates
+                .Include(c => c.Category)
                 .Include(c => c.Documents)
                 .Include(c => c.Sizes)
                 .Include(c => c.CreatedBy)

@@ -33,7 +33,6 @@ namespace Inventory.Services
                             .Include(c => c.Children)
                             .Include(c => c.CreatedBy)
                             .Include(c => c.Vendor)
-                            .Include(c => c.Category)
                             .Include(c => c.Location)
                             .Include(c => c.LogEntries)
                             .ThenInclude(c => c.CreatedBy)
@@ -53,7 +52,6 @@ namespace Inventory.Services
                     .Include(c => c.Children)
                     .Include(c => c.CreatedBy)
                     .Include(c => c.Vendor)
-                    .Include(c => c.Category)
                     .Include(c => c.Location)
                     .Include(c => c.LogEntries)
                     .ThenInclude(c => c.CreatedBy)
@@ -71,7 +69,6 @@ namespace Inventory.Services
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
-                .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.CreatedBy)
@@ -89,7 +86,6 @@ namespace Inventory.Services
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
-                .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.CreatedBy)
@@ -104,7 +100,6 @@ namespace Inventory.Services
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
-                .Include(c => c.Category)
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.CreatedBy)
@@ -145,7 +140,7 @@ namespace Inventory.Services
 
         public async Task UpdateItemAsync(string updatedById, Item updatedItem)
         {
-            var item = await _context.Items.Include(c => c.Category).FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
+            var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
         
             if (item != null)
             {
@@ -173,20 +168,6 @@ namespace Inventory.Services
                         CreatedDate = DateTime.Now
                     };
                     item.SerialNumber = updatedItem.SerialNumber;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
-                
-                if (updatedItem.CategoryId != item.CategoryId && updatedItem.CategoryId != null)
-                {
-                    var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updatedItem.CategoryId);
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "Category changed from " + item.Category?.Name + " to " + category.Name,
-                        CreatedDate = DateTime.Now
-                    };
-                    item.CategoryId = updatedItem.CategoryId;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
