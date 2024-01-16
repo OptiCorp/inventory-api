@@ -11,6 +11,8 @@ namespace Inventory.Models
         
         public string? Type { get; set; }
         
+        public string? ProductNumber { get; set; }
+        
         public string? Revision { get; set; }
         
         public string? Description { get; set; }
@@ -19,10 +21,13 @@ namespace Inventory.Models
 
         public DateTime? UpdatedDate { get; set; }
         
-        public string? CreatorId { get; set; }
+        public string? CreatedById { get; set; }
         
-        public User? Creator { get; set; }
+        public User? CreatedBy { get; set; }
 
+        public IEnumerable<Document>? Documents { get; set; }
+        
+        public IEnumerable<Size>? Sizes { get; set; }
         
     }
 }

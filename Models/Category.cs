@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
@@ -8,17 +7,12 @@ namespace Inventory.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
         
-        [Required]
         public string? Name { get; set; }
         
-        [Required]
-        public string? UserId { get; set; }
+        public string? CreatedById { get; set; }
         
-        [Required]
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
-        
-        public User? User { get; set; }
     }
 }

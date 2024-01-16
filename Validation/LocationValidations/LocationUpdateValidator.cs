@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models.DTOs.LocationDTOs;
+using Inventory.Models;
 
 namespace Inventory.Validations.LocationValidations
 {
-    public class LocationUpdateValidator : AbstractValidator<LocationUpdateDto>
+    public class LocationUpdateValidator : AbstractValidator<Location>, ILocationUpdateValidator
     {
 
         public LocationUpdateValidator()

@@ -1,86 +1,73 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
-using Inventory.Models.DTOs.ListDTOs;
-using Inventory.Utilities;
 
 namespace Inventory.Services
 {
     public class ListService : IListService
     {
         private readonly InventoryDbContext _context;
-        private readonly IListUtilities _listUtilities;
 
-        public ListService(InventoryDbContext context, IListUtilities listUtilities)
+        public ListService(InventoryDbContext context)
         {
             _context = context;
-            _listUtilities = listUtilities;
         }
 
-        public async Task<IEnumerable<ListResponseDto>> GetAllListsAsync()
+        public async Task<IEnumerable<List>> GetAllListsAsync()
         {
-            return await _context.Lists.Include(c => c.User)
+            return await _context.Lists.Include(c => c.CreatedBy)
                                             .Include(c => c.Items)
-                                            .Select(c => _listUtilities.ListToResponseDto(c))
+                                            .ThenInclude(c => c.ItemTemplate)
                                             .ToListAsync();
         }
         
-        public async Task<IEnumerable<ListResponseDto>> GetAllListsBySearchStringAsync(string searchString, int page, string userId)
+        public async Task<IEnumerable<List>> GetAllListsBySearchStringAsync(string searchString, int page, string userId)
         {   
             return await _context.Lists.Include(c => c.Items)
-                .Where(c => c.UserId == userId)
+                .ThenInclude(c => c.ItemTemplate)
+                .Where(c => c.CreatedById == userId)
                 .Where(list =>
                     list.Title.Contains(searchString) ||
                     list.Items.Any(item =>
                         item.WpId.Contains(searchString) ||
                         item.SerialNumber.Contains(searchString) ||
-                        item.Description.Contains(searchString)
+                        item.ItemTemplate.Description.Contains(searchString)
                     ))
-                .Include(c => c.User)
+                .Include(c => c.CreatedBy)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10)
-                .Select(list => _listUtilities.ListToResponseDto(list))
                 .ToListAsync();
         }
         
-        public async Task<IEnumerable<ListResponseDto>> GetAllListsByUserIdAsync(string id, int page)
+        public async Task<IEnumerable<List>> GetAllListsByUserIdAsync(string id, int page)
         {
-            return await _context.Lists.Where(c => c.UserId == id)
-                .Include(c => c.User)
+            return await _context.Lists.Where(c => c.CreatedById == id)
+                .Include(c => c.CreatedBy)
                 .Include(c => c.Items)
+                .ThenInclude(c => c.ItemTemplate)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10)
-                .Select(c => _listUtilities.ListToResponseDto(c))
                 .ToListAsync();
         }
 
-        public async Task<ListResponseDto> GetListByIdAsync(string id)
+        public async Task<List> GetListByIdAsync(string id)
         {
-            var list = await _context.Lists
-                .Include(c => c.User)
+            return await _context.Lists
+                .Include(c => c.CreatedBy)
                 .Include(c => c.Items)
+                .ThenInclude(c => c.ItemTemplate)
                 .FirstOrDefaultAsync(c => c.Id == id);
-        
-            if (list == null) return null;
-        
-            return _listUtilities.ListToResponseDto(list);
         }
         
-        public async Task<string?> CreateListAsync(ListCreateDto listCreateDto)
+        public async Task<string?> CreateListAsync(List listCreate)
         {
             try
             {
-                var list = new List
-                {
-                    Title = listCreateDto.Title,
-                    UserId = listCreateDto.CreatedById,
-                    CreatedDate = DateTime.Now
-                };
-                
-                await _context.Lists.AddAsync(list);
+                listCreate.CreatedDate = DateTime.Now;
+                await _context.Lists.AddAsync(listCreate);
                 await _context.SaveChangesAsync();
-                return list.Id;
+                return listCreate.Id;
             }
             catch (Exception e)
             {
@@ -117,13 +104,13 @@ namespace Inventory.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateListAsync(ListUpdateDto updatedList)
+        public async Task UpdateListAsync(List listUpdate)
         {
-            var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == updatedList.Id);
+            var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listUpdate.Id);
         
             if (list != null)
             {
-                list.Title = updatedList.Title;
+                list.Title = listUpdate.Title;
                 list.UpdatedDate = DateTime.Now;
         
                 await _context.SaveChangesAsync();

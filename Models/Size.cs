@@ -9,10 +9,10 @@ namespace Inventory.Models
         
         public string? ItemTemplateId { get; set; }
         
-        public string? DocumentId { get; set; }
+        public string? Property { get; set; }
         
-        public ItemTemplate? ItemTemplate { get; set; }
+        public float? Amount { get; set; }
         
-        
+        public string? Unit { get; set; }
     }
 }

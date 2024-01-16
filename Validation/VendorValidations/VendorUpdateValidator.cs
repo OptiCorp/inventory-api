@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models.DTOs.VendorDTOs;
+using Inventory.Models;
 
 namespace Inventory.Validations.VendorValidations
 {
-    public class VendorUpdateValidator : AbstractValidator<VendorUpdateDto>
+    public class VendorUpdateValidator : AbstractValidator<Vendor>, IVendorUpdateValidator
     {
 
         public VendorUpdateValidator()

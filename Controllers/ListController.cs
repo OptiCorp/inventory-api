@@ -1,9 +1,8 @@
-using FluentValidation;
+using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using Inventory.Models.DTOs.ListDTOs;
-using Inventory.Models.DTOs.VendorDTOs;
 using Inventory.Services;
+using Inventory.Validations.ListValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.Controllers
@@ -14,26 +13,30 @@ namespace Inventory.Controllers
     {
         private readonly IListService _listService;
         private readonly IUserService _userService;
+        private readonly IListCreateValidator _createValidator;
+        private IListUpdateValidator _updateValidator;
 
-        public ListController(IListService listService, IUserService userService)
+        public ListController(IListService listService, IUserService userService, IListCreateValidator createValidator, IListUpdateValidator updateValidator)
         {
             _listService = listService;
             _userService = userService;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         
         [HttpGet]
         [SwaggerOperation(Summary = "Get all lists", Description = "Retrieves a list of all lists.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<ListResponseDto>))]
-        public async Task<ActionResult<IEnumerable<ListResponseDto>>> GetList()
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
+        public async Task<ActionResult<IEnumerable<List>>> GetAllLists()
         {
             return Ok(await _listService.GetAllListsAsync());
         }
         
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get list", Description = "Retrieves a list.")]
-        [SwaggerResponse(200, "Success", typeof(ListResponseDto))]
+        [SwaggerResponse(200, "Success", typeof(List))]
         [SwaggerResponse(404, "List not found")]
-        public async Task<ActionResult<ListResponseDto>> GetList(string id)
+        public async Task<ActionResult<List>> GetList(string id)
         {
             var list = await _listService.GetListByIdAsync(id);
             if (list == null)
@@ -46,17 +49,17 @@ namespace Inventory.Controllers
         
         [HttpGet("ByUserId/{id}")]
         [SwaggerOperation(Summary = "Get lists added by user", Description = "Retrieves lists added by the user.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<ListResponseDto>))]
-        public async Task<ActionResult<IEnumerable<ListResponseDto>>> GetListByUserId(string id, int page)
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
+        public async Task<ActionResult<IEnumerable<List>>> GetListsByUserId(string id, int page)
         {
             return Ok(await _listService.GetAllListsByUserIdAsync(id, page));
         }
         
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get lists containing search string", Description = "Retrieves lists containing search string in title, WpId, serial number or description.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<ListResponseDto>))]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
         [SwaggerResponse(404, "User not found")]
-        public async Task<ActionResult<IEnumerable<ListResponseDto>>> GetListBySearchString(string searchString, int page, string userId)
+        public async Task<ActionResult<IEnumerable<List>>> GetListsBySearchString(string searchString, int page, string userId)
         {
             var user = await _userService.GetUserByIdAsync(userId);
             if (user == null)
@@ -68,11 +71,11 @@ namespace Inventory.Controllers
         
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new list", Description = "Creates a new list.")]
-        [SwaggerResponse(201, "List created", typeof(ListResponseDto))]
+        [SwaggerResponse(201, "List created", typeof(List))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<ListResponseDto>> PostList(ListCreateDto listCreateDto, [FromServices] IValidator<ListCreateDto> validator)
+        public async Task<ActionResult<List>> CreateList(List listCreate)
         {
-            var validationResult = await validator.ValidateAsync(listCreateDto);
+            var validationResult = await _createValidator.ValidateAsync(listCreate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -86,7 +89,7 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
             
-            var listId = await _listService.CreateListAsync(listCreateDto);
+            var listId = await _listService.CreateListAsync(listCreate);
             if (listId == null)
             {
                 return StatusCode(500);
@@ -99,9 +102,9 @@ namespace Inventory.Controllers
         
         [HttpPost("AddItems")]
         [SwaggerOperation(Summary = "Add items to a list", Description = "Adds items to a list.")]
-        [SwaggerResponse(200, "Items added", typeof(ListResponseDto))]
+        [SwaggerResponse(200, "Items added", typeof(List))]
         [SwaggerResponse(404, "List not found")]
-        public async Task<ActionResult<ListResponseDto>> AddItemsToList(IEnumerable<string> itemIds, string listId)
+        public async Task<ActionResult<List>> AddItemsToList(IEnumerable<string> itemIds, string listId)
         {
             var list = await _listService.GetListByIdAsync(listId);
             if (list == null)
@@ -116,9 +119,9 @@ namespace Inventory.Controllers
         
         [HttpPost("RemoveItems")]
         [SwaggerOperation(Summary = "Remove items from a list", Description = "Removes items to a list.")]
-        [SwaggerResponse(201, "Items removed", typeof(ListResponseDto))]
+        [SwaggerResponse(201, "Items removed", typeof(List))]
         [SwaggerResponse(404, "List not found")]
-        public async Task<ActionResult<ListResponseDto>> RemoveItemsFromList(IEnumerable<string> itemIds, string listId)
+        public async Task<ActionResult<List>> RemoveItemsFromList(IEnumerable<string> itemIds, string listId)
         {
             var list = await _listService.GetListByIdAsync(listId);
             if (list == null)
@@ -136,9 +139,9 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "List updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
-        public async Task<IActionResult> PutList(string id, ListUpdateDto listUpdateDto, [FromServices] IValidator<ListUpdateDto> validator)
+        public async Task<IActionResult> UpdateList(string id, List listUpdate)
         {
-            var validationResult = await validator.ValidateAsync(listUpdateDto);
+            var validationResult = await _updateValidator.ValidateAsync(listUpdate);
             if (!validationResult.IsValid)
             {
                 var modelStateDictionary = new ModelStateDictionary();
@@ -152,7 +155,7 @@ namespace Inventory.Controllers
                 return ValidationProblem(modelStateDictionary);
             }
             
-            if (id != listUpdateDto.Id)
+            if (id != listUpdate.Id)
             {
                 return BadRequest("Id does not match");
             }
@@ -163,7 +166,7 @@ namespace Inventory.Controllers
                 return NotFound("List not found");
             }
 
-            await _listService.UpdateListAsync(listUpdateDto);
+            await _listService.UpdateListAsync(listUpdate);
 
             return NoContent();
         }

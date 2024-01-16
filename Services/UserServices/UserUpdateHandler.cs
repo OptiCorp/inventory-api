@@ -54,7 +54,7 @@ namespace Inventory.Services
                     throw new ArgumentNullException(nameof(args));
 
                 string body = args.Message.Body.ToString();
-                UserUpdateDto updatedUserDto = JsonSerializer.Deserialize<UserUpdateDto>(body);
+                UserBusUpdateDto updatedUserDto = JsonSerializer.Deserialize<UserBusUpdateDto>(body);
 
                 Console.WriteLine(updatedUserDto.Username);
 

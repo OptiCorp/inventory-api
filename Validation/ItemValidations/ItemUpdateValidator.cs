@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models.DTOs.ItemDTOs;
+using Inventory.Models;
 
 namespace Inventory.Validations.ItemValidations
 {
-    public class ItemUpdateValidator : AbstractValidator<ItemUpdateDto>
+    public class ItemUpdateValidator : AbstractValidator<Item>, IItemUpdateValidator
     {
 
         public ItemUpdateValidator()
@@ -22,14 +22,6 @@ namespace Inventory.Validations.ItemValidations
                 .MinimumLength(3).WithMessage("Serial number must be at least 3 characters.")
                 .MaximumLength(40).WithMessage("Serial number cannot exceed 40 characters.")
                 .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Serial number can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
-            
-            RuleFor(item => item.ProductNumber).NotEmpty().WithMessage("Product number is required.")
-                .NotNull().WithMessage("Product number cannot be null.")
-                .MinimumLength(3).WithMessage("Product number must be at least 3 characters.")
-                .MaximumLength(40).WithMessage("Product number cannot exceed 40 characters.")
-                .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Product number can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
-            
-            RuleFor(item => item.Type).Must(type => type?.ToLower() is "unit" or "assembly" or "subassembly" or "part").WithMessage("Item type must be Unit, Assembly, Subassembly or Part");
             
             RuleFor(item => item.CategoryId).NotEmpty().WithMessage("Category Id is required.")
                 .NotNull().WithMessage("Category Id cannot be null.")
@@ -54,13 +46,8 @@ namespace Inventory.Validations.ItemValidations
                 .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Location Id can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
 
             
-            RuleFor(item => item.AddedById).NotEmpty().WithMessage("AddedById is required.")
+            RuleFor(item => item.CreatedById).NotEmpty().WithMessage("AddedById is required.")
                 .NotNull().WithMessage("AddedById cannot be null.");
-
-            RuleFor(item => item.Description).NotEmpty().WithMessage("Description is required.")
-                .NotNull().WithMessage("Description cannot be null.")
-                .MinimumLength(3).WithMessage("Description must be at least 3 characters.")
-                .MaximumLength(450).WithMessage("Description cannot exceed 450 characters.");
 
             RuleFor(item => item.Comment)
                 .MaximumLength(200).WithMessage("Comment cannot exceed 200 characters.");
