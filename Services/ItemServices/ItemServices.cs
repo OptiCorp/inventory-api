@@ -176,32 +176,6 @@ namespace Inventory.Services
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
-                if (updatedItem.ItemTemplate.ProductNumber != item.ItemTemplate.ProductNumber)
-                {
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "Product number changed from " + item.ItemTemplate.ProductNumber + " to " + updatedItem.ItemTemplate.ProductNumber,
-                        CreatedDate = DateTime.Now
-                    };
-                    item.ItemTemplate.ProductNumber = updatedItem.ItemTemplate.ProductNumber;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
-                
-                if (updatedItem.ItemTemplate.Type != item.ItemTemplate.Type)
-                {
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "Type changed from " + item.ItemTemplate.Type + " to " + updatedItem.ItemTemplate.Type,
-                        CreatedDate = DateTime.Now
-                    };
-                    item.ItemTemplate.Type = updatedItem.ItemTemplate.Type;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
-                
                 if (updatedItem.CategoryId != item.CategoryId && updatedItem.CategoryId != null)
                 {
                     var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updatedItem.CategoryId);
@@ -227,19 +201,6 @@ namespace Inventory.Services
                         CreatedDate = DateTime.Now
                     };
                     item.LocationId = updatedItem.LocationId;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
-               
-                if (updatedItem.ItemTemplate.Description != item.ItemTemplate.Description)
-                {
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "Description updated",
-                        CreatedDate = DateTime.Now
-                    };
-                    item.ItemTemplate.Description = updatedItem.ItemTemplate.Description;
                     await _context.LogEntries.AddAsync(logEntry);
                 }
                 
