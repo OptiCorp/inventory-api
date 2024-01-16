@@ -10,7 +10,6 @@ public class InventoryDbContext : DbContext
     {
     }
     public DbSet<User> User { get; set; } = null!;
-    // public DbSet<UserRole> UserRoles { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;
     public DbSet<List> Lists { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
@@ -28,7 +27,6 @@ public class InventoryDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         UserConfigurations.Configure(modelBuilder);
-        // UserRoleConfigurations.Configure(modelBuilder);
         ItemConfigurations.Configure(modelBuilder);
         ListConfigurations.Configure(modelBuilder);
         DocumentConfigurations.Configure(modelBuilder);
