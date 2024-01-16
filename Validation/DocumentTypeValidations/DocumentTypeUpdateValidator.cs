@@ -8,7 +8,7 @@ namespace Inventory.Validations.DocumentTypeValidations
 
         public DocumentTypeUpdateValidator()
         {
-            RuleFor(vendor => vendor.Name).NotEmpty().WithMessage("Document type name is required.")
+            RuleFor(documentType => documentType.Name).NotEmpty().WithMessage("Document type name is required.")
                 .NotNull().WithMessage("Document type name cannot be null.")
                 .MinimumLength(3).WithMessage("Document type name must be at least 3 characters.")
                 .MaximumLength(40).WithMessage("Document type name cannot exceed 40 characters.")

@@ -25,7 +25,7 @@ namespace Inventory.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Get all categories", Description = "Retrieves a list of all categories.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Size>))]
-        public async Task<ActionResult<IEnumerable<Size>>> GetAllCategories()
+        public async Task<ActionResult<IEnumerable<Size>>> GetAllSizes()
         {
             return Ok(await _sizeService.GetAllSizesAsync());
         }

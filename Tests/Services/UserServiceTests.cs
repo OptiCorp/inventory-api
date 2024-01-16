@@ -1,6 +1,5 @@
 using Inventory.Models;
 using Inventory.Services;
-using Inventory.Utilities;
 using Xunit;
 
 namespace Inventory.Tests.Services
@@ -13,8 +12,7 @@ namespace Inventory.Tests.Services
             //Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("User");
-            var userUtilities = new UserUtilities();
-            var userService = new UserService(dbContext, userUtilities);
+            var userService = new UserService(dbContext);
 
             //Act
             var users = await userService.GetAllUsersAsync();
@@ -30,8 +28,7 @@ namespace Inventory.Tests.Services
             //Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("User");
-            var userUtilities = new UserUtilities();
-            var userService = new UserService(dbContext, userUtilities);
+            var userService = new UserService(dbContext);
 
             //Act
             var users = await userService.GetAllUsersAdminAsync();
@@ -47,8 +44,7 @@ namespace Inventory.Tests.Services
             //Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("User");
-            var userUtilities = new UserUtilities();
-            var userService = new UserService(dbContext, userUtilities);
+            var userService = new UserService(dbContext);
 
             //Act
             var user = await userService.GetUserByIdAsync("User 1");
@@ -65,8 +61,7 @@ namespace Inventory.Tests.Services
             //Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("User");
-            var userUtilities = new UserUtilities();
-            var userService = new UserService(dbContext, userUtilities);
+            var userService = new UserService(dbContext);
 
             //Act
             var user = await userService.GetUserByAzureAdUserIdAsync("AzureAD1@bouvet.no");
@@ -82,8 +77,7 @@ namespace Inventory.Tests.Services
             //Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("User");
-            var userUtilities = new UserUtilities();
-            var userService = new UserService(dbContext, userUtilities);
+            var userService = new UserService(dbContext);
 
             //Act
             var user = await userService.GetUserByUsernameAsync("Username 1");

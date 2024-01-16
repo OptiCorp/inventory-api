@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Inventory.Models;
@@ -69,22 +68,6 @@ namespace Inventory.Services
 
         public async Task<string> UploadDocumentAsync(DocumentUploadDto document)
         {
-            // var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
-            //
-            // BlobContainerClient containerClient =
-            //     new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
-            //
-            // var existingDocument = _context.Documents.Where(doc => doc.DocumentTypeId == document.DocumentTypeId);
-            //
-            // var blobId = Guid.NewGuid().ToString();
-            // var blobExists = await containerClient.GetBlobClient(blobId).ExistsAsync();
-            //
-            // while (blobExists == true)
-            // {
-            //     blobId = Guid.NewGuid().ToString();
-            //     blobExists = await containerClient.GetBlobClient(blobId).ExistsAsync();
-            // }
-            
             var newDocument = new Document
             {
                 DocumentTypeId = document.DocumentTypeId,
@@ -92,21 +75,6 @@ namespace Inventory.Services
                 ContentType = document.File.ContentType
             };
             
-            // try
-            // {
-            //     await containerClient.CreateIfNotExistsAsync();
-            //
-            //     using (MemoryStream stream = new MemoryStream())
-            //     {
-            //         await document.File.CopyToAsync(stream);
-            //         stream.Position = 0;
-            //         await containerClient.UploadBlobAsync(newDocument.BlobId, stream);
-            //     }
-            // }
-            // catch (Exception e)
-            // {
-            //     throw e;
-            // }
             var item = await _context.Items.Where(item => item.Id == document.ItemId)
                 .Include(item => item.Documents)
                 .FirstOrDefaultAsync();
@@ -120,15 +88,6 @@ namespace Inventory.Services
 
         public async Task DeleteDocumentFromItemAsync(Document document, string itemId)
         {
-            // var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
-            //
-            // BlobContainerClient containerClient =
-            //     new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
-            //
-            // var blobClient = containerClient.GetBlobClient(document.BlobId);
-            //
-            // await blobClient.DeleteAsync();
-
             var item = await _context.Items.Where(item => item.Id == itemId)
                 .Include(item => item.Documents)
                 .FirstOrDefaultAsync();

@@ -1,4 +1,3 @@
-using Inventory.Models;
 
 namespace Inventory.Utilities
 {

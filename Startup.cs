@@ -8,7 +8,6 @@ using Serilog;
 using Inventory.Models;
 using Inventory.Services;
 using Inventory.Utilities;
-// using Inventory.Validation.UserValidations;
 using Inventory.Validations.CategoryValidations;
 using Inventory.Validations.DocumentTypeValidations;
 using Inventory.Validations.ItemTemplateValidations;
@@ -17,8 +16,6 @@ using Inventory.Validations.ListValidations;
 using Inventory.Validations.LocationValidations;
 using Inventory.Validations.PreCheckValidations;
 using Inventory.Validations.SizeValidations;
-// using Inventory.Validations.UserRoleValidations;
-// using Inventory.Validations.UserValidations;
 using Inventory.Validations.VendorValidations;
 
 namespace inventory
@@ -59,7 +56,6 @@ namespace inventory
             });
             
             services.AddScoped<IUserService, UserService>();
-            // services.AddScoped<IUserRoleService, UserRoleService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IListService, ListService>();
             services.AddScoped<ICategoryService, CategoryService>();
@@ -85,10 +81,6 @@ namespace inventory
             services.AddScoped<ILocationUpdateValidator, LocationUpdateValidator>();
             services.AddScoped<IVendorCreateValidator, VendorCreateValidator>();
             services.AddScoped<IVendorUpdateValidator, VendorUpdateValidator>();
-            // services.AddScoped<IUserCreateValidator, UserCreateValidator>();
-            // services.AddScoped<IUserUpdateValidator, UserUpdateValidator>();
-            // services.AddScoped<IUserRoleCreateValidator, UserRoleCreateValidator>();
-            // services.AddScoped<IUserRoleUpdateValidator, UserRoleUpdateValidator>();
             services.AddScoped<IPreCheckCreateValidator, PreCheckCreateValidator>();
             services.AddScoped<IPreCheckUpdateValidator, PreCheckUpdateValidator>();
             services.AddScoped<ISizeCreateValidator, SizeCreateValidator>();
@@ -105,17 +97,11 @@ namespace inventory
 
 
             // Add DbContext
-            // var connectionString = GetSecretValueFromKeyVault(Configuration["AzureKeyVault:ConnectionStringSecretName"]);
+            var connectionString = GetSecretValueFromKeyVault(Configuration["AzureKeyVault:ConnectionStringSecretName"]);
             
-            var connectionString = "Server=tcp:dbserver-inventory-prod.database.windows.net,1433;Initial Catalog=db-inventory-prod_Copy;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication='Active Directory Default';";
-
-
-            // services.AddDbContext<InventoryDbContext>(options =>
-            //     options.UseInMemoryDatabase("temporaryDatabase"));
 
             services.AddDbContext<InventoryDbContext>(options => options.UseSqlServer(connectionString));
-
-
+            
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
@@ -173,7 +159,7 @@ namespace inventory
                 .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
-            // dbContext.Database.Migrate();
+            dbContext.Database.Migrate();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -9,23 +9,8 @@ namespace Inventory.Configuration
         {
             modelBuilder.Entity<User>()
                 .HasKey(u => u.Id);
-            
-            // modelBuilder.Entity<User>()
-            //     .HasOne(c => c.UserRole)
-            //     .WithMany()
-            //     .HasForeignKey(c => c.UserRoleId)
-            //     .OnDelete(DeleteBehavior.NoAction);
         }
     }
-    
-    // public static class UserRoleConfigurations
-    // {
-    //     public static void Configure(ModelBuilder modelBuilder)
-    //     {
-    //         modelBuilder.Entity<UserRole>()
-    //             .HasKey(u => u.Id);
-    //     }
-    // }
     
     public static class ItemConfigurations
     {
