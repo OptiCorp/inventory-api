@@ -11,6 +11,8 @@ namespace Inventory.Models
         
         public string? Type { get; set; }
         
+        public string? CategoryId { get; set; }
+        
         public string? ProductNumber { get; set; }
         
         public string? Revision { get; set; }
@@ -24,6 +26,8 @@ namespace Inventory.Models
         public string? CreatedById { get; set; }
         
         public User? CreatedBy { get; set; }
+        
+        public Category? Category { get; set; }
 
         public IEnumerable<Document>? Documents { get; set; }
         

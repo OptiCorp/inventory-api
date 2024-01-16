@@ -22,6 +22,12 @@ namespace Inventory.Validations.ItemTemplateValidations
                 .MinimumLength(3).WithMessage("Item template type must be at least 3 characters.")
                 .MaximumLength(40).WithMessage("Item template type cannot exceed 40 characters.")
                 .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Item template type can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
+            
+            RuleFor(itemTemplate => itemTemplate.CategoryId).NotEmpty().WithMessage("Category Id is required.")
+                .NotNull().WithMessage("Category Id cannot be null.")
+                .MinimumLength(3).WithMessage("Category Id must be at least 3 characters.")
+                .MaximumLength(40).WithMessage("Category Id cannot exceed 40 characters.")
+                .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Category Id can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
 
             RuleFor(itemTemplate => itemTemplate.ProductNumber).NotEmpty().WithMessage("Product number is required.")
                 .NotNull().WithMessage("Product number cannot be null.")

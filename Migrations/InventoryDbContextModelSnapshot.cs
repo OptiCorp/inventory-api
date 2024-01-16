@@ -120,9 +120,6 @@ namespace inventoryapi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CategoryId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
@@ -161,8 +158,6 @@ namespace inventoryapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("ItemTemplateId");
@@ -186,6 +181,9 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CategoryId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedById")
@@ -213,6 +211,8 @@ namespace inventoryapi.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("CreatedById");
 
@@ -464,11 +464,6 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
                 {
-                    b.HasOne("Inventory.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Inventory.Models.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
@@ -499,8 +494,6 @@ namespace inventoryapi.Migrations
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("Category");
-
                     b.Navigation("CreatedBy");
 
                     b.Navigation("ItemTemplate");
@@ -516,9 +509,16 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.ItemTemplate", b =>
                 {
+                    b.HasOne("Inventory.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Inventory.Models.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.Navigation("Category");
 
                     b.Navigation("CreatedBy");
                 });

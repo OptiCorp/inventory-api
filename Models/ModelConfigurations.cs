@@ -48,12 +48,6 @@ namespace Inventory.Configuration
                 .WithMany();
             
             modelBuilder.Entity<Item>()
-                .HasOne(c => c.Category)
-                .WithMany()
-                .HasForeignKey(c => c.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull);
-            
-            modelBuilder.Entity<Item>()
                 .HasOne(c => c.Vendor)
                 .WithMany()
                 .HasForeignKey(c => c.VendorId)
@@ -147,6 +141,12 @@ namespace Inventory.Configuration
             modelBuilder.Entity<ItemTemplate>()
                 .HasMany(d => d.Documents)
                 .WithMany();
+            
+            modelBuilder.Entity<ItemTemplate>()
+                .HasOne(c => c.Category)
+                .WithMany()
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
     

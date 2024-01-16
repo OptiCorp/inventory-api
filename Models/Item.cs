@@ -12,8 +12,6 @@ namespace Inventory.Models
         
         public string? SerialNumber { get; set; }
         
-        public string? CategoryId { get; set; }
-        
         public string? ParentId { get; set; }
         
         public string? VendorId { get; set; }
@@ -33,8 +31,6 @@ namespace Inventory.Models
         public DateTime? CreatedDate { get; set; }
 
         public DateTime? UpdatedDate { get; set; }
-        
-        public Category? Category { get; set; }
         
         public ICollection<Item>? Children { get; set; }
         
