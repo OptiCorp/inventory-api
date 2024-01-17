@@ -14,12 +14,28 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<DocumentType>> GetAllDocumentTypesAsync()
         {
-            return await _context.DocumentTypes.ToListAsync();
+            try
+            {
+                return await _context.DocumentTypes.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<DocumentType> GetDocumentTypeByIdAsync(string id)
         {
-            return await _context.DocumentTypes.FirstOrDefaultAsync(c => c.Id == id);
+            try
+            {
+                return await _context.DocumentTypes.FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<string?> CreateDocumentTypeAsync(DocumentType documentTypeCreate)
@@ -39,24 +55,40 @@ namespace Inventory.Services
 
         public async Task UpdateDocumentTypeAsync(DocumentType documentTypeUpdate)
         {
-            var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(c => c.Id == documentTypeUpdate.Id);
-        
-            if (documentType != null)
+            try
             {
-                documentType.Name = documentTypeUpdate.Name;
-                documentType.Description = documentTypeUpdate.Description;
+                var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(c => c.Id == documentTypeUpdate.Id);
         
-                await _context.SaveChangesAsync();
+                if (documentType != null)
+                {
+                    documentType.Name = documentTypeUpdate.Name;
+                    documentType.Description = documentTypeUpdate.Description;
+        
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
         public async Task DeleteDocumentTypeAsync(string id)
         {
-            var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(c => c.Id == id);
-            if (documentType != null)
+            try
             {
-                _context.DocumentTypes.Remove(documentType);
-                await _context.SaveChangesAsync();
+                var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(c => c.Id == id);
+                if (documentType != null)
+                {
+                    _context.DocumentTypes.Remove(documentType);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
     }

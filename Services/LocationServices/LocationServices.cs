@@ -14,18 +14,42 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<Location>> GetAllLocationsAsync()
         {
-            return await _context.Locations.ToListAsync();
+            try
+            {
+                return await _context.Locations.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<IEnumerable<Location>> GetAllLocationsBySearchStringAsync(string searchString)
-        {   
-            return await _context.Locations.Where(location => location.Name.Contains(searchString))
-                                            .ToListAsync();
+        {
+            try
+            {
+                return await _context.Locations.Where(location => location.Name.Contains(searchString))
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<Location> GetLocationByIdAsync(string id)
         {
-            return await _context.Locations.FirstOrDefaultAsync(c => c.Id == id);
+            try
+            {
+                return await _context.Locations.FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<string?> CreateLocationAsync(Location locationCreate)
@@ -40,30 +64,46 @@ namespace Inventory.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return null;
+                throw;
             }
         }
 
         public async Task UpdateLocationAsync(Location locationUpdate)
         {
-            var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == locationUpdate.Id);
-        
-            if (location != null)
+            try
             {
-                location.Name = locationUpdate.Name;
-                location.UpdatedDate = DateTime.Now;
+                var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == locationUpdate.Id);
         
-                await _context.SaveChangesAsync();
+                if (location != null)
+                {
+                    location.Name = locationUpdate.Name;
+                    location.UpdatedDate = DateTime.Now;
+        
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
         public async Task DeleteLocationAsync(string id)
         {
-            var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == id);
-            if (location != null)
+            try
             {
-                _context.Locations.Remove(location);
-                await _context.SaveChangesAsync();
+                var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == id);
+                if (location != null)
+                {
+                    _context.Locations.Remove(location);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
     }

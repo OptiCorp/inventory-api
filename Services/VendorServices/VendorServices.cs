@@ -14,18 +14,42 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<Vendor>> GetAllVendorsAsync()
         {
-            return await _context.Vendors.ToListAsync();
+            try
+            {
+                return await _context.Vendors.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<IEnumerable<Vendor>> GetAllVendorsBySearchStringAsync(string searchString)
-        {   
-            return await _context.Vendors.Where(vendor => vendor.Name.Contains(searchString))
+        {
+            try
+            {
+                return await _context.Vendors.Where(vendor => vendor.Name.Contains(searchString))
                                         .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<Vendor> GetVendorByIdAsync(string id)
         {
-            return await _context.Vendors.FirstOrDefaultAsync(c => c.Id == id);
+            try
+            {
+                return await _context.Vendors.FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<string?> CreateVendorAsync(Vendor vendorCreate)
@@ -40,30 +64,46 @@ namespace Inventory.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return null;
+                throw;
             }
         }
 
         public async Task UpdateVendorAsync(Vendor vendorUpdate)
         {
-            var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == vendorUpdate.Id);
-        
-            if (vendor != null)
+            try
             {
-                vendor.Name = vendorUpdate.Name;
-                vendor.UpdatedDate = DateTime.Now;
-        
-                await _context.SaveChangesAsync();
+                var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == vendorUpdate.Id);
+            
+                if (vendor != null)
+                {
+                    vendor.Name = vendorUpdate.Name;
+                    vendor.UpdatedDate = DateTime.Now;
+            
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
         public async Task DeleteVendorAsync(string id)
         {
-            var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == id);
-            if (vendor != null)
+            try
             {
-                _context.Vendors.Remove(vendor);
-                await _context.SaveChangesAsync();
+                var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == id);
+                if (vendor != null)
+                {
+                    _context.Vendors.Remove(vendor);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
     }

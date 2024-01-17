@@ -14,18 +14,42 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
         {
-            return await _context.Categories.ToListAsync();
+            try
+            {
+                return await _context.Categories.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<IEnumerable<Category>> GetAllCategoriesBySearchStringAsync(string searchString)
-        {   
-            return await _context.Categories.Where(category => category.Name.Contains(searchString))
+        {
+            try
+            {
+                return await _context.Categories.Where(category => category.Name.Contains(searchString))
                                             .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<Category> GetCategoryByIdAsync(string id)
         {
-            return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            try
+            {
+                return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<string?> CreateCategoryAsync(Category categoryCreate)
@@ -40,30 +64,46 @@ namespace Inventory.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return null;
+                throw;
             }
         }
 
         public async Task UpdateCategoryAsync(Category categoryUpdate)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryUpdate.Id);
-        
-            if (category != null)
+            try
             {
-                category.Name = categoryUpdate.Name;
-                category.UpdatedDate = DateTime.Now;
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryUpdate.Id);
         
-                await _context.SaveChangesAsync();
+                if (category != null)
+                {
+                    category.Name = categoryUpdate.Name;
+                    category.UpdatedDate = DateTime.Now;
+        
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
         public async Task DeleteCategoryAsync(string id)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
-            if (category != null)
+            try
             {
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+                if (category != null)
+                {
+                    _context.Categories.Remove(category);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
     }

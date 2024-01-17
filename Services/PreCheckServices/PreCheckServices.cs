@@ -14,12 +14,28 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<PreCheck>> GetAllPreChecksAsync()
         {
-            return await _context.PreChecks.ToListAsync();
+            try
+            {
+                return await _context.PreChecks.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<PreCheck> GetPreCheckByIdAsync(string id)
         {
-            return await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == id);
+            try
+            {
+                return await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<string?> CreatePreCheckAsync(PreCheck preCheckCreate)
@@ -33,30 +49,46 @@ namespace Inventory.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return null;
+                throw;
             }
         }
 
         public async Task UpdatePreCheckAsync(PreCheck preCheckUpdate)
         {
-            var preCheck = await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == preCheckUpdate.Id);
-        
-            if (preCheck != null)
+            try
             {
-                preCheck.Check = preCheckUpdate.Check;
-                preCheck.Comment = preCheckUpdate.Comment;
+                var preCheck = await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == preCheckUpdate.Id);
         
-                await _context.SaveChangesAsync();
+                if (preCheck != null)
+                {
+                    preCheck.Check = preCheckUpdate.Check;
+                    preCheck.Comment = preCheckUpdate.Comment;
+        
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
         public async Task DeletePreCheckAsync(string id)
         {
-            var preCheck = await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == id);
-            if (preCheck != null)
+            try
             {
-                _context.PreChecks.Remove(preCheck);
-                await _context.SaveChangesAsync();
+                var preCheck = await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == id);
+                if (preCheck != null)
+                {
+                    _context.PreChecks.Remove(preCheck);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
     }
