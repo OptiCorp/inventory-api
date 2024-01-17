@@ -25,24 +25,40 @@ namespace Inventory.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Get all document types", Description = "Retrieves a list of all document types.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentType>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<DocumentType>>> GetAllDocumentTypes()
         {
-            return Ok(await _documentTypeService.GetAllDocumentTypesAsync());
+            try
+            {
+                return Ok(await _documentTypeService.GetAllDocumentTypesAsync());
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get document type", Description = "Retrieves a document type.")]
         [SwaggerResponse(200, "Success", typeof(DocumentType))]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Document type not found")]
         public async Task<ActionResult<DocumentType>> GetDocumentType(string id)
         {
-            var documentType = await _documentTypeService.GetDocumentTypeByIdAsync(id);
-            if (documentType == null)
+            try
             {
-                return NotFound("Document type not found");
-            }
+                var documentType = await _documentTypeService.GetDocumentTypeByIdAsync(id);
+                if (documentType == null)
+                {
+                    return NotFound("Document type not found");
+                }
 
-            return Ok(documentType);
+                return Ok(documentType);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPost]
@@ -64,16 +80,23 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            var documentTypeId = await _documentTypeService.CreateDocumentTypeAsync(documentTypeCreate);
-            if (documentTypeId == null)
+
+            try
             {
-                return BadRequest("Document type creation failed");
+                var documentTypeId = await _documentTypeService.CreateDocumentTypeAsync(documentTypeCreate);
+                if (documentTypeId == null)
+                {
+                    return BadRequest("Document type creation failed");
+                }
+
+                var documentType = await _documentTypeService.GetDocumentTypeByIdAsync(documentTypeId);
+
+                return CreatedAtAction(nameof(GetDocumentType), new { id = documentTypeId }, documentType);
             }
-
-            var documentType = await _documentTypeService.GetDocumentTypeByIdAsync(documentTypeId);
-
-            return CreatedAtAction(nameof(GetDocumentType), new { id = documentTypeId }, documentType);
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPut("{id}")]
@@ -96,38 +119,53 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            if (id != documentTypeUpdate.Id)
+
+            try
             {
-                return BadRequest("Id does not match");
-            }
+                if (id != documentTypeUpdate.Id)
+                {
+                    return BadRequest("Id does not match");
+                }
 
-            var documentType = await _documentTypeService.GetDocumentTypeByIdAsync(id);
-            if (documentType == null)
+                var documentType = await _documentTypeService.GetDocumentTypeByIdAsync(id);
+                if (documentType == null)
+                {
+                    return NotFound("Document type not found");
+                }
+
+                await _documentTypeService.UpdateDocumentTypeAsync(documentTypeUpdate);
+
+                return NoContent();
+            }
+            catch (Exception e)
             {
-                return NotFound("Document type not found");
+                return BadRequest($"Something went wrong: {e.Message}");
             }
-
-            await _documentTypeService.UpdateDocumentTypeAsync(documentTypeUpdate);
-
-            return NoContent();
         }
         
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete document type", Description = "Deletes a document type.")]
         [SwaggerResponse(200, "Document type deleted")]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Document type not found")]
         public async Task<IActionResult> DeleteDocumentType(string id)
         {
-            var documentType = await _documentTypeService.GetDocumentTypeByIdAsync(id);
-            if (documentType == null)
+            try
             {
-                return NotFound("Document type not found");
+                var documentType = await _documentTypeService.GetDocumentTypeByIdAsync(id);
+                if (documentType == null)
+                {
+                    return NotFound("Document type not found");
+                }
+
+                await _documentTypeService.DeleteDocumentTypeAsync(id);
+
+                return NoContent();
             }
-
-            await _documentTypeService.DeleteDocumentTypeAsync(id);
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
     }
 }

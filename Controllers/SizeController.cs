@@ -25,24 +25,41 @@ namespace Inventory.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Get all categories", Description = "Retrieves a list of all categories.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Size>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<Size>>> GetAllSizes()
         {
-            return Ok(await _sizeService.GetAllSizesAsync());
+            try
+            {
+                return Ok(await _sizeService.GetAllSizesAsync());
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get size", Description = "Retrieves a size.")]
         [SwaggerResponse(200, "Success", typeof(Size))]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Size not found")]
         public async Task<ActionResult<Size>> GetSize(string id)
         {
-            var size = await _sizeService.GetSizeByIdAsync(id);
-            if (size == null)
+            try
             {
-                return NotFound("Size not found");
-            }
+                var size = await _sizeService.GetSizeByIdAsync(id);
+                if (size == null)
+                {
+                    return NotFound("Size not found");
+                }
 
-            return Ok(size);
+                return Ok(size);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPost]
@@ -64,25 +81,31 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            var sizeId = await _sizeService.CreateSizeAsync(sizeCreate);
-            if (sizeId == null)
+
+            try
             {
-                return BadRequest("Size creation failed");
+                var sizeId = await _sizeService.CreateSizeAsync(sizeCreate);
+                if (sizeId == null)
+                {
+                    return BadRequest("Size creation failed");
+                }
+
+                var size = await _sizeService.GetSizeByIdAsync(sizeId);
+
+                return CreatedAtAction(nameof(GetSize), new { id = sizeId }, size);
             }
-
-            var size = await _sizeService.GetSizeByIdAsync(sizeId);
-
-            return CreatedAtAction(nameof(GetSize), new { id = sizeId }, size);
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update size", Description = "Updates a size.")]
         [SwaggerResponse(200, "Size updated")]
         [SwaggerResponse(400, "Invalid request")]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Size not found")]
-        
-        
         public async Task<IActionResult> UpdateSize(string id, Size sizeUpdate)
         {
             var validationResult = await _updateValidator.ValidateAsync(sizeUpdate);
@@ -98,38 +121,54 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            if (id != sizeUpdate.Id)
+
+            try
             {
-                return BadRequest("Id does not match");
-            }
+                if (id != sizeUpdate.Id)
+                {
+                    return BadRequest("Id does not match");
+                }
 
-            var size = await _sizeService.GetSizeByIdAsync(id);
-            if (size == null)
+                var size = await _sizeService.GetSizeByIdAsync(id);
+                if (size == null)
+                {
+                    return NotFound("Size not found");
+                }
+
+                await _sizeService.UpdateSizeAsync(sizeUpdate);
+
+                return NoContent();
+
+            }
+            catch (Exception e)
             {
-                return NotFound("Size not found");
+                return BadRequest($"Something went wrong: {e.Message}");
             }
-
-            await _sizeService.UpdateSizeAsync(sizeUpdate);
-
-            return NoContent();
         }
         
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete size", Description = "Deletes a size.")]
         [SwaggerResponse(200, "Size deleted")]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Size not found")]
         public async Task<IActionResult> DeleteSize(string id)
         {
-            var size = await _sizeService.GetSizeByIdAsync(id);
-            if (size == null)
+            try
             {
-                return NotFound("Size not found");
+                var size = await _sizeService.GetSizeByIdAsync(id);
+                if (size == null)
+                {
+                    return NotFound("Size not found");
+                }
+
+                await _sizeService.DeleteSizeAsync(id);
+
+                return NoContent();
             }
-
-            await _sizeService.DeleteSizeAsync(id);
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
     }
 }
