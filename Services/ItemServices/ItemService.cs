@@ -254,38 +254,41 @@ namespace Inventory.Services
                         await _context.LogEntries.AddAsync(logEntry);
                     }
 
-                    foreach (var child in updatedItem.Children) 
-                    {
-                        if (!item.Children.Any(c => c.Id == child.Id)) 
+                    if (updatedItem.Children != null) {
+                        foreach (var child in updatedItem.Children) 
                         {
-                            logEntry = new LogEntry
+                            if (!item.Children.Any(c => c.Id == child.Id)) 
                             {
-                                ItemId = item.Id,
-                                CreatedById = updatedById,
-                                Message = $"Child item added: {child.WpId}",
-                                CreatedDate = DateTime.Now
-                            };
-                            await _context.LogEntries.AddAsync(logEntry);
+                                logEntry = new LogEntry
+                                {
+                                    ItemId = item.Id,
+                                    CreatedById = updatedById,
+                                    Message = $"Child item added: {child.WpId}",
+                                    CreatedDate = DateTime.Now
+                                };
+                                await _context.LogEntries.AddAsync(logEntry);
+                            }
+                            
                         }
-                        
                     }
 
                     
-
-                    foreach (var child in item.Children) 
-                    {
-                        if (!updatedItem.Children.Any(c => c.Id == child.Id)) 
+                    if (item.Children != null) {
+                        foreach (var child in item.Children) 
                         {
-                            logEntry = new LogEntry
+                            if (!updatedItem.Children.Any(c => c.Id == child.Id)) 
                             {
-                                ItemId = item.Id,
-                                CreatedById = updatedById,
-                                Message = $"Child item removed: {child.WpId}",
-                                CreatedDate = DateTime.Now
-                            };
-                            await _context.LogEntries.AddAsync(logEntry);
+                                logEntry = new LogEntry
+                                {
+                                    ItemId = item.Id,
+                                    CreatedById = updatedById,
+                                    Message = $"Child item removed: {child.WpId}",
+                                    CreatedDate = DateTime.Now
+                                };
+                                await _context.LogEntries.AddAsync(logEntry);
+                            }
+                            
                         }
-                        
                     }
 
 
