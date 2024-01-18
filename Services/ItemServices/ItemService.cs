@@ -247,12 +247,47 @@ namespace Inventory.Services
                         {
                             ItemId = item.Id,
                             CreatedById = updatedById,
-                            Message = "Parent ID changed from " + item.ParentId + " to " + updatedItem.ParentId,
+                            Message = "Parent ID changed from " + item.WpId + " to " + updatedItem.WpId,
                             CreatedDate = DateTime.Now
                         };
                         item.ParentId = updatedItem.ParentId;
                         await _context.LogEntries.AddAsync(logEntry);
                     }
+
+                    foreach (var child in updatedItem.Children) 
+                    {
+                        if (!item.Children.Any(c => c.Id == child.Id)) 
+                        {
+                            logEntry = new LogEntry
+                            {
+                                ItemId = item.Id,
+                                CreatedById = updatedById,
+                                Message = $"Child item added: {child.WpId}",
+                                CreatedDate = DateTime.Now
+                            };
+                            await _context.LogEntries.AddAsync(logEntry);
+                        }
+                        
+                    }
+
+                    
+
+                    foreach (var child in item.Children) 
+                    {
+                        if (!updatedItem.Children.Any(c => c.Id == child.Id)) 
+                        {
+                            logEntry = new LogEntry
+                            {
+                                ItemId = item.Id,
+                                CreatedById = updatedById,
+                                Message = $"Child item removed: {child.WpId}",
+                                CreatedDate = DateTime.Now
+                            };
+                            await _context.LogEntries.AddAsync(logEntry);
+                        }
+                        
+                    }
+
 
                     if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
                     {
