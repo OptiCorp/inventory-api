@@ -27,9 +27,17 @@ namespace Inventory.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Get all items", Description = "Retrieves a list of all items.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<Item>>> GetAllItems()
         {
-            return Ok(await _itemService.GetAllItemsAsync());
+            try
+            {
+                return Ok(await _itemService.GetAllItemsAsync());
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("{id}")]
@@ -38,13 +46,20 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "Item not found")]
         public async Task<ActionResult<Item>> GetItem(string id)
         {
-            var item = await _itemService.GetItemByIdAsync(id);
-            if (item == null)
+            try
             {
-                return NotFound("Item not found");
-            }
+                var item = await _itemService.GetItemByIdAsync(id);
+                if (item == null)
+                {
+                    return NotFound("Item not found");
+                }
 
-            return Ok(item);
+                return Ok(item);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPost]
@@ -69,21 +84,28 @@ namespace Inventory.Controllers
                     return ValidationProblem(modelStateDictionary);
                 }
             }
-            
-            var itemIds = await _itemService.CreateItemAsync(itemCreateList);
-            if (itemIds == null)
-            {
-                return BadRequest("Item creation failed");
-            }
 
-            var items = new List<Item>();
-            foreach (var itemId in itemIds)
+            try
             {
-                var item = await _itemService.GetItemByIdAsync(itemId);
-                items.Add(item);
+                var itemIds = await _itemService.CreateItemAsync(itemCreateList);
+                if (itemIds == null)
+                {
+                    return BadRequest("Item creation failed");
+                }
+
+                var items = new List<Item>();
+                foreach (var itemId in itemIds)
+                {
+                    var item = await _itemService.GetItemByIdAsync(itemId);
+                    items.Add(item);
+                }
+                
+                return CreatedAtAction(nameof(GetItem), new { ids = itemIds }, items);
             }
-            
-            return CreatedAtAction(nameof(GetItem), new { ids = itemIds }, items);
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
 
         [HttpPost("AddChildItemToParent")]
@@ -93,34 +115,49 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "Item not found")]
         public async Task<IActionResult> AddChildItemToParent(string itemId, string childItemId)
         {
-            var parentItem = await _itemService.GetItemByIdAsync(itemId);
-            var childItem = await _itemService.GetItemByIdAsync(childItemId);
-            if (parentItem == null)
+            try
             {
-                return NotFound("Item not found");
-            }
+                var parentItem = await _itemService.GetItemByIdAsync(itemId);
+                var childItem = await _itemService.GetItemByIdAsync(childItemId);
+                if (parentItem == null)
+                {
+                    return NotFound("Item not found");
+                }
 
-            if (childItem == null)
+                if (childItem == null)
+                {
+                    return NotFound("Child item not found");
+                }
+
+                if (parentItem.Id == childItem.Id)
+                {
+                    return BadRequest("You cannot add an item as a child of itself. Please select a different item to be linked.");
+                }
+
+                await _itemService.AddChildItemToParentAsync(itemId, childItemId);
+
+                return NoContent();
+            }
+            catch (Exception e)
             {
-                return NotFound("Child item not found");
+                return BadRequest($"Something went wrong: {e.Message}");
             }
-
-            if (parentItem.Id == childItem.Id)
-            {
-                return BadRequest("You cannot add an item as a child of itself. Please select a different item to be linked.");
-            }
-
-            await _itemService.AddChildItemToParentAsync(itemId, childItemId);
-
-            return NoContent();
         }
 
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<Item>>> GetItemsBySearchString(string searchString, int page, string? type)
         {
-            return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString, page, type));
+            try
+            {
+                return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString, page, type));
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("BySearchStringNotInList/{searchString}")]
@@ -129,20 +166,35 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "List not found")]
         public async Task<ActionResult<IEnumerable<Item>>> GetItemsNotInLIstBySearchString(string searchString, string listId, int page)
         {
-            var list = await _listService.GetListByIdAsync(listId);
-            if (list == null)
+            try
             {
-                return NotFound("List not found");
+                var list = await _listService.GetListByIdAsync(listId);
+                if (list == null)
+                {
+                    return NotFound("List not found");
+                }
+                return Ok(await _itemService.GetAllItemsNotInListBySearchStringAsync(searchString, listId, page));
             }
-            return Ok(await _itemService.GetAllItemsNotInListBySearchStringAsync(searchString, listId, page));
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("ByUserId/{id}")]
         [SwaggerOperation(Summary = "Get items added by user", Description = "Retrieves items added by the user.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<Item>>> GetItemsByUserId(string id, int page)
         {
-            return Ok(await _itemService.GetAllItemsByUserIdAsync(id, page));
+            try
+            {
+                return Ok(await _itemService.GetAllItemsByUserIdAsync(id, page));
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPut("{id}")]
@@ -165,21 +217,28 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            if (id != itemUpdate.Id)
+
+            try
             {
-                return BadRequest("Id does not match");
-            }
+                if (id != itemUpdate.Id)
+                {
+                    return BadRequest("Id does not match");
+                }
 
-            var item = await _itemService.GetItemByIdAsync(id);
-            if (item == null)
+                var item = await _itemService.GetItemByIdAsync(id);
+                if (item == null)
+                {
+                    return NotFound("Item not found");
+                }
+
+                await _itemService.UpdateItemAsync(updatedById, itemUpdate);
+
+                return NoContent();
+            }
+            catch (Exception e)
             {
-                return NotFound("Item not found");
+                return BadRequest($"Something went wrong: {e.Message}");
             }
-
-            await _itemService.UpdateItemAsync(updatedById, itemUpdate);
-
-            return NoContent();
         }
         [HttpPost("RemoveParentId")]
         [SwaggerOperation(Summary = "Removes parent id from item.", Description = "Removes parent id from item.")]
@@ -188,32 +247,47 @@ namespace Inventory.Controllers
         [SwaggerResponse(404, "Item not found")]
         public async Task<IActionResult> RemoveParentId(string itemId)
         {
-            var item = await _itemService.GetItemByIdAsync(itemId);
-            if (item == null)
+            try
             {
-                return NotFound("Item not found");
+                var item = await _itemService.GetItemByIdAsync(itemId);
+                if (item == null)
+                {
+                    return NotFound("Item not found");
+                }
+
+                await _itemService.RemoveParentIdAsync(itemId);
+
+                return NoContent();
             }
-
-            await _itemService.RemoveParentIdAsync(itemId);
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete item", Description = "Deletes an item.")]
         [SwaggerResponse(200, "Item deleted")]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Item not found")]
         public async Task<IActionResult> DeleteItem(string id)
         {
-            var item = await _itemService.GetItemByIdAsync(id);
-            if (item == null)
+            try
             {
-                return NotFound("Item not found");
+                var item = await _itemService.GetItemByIdAsync(id);
+                if (item == null)
+                {
+                    return NotFound("Item not found");
+                }
+
+                await _itemService.DeleteItemAsync(id);
+
+                return NoContent();
             }
-
-            await _itemService.DeleteItemAsync(id);
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("IsWpIdUnique/{wpId}")]
@@ -222,7 +296,14 @@ namespace Inventory.Controllers
         [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<bool>> IsIdUnique(string wpId)
         {
-            return await _itemService.IsWpIdUnique(wpId);
+            try
+            {
+                return await _itemService.IsWpIdUnique(wpId);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
     }
 }
