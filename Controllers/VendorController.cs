@@ -25,32 +25,56 @@ namespace Inventory.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Get all vendors", Description = "Retrieves a list of all vendors.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Vendor>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<Vendor>>> GetAllVendors()
         {
-            return Ok(await _vendorService.GetAllVendorsAsync());
+            try
+            {
+                return Ok(await _vendorService.GetAllVendorsAsync());
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get vendor", Description = "Retrieves a vendor.")]
         [SwaggerResponse(200, "Success", typeof(Vendor))]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Vendor not found")]
         public async Task<ActionResult<Vendor>> GetVendor(string id)
         {
-            var vendor = await _vendorService.GetVendorByIdAsync(id);
-            if (vendor == null)
+            try
             {
-                return NotFound("Vendor not found");
-            }
+                var vendor = await _vendorService.GetVendorByIdAsync(id);
+                if (vendor == null)
+                {
+                    return NotFound("Vendor not found");
+                }
 
-            return Ok(vendor);
+                return Ok(vendor);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get vendors containing search string", Description = "Retrieves vendors containing search string in name.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Vendor>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<Vendor>>> GetVendorBySearchString(string searchString)
         {
-            return Ok(await _vendorService.GetAllVendorsBySearchStringAsync(searchString));
+            try
+            { 
+                return Ok(await _vendorService.GetAllVendorsBySearchStringAsync(searchString));
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPost]
@@ -72,16 +96,23 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            var vendorId = await _vendorService.CreateVendorAsync(vendorCreate);
-            if (vendorId == null)
+
+            try
             {
-                return BadRequest("Vendor creation failed");
+                var vendorId = await _vendorService.CreateVendorAsync(vendorCreate);
+                if (vendorId == null)
+                {
+                    return BadRequest("Vendor creation failed");
+                }
+
+                var vendor = await _vendorService.GetVendorByIdAsync(vendorId);
+
+                return CreatedAtAction(nameof(GetVendor), new { id = vendorId }, vendor);
             }
-
-            var vendor = await _vendorService.GetVendorByIdAsync(vendorId);
-
-            return CreatedAtAction(nameof(GetVendor), new { id = vendorId }, vendor);
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPut("{id}")]
@@ -104,38 +135,53 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            if (id != vendorUpdate.Id)
+
+            try
             {
-                return BadRequest("Id does not match");
-            }
+                if (id != vendorUpdate.Id)
+                {
+                    return BadRequest("Id does not match");
+                }
 
-            var vendor = await _vendorService.GetVendorByIdAsync(id);
-            if (vendor == null)
+                var vendor = await _vendorService.GetVendorByIdAsync(id);
+                if (vendor == null)
+                {
+                    return NotFound("Vendor not found");
+                }
+
+                await _vendorService.UpdateVendorAsync(vendorUpdate);
+
+                return NoContent();
+            }
+            catch (Exception e)
             {
-                return NotFound("Vendor not found");
+                return BadRequest($"Something went wrong: {e.Message}");
             }
-
-            await _vendorService.UpdateVendorAsync(vendorUpdate);
-
-            return NoContent();
         }
         
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete vendor", Description = "Deletes a vendor.")]
         [SwaggerResponse(200, "Vendor deleted")]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Vendor not found")]
         public async Task<IActionResult> DeleteVendor(string id)
         {
-            var vendor = await _vendorService.GetVendorByIdAsync(id);
-            if (vendor == null)
+            try
             {
-                return NotFound("Vendor not found");
+                var vendor = await _vendorService.GetVendorByIdAsync(id);
+                if (vendor == null)
+                {
+                    return NotFound("Vendor not found");
+                }
+
+                await _vendorService.DeleteVendorAsync(id);
+
+                return NoContent();
             }
-
-            await _vendorService.DeleteVendorAsync(id);
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
     }
 }

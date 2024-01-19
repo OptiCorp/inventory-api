@@ -14,24 +14,39 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<ItemTemplate>> GetAllItemTemplatesAsync()
         {
-            return await _context.ItemTemplates
-                .Include(c => c.Category)
-                .Include(c => c.Documents)
-                .Include(c => c.Sizes)
-                .Include(c => c.CreatedBy)
-                .ToListAsync();
+            try
+            {
+                return await _context.ItemTemplates
+                    .Include(c => c.Category)
+                    .Include(c => c.Documents)
+                    .Include(c => c.Sizes)
+                    .Include(c => c.CreatedBy)
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
 
         public async Task<ItemTemplate> GetItemTemplateByIdAsync(string id)
         {
-            return await _context.ItemTemplates
-                .Include(c => c.Category)
-                .Include(c => c.Documents)
-                .Include(c => c.Sizes)
-                .Include(c => c.CreatedBy)
-                .FirstOrDefaultAsync(c => c.Id == id);
-            
+            try
+            {
+                return await _context.ItemTemplates
+                    .Include(c => c.Category)
+                    .Include(c => c.Documents)
+                    .Include(c => c.Sizes)
+                    .Include(c => c.CreatedBy)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<string?> CreateItemTemplateAsync(ItemTemplate itemTemplate)
@@ -46,35 +61,51 @@ namespace Inventory.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return null;
+                throw;
             }
         }
         
         public async Task UpdateItemTemplateAsync(ItemTemplate itemTemplateUpdate)
         {
-            var itemTemplate = await _context.ItemTemplates.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.Id);
-        
-            if (itemTemplate != null)
+            try
             {
-                itemTemplate.Name = itemTemplateUpdate.Name;
-                itemTemplate.Type = itemTemplateUpdate.Type;
-                itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
-                itemTemplate.Revision = itemTemplateUpdate.Revision;
-                itemTemplate.Description = itemTemplateUpdate.Description;
-                itemTemplate.CreatedById = itemTemplateUpdate.CreatedById;
-                itemTemplate.UpdatedDate = DateTime.Now;
+                var itemTemplate = await _context.ItemTemplates.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.Id);
         
-                await _context.SaveChangesAsync();
+                if (itemTemplate != null)
+                {
+                    itemTemplate.Name = itemTemplateUpdate.Name;
+                    itemTemplate.Type = itemTemplateUpdate.Type;
+                    itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
+                    itemTemplate.Revision = itemTemplateUpdate.Revision;
+                    itemTemplate.Description = itemTemplateUpdate.Description;
+                    itemTemplate.CreatedById = itemTemplateUpdate.CreatedById;
+                    itemTemplate.UpdatedDate = DateTime.Now;
+        
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
         public async Task DeleteItemTemplateAsync(string id)
         {
-            var itemTemplate = await _context.ItemTemplates.FirstOrDefaultAsync(c => c.Id == id);
-            if (itemTemplate != null)
+            try
             {
-                _context.ItemTemplates.Remove(itemTemplate);
-                await _context.SaveChangesAsync();
+                var itemTemplate = await _context.ItemTemplates.FirstOrDefaultAsync(c => c.Id == id);
+                if (itemTemplate != null)
+                {
+                    _context.ItemTemplates.Remove(itemTemplate);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
     }

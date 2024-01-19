@@ -27,46 +27,78 @@ namespace Inventory.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "Get all lists", Description = "Retrieves a list of all lists.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<List>>> GetAllLists()
         {
-            return Ok(await _listService.GetAllListsAsync());
+            try
+            {
+                return Ok(await _listService.GetAllListsAsync());
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get list", Description = "Retrieves a list.")]
         [SwaggerResponse(200, "Success", typeof(List))]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
         public async Task<ActionResult<List>> GetList(string id)
         {
-            var list = await _listService.GetListByIdAsync(id);
-            if (list == null)
+            try
             {
-                return NotFound("List not found");
-            }
+                var list = await _listService.GetListByIdAsync(id);
+                if (list == null)
+                {
+                    return NotFound("List not found");
+                }
 
-            return Ok(list);
+                return Ok(list);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("ByUserId/{id}")]
         [SwaggerOperation(Summary = "Get lists added by user", Description = "Retrieves lists added by the user.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
+        [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<List>>> GetListsByUserId(string id, int page)
         {
-            return Ok(await _listService.GetAllListsByUserIdAsync(id, page));
+            try
+            {
+                return Ok(await _listService.GetAllListsByUserIdAsync(id, page));
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get lists containing search string", Description = "Retrieves lists containing search string in title, WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "User not found")]
         public async Task<ActionResult<IEnumerable<List>>> GetListsBySearchString(string searchString, int page, string userId)
         {
-            var user = await _userService.GetUserByIdAsync(userId);
-            if (user == null)
+            try
             {
-                return NotFound("User not found");
+                var user = await _userService.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+                return Ok(await _listService.GetAllListsBySearchStringAsync(searchString, page, userId));
             }
-            return Ok(await _listService.GetAllListsBySearchStringAsync(searchString, page, userId));
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPost]
@@ -88,50 +120,73 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            var listId = await _listService.CreateListAsync(listCreate);
-            if (listId == null)
+
+            try
             {
-                return StatusCode(500);
+                var listId = await _listService.CreateListAsync(listCreate);
+                if (listId == null)
+                {
+                    return StatusCode(500);
+                }
+
+                var list = await _listService.GetListByIdAsync(listId);
+
+                return CreatedAtAction(nameof(GetList), new { id = listId }, list);
             }
-
-            var list = await _listService.GetListByIdAsync(listId);
-
-            return CreatedAtAction(nameof(GetList), new { id = listId }, list);
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPost("AddItems")]
         [SwaggerOperation(Summary = "Add items to a list", Description = "Adds items to a list.")]
         [SwaggerResponse(200, "Items added", typeof(List))]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
         public async Task<ActionResult<List>> AddItemsToList(IEnumerable<string> itemIds, string listId)
         {
-            var list = await _listService.GetListByIdAsync(listId);
-            if (list == null)
+            try
             {
-                return NotFound("List not found");
+                var list = await _listService.GetListByIdAsync(listId);
+                if (list == null)
+                {
+                    return NotFound("List not found");
+                }
+
+                await _listService.AddItemsToListAsync(itemIds, listId);
+
+                return NoContent();
             }
-
-            await _listService.AddItemsToListAsync(itemIds, listId);
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPost("RemoveItems")]
         [SwaggerOperation(Summary = "Remove items from a list", Description = "Removes items to a list.")]
         [SwaggerResponse(201, "Items removed", typeof(List))]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
         public async Task<ActionResult<List>> RemoveItemsFromList(IEnumerable<string> itemIds, string listId)
         {
-            var list = await _listService.GetListByIdAsync(listId);
-            if (list == null)
+            try
             {
-                return NotFound("List not found");
+                var list = await _listService.GetListByIdAsync(listId);
+                if (list == null)
+                {
+                    return NotFound("List not found");
+                }
+
+                await _listService.RemoveItemsFromListAsync(itemIds, listId);
+
+                return NoContent();
             }
-
-            await _listService.RemoveItemsFromListAsync(itemIds, listId);
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
         
         [HttpPut("{id}")]
@@ -154,38 +209,53 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
-            if (id != listUpdate.Id)
+
+            try
             {
-                return BadRequest("Id does not match");
-            }
+                if (id != listUpdate.Id)
+                {
+                    return BadRequest("Id does not match");
+                }
 
-            var list = await _listService.GetListByIdAsync(id);
-            if (list == null)
+                var list = await _listService.GetListByIdAsync(id);
+                if (list == null)
+                {
+                    return NotFound("List not found");
+                }
+
+                await _listService.UpdateListAsync(listUpdate);
+
+                return NoContent();
+            }
+            catch (Exception e)
             {
-                return NotFound("List not found");
+                return BadRequest($"Something went wrong: {e.Message}");
             }
-
-            await _listService.UpdateListAsync(listUpdate);
-
-            return NoContent();
         }
         
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete list", Description = "Deletes an list.")]
         [SwaggerResponse(200, "List deleted")]
+        [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
         public async Task<IActionResult> DeleteList(string id)
         {
-            var list = await _listService.GetListByIdAsync(id);
-            if (list == null)
+            try
             {
-                return NotFound("List not found");
+                var list = await _listService.GetListByIdAsync(id);
+                if (list == null)
+                {
+                    return NotFound("List not found");
+                }
+
+                await _listService.DeleteListAsync(id);
+
+                return NoContent();
             }
-
-            await _listService.DeleteListAsync(id);
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
         }
     }
 }
