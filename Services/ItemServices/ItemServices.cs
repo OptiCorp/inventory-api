@@ -22,9 +22,10 @@ namespace Inventory.Services
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type)
-        {   
-            var query = _context.Items
+        public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page)
+        {
+            var result = await _context.Items
+                .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString))
                 .Include(c => c.ItemTemplate)
                 .ThenInclude(c => c.Category)
                 .Include(c => c.Parent)
@@ -34,46 +35,41 @@ namespace Inventory.Services
                 .Include(c => c.Location)
                 .Include(c => c.LogEntries)
                 .ThenInclude(c => c.CreatedBy)
-                .OrderBy(c => c.Id);
-
-            var result = await query
-                .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString))
+                .OrderBy(c => c.Id)
+                .Take(page * 10)
                 .ToListAsync();
 
-            if (result.Count >= 10)
+            if (result.Count >= page * 10)
             {
                 return result;
             }
-            else
-            {
-                var templates = await _context.ItemTemplates
-                    .Where(c => c.Description.Contains(searchString)
-                                && (type.IsNullOrEmpty() || c.Type == type))
-                    .OrderBy(c => c.Id)
-                    .ToListAsync();
+            
+            var remainingItemsCount = page * 10 - result.Count;
+                
+            var templateIds = await _context.ItemTemplates
+                .Where(c => c.Description.Contains(searchString))
+                .OrderBy(c => c.Id)
+                .Select(c => c.Id)
+                .ToListAsync();
 
-                foreach (var template in templates)
-                {
-                    var items = await _context.Items
-                        .Where(c => c.ItemTemplateId == template.Id)
-                        .Include(c => c.ItemTemplate)
-                        .ThenInclude(c => c.Category)
-                        .Include(c => c.Parent)
-                        .Include(c => c.Children)
-                        .Include(c => c.CreatedBy)
-                        .Include(c => c.Vendor)
-                        .Include(c => c.Location)
-                        .Include(c => c.LogEntries)
-                        .ThenInclude(c => c.CreatedBy)
-                        .OrderBy(c => c.Id)
-                        .ToListAsync();
+            var items = await _context.Items
+                .Where(c => templateIds.Contains(c.ItemTemplateId))
+                .Include(c => c.ItemTemplate)
+                .ThenInclude(c => c.Category)
+                .Include(c => c.Parent)
+                .Include(c => c.Children)
+                .Include(c => c.CreatedBy)
+                .Include(c => c.Vendor)
+                .Include(c => c.Location)
+                .Include(c => c.LogEntries)
+                .ThenInclude(c => c.CreatedBy)
+                .OrderBy(c => c.Id)
+                .Take(remainingItemsCount)
+                .ToListAsync();
+                
+            result.AddRange(items);
 
-                    result.AddRange(items);
-                }
-            }
-            var itemsToReturn = result.Skip(page == 0 ? 0 : (page - 1) * 10).Take(10).ToList();
-            Console.WriteLine(itemsToReturn.Count);
-            return itemsToReturn;
+            return result;
         }
         
         public async Task<IEnumerable<Item>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)

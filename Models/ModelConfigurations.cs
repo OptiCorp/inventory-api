@@ -39,7 +39,7 @@ namespace Inventory.Configuration
             
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.ItemTemplate)
-                .WithMany(c => c.Items)
+                .WithMany()
                 .HasForeignKey(c => c.ItemTemplateId)
                 .OnDelete(DeleteBehavior.SetNull);
 

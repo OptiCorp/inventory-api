@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Inventory.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -118,9 +119,9 @@ namespace Inventory.Controllers
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItemsBySearchString(string searchString, int page, string? type)
+        public async Task<ActionResult<IEnumerable<Item>>> GetItemsBySearchString(string searchString, [Required] int page)
         {
-            return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString, page, type));
+            return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString, page));
         }
         
         [HttpGet("BySearchStringNotInList/{searchString}")]

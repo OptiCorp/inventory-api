@@ -6,7 +6,7 @@ namespace Inventory.Services
     public interface IItemService
     {
         Task<IEnumerable<Item>> GetAllItemsAsync();
-        Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page, string? type);
+        Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page);
         Task<IEnumerable<Item>> GetAllItemsNotInListBySearchStringAsync(string searchString,string listId, int page);
         Task<IEnumerable<Item>> GetAllItemsByUserIdAsync(string id, int page);
         Task<Item> GetItemByIdAsync(string id);
