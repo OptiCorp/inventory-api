@@ -243,11 +243,14 @@ namespace Inventory.Services
 
                     if (updatedItem.ParentId != item.ParentId)
                     {
+                        var oldParent = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.ParentId);
+                        var newParent = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.ParentId);
+                        
                         logEntry = new LogEntry
                         {
                             ItemId = item.Id,
                             CreatedById = updatedById,
-                            Message = "Parent ID changed from " + item.WpId + " to " + updatedItem.WpId,
+                            Message = "Parent ID changed from " + oldParent.WpId + " to " + newParent.WpId,
                             CreatedDate = DateTime.Now
                         };
                         item.ParentId = updatedItem.ParentId;
