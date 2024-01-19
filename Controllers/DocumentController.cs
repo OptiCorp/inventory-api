@@ -19,11 +19,29 @@ namespace Inventory.Controllers
             _itemService = itemService;
         }
 
+        [HttpGet]
+        [SwaggerOperation(Summary = "Get a document by its ID", Description = "Retrieves a document with the specified ID")]
+        [SwaggerResponse(200, "Success", typeof(DocumentResponseDto))]
+        [SwaggerResponse(400, "Invalid request")]
+        public async Task<ActionResult<DocumentResponseDto>> GetDocumentById(string id)
+        {
+            try
+            {
+                return Ok(await _documentService.GetDocumentByIdAsync(id));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+        
+        
         [HttpGet("ByItemId/{id}")]
         [SwaggerOperation(Summary = "Get documentation by item ID", Description = "Retrives all files related to an item")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<Document>))]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentResponseDto>))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<IEnumerable<Document>>> GetDocumentsByItemId(string id)
+        public async Task<ActionResult<IEnumerable<DocumentResponseDto>>> GetDocumentsByItemId(string id)
         {
             try
             {
@@ -32,7 +50,7 @@ namespace Inventory.Controllers
                 {
                     return NotFound("Item not found");
                 }
-                return Ok(item.Documents);
+                return Ok(await _documentService.GetDocumentsByItemIdAsync(id));
             }
             catch (Exception e)
             {
@@ -56,7 +74,7 @@ namespace Inventory.Controllers
 
                 string newDocumentId = await _documentService.UploadDocumentAsync(document);
                 
-                Document newDocument = await _documentService.GetDocumentByIdAsync(newDocumentId); 
+                var newDocument = await _documentService.GetDocumentByIdAsync(newDocumentId); 
                 
                 return CreatedAtAction(nameof(UploadDocument), new { id = newDocumentId }, newDocument);
             }
@@ -81,7 +99,7 @@ namespace Inventory.Controllers
                     return NotFound("Document not found");
                 }
 
-                await _documentService.DeleteDocumentFromItemAsync(document, itemId);
+                await _documentService.DeleteDocumentAsync(documentId);
 
                 return Ok();
             }

@@ -19,45 +19,41 @@ namespace Inventory.Services
         {
             try
             {
-                var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
-                BlobContainerClient containerClient =
-                    new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
-                var documentList = new List<DocumentResponseDto>();
-            
-                var item = await _context.Items.Where(item => item.Id == id)
-                    .Include(item => item.Documents).ThenInclude(doc => doc.DocumentType).FirstOrDefaultAsync();
+                var item = await _context.Items
+                    .Where(item => item.Id == id)
+                    .Include(item => item.Documents)
+                    .FirstOrDefaultAsync();
                 
-                var documents = item.Documents;
-                
-                foreach (var document in documents)
+                var itemTemplate = await _context.ItemTemplates
+                    .Where(temp => temp.Id == item.ItemTemplateId)
+                    .Include(doc => doc.Documents)
+                    .FirstOrDefaultAsync();
+
+                var allDocuments = new List<Document>();
+                allDocuments.AddRange(item.Documents);
+                allDocuments.AddRange(itemTemplate.Documents);
+                    
+                if (allDocuments.Any()) return null;
+
+                List<DocumentResponseDto> documentResponseList = new List<DocumentResponseDto>();
+
+                foreach (var document in allDocuments)
                 {
-                    try
+                    var fileBytes = await DownloadDocumentFromBlobStorage(document.BlobId);
+
+                    var documentResponse = new DocumentResponseDto
                     {
-                        using (MemoryStream stream = new MemoryStream())
-                        {
-                            var blobClient = containerClient.GetBlobClient(document.BlobId);
-
-                            await blobClient.DownloadToAsync(stream);
-
-                            var documentResponse = new DocumentResponseDto()
-                            {
-                                Id = document.Id,
-                                Name = document.DocumentType.Name,
-                                BlobId = document.BlobId,
-                                ContentType = document.ContentType,
-                                Bytes = stream.ToArray()
-                            };
+                        Id = document.Id,
+                        Name = await _context.DocumentTypes.Where(doc => doc.Id == document.DocumentTypeId)
+                            .Select(doc => doc.Name).FirstOrDefaultAsync(),
+                        ContentType = document.ContentType,
+                        Bytes = fileBytes
+                    };
                         
-                            documentList.Add(documentResponse);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                        throw;
-                    }
+                    documentResponseList.Add(documentResponse);
                 }
-                return documentList;
+                
+                return documentResponseList;
             }
             catch (Exception e)
             {
@@ -66,11 +62,26 @@ namespace Inventory.Services
             }
         }
 
-        public async Task<Document> GetDocumentByIdAsync(string id)
+        public async Task<DocumentResponseDto> GetDocumentByIdAsync(string id)
         {
             try
             {
-                return await _context.Documents.FirstOrDefaultAsync(document => document.Id == id);
+                var document = await _context.Documents
+                    .Where(doc => doc.Id == id)
+                    .Include(doc => doc.DocumentType)
+                    .FirstOrDefaultAsync();
+
+                var fileBytes = await DownloadDocumentFromBlobStorage(document.BlobId);
+
+                var documentResponse = new DocumentResponseDto
+                {
+                    Id = document.Id,
+                    Name = document.DocumentType.Name,
+                    ContentType = document.ContentType,
+                    Bytes = fileBytes
+                };
+
+                return documentResponse;
             }
             catch (Exception e)
             {
@@ -83,26 +94,38 @@ namespace Inventory.Services
         {
             try
             {
-                var newDocument = new Document
-                {
-                    DocumentTypeId = document.DocumentTypeId,
-                    BlobId = Guid.NewGuid().ToString(),
-                    ContentType = document.File.ContentType
-                };
-            
-                var item = await _context.Items.Where(item => item.Id == document.ItemId)
-                    .Include(item => item.Documents)
-                    .FirstOrDefaultAsync();
-                item.Documents.Add(newDocument);
-                await _context.SaveChangesAsync();
-            
-                return newDocument.Id;
+                return "hello";
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public Task AddDocumentToItemAsync(string documentId, string itemId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddDocumentToItemTemplateAsync(string documentId, string itemTemplateId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveDocumentFromItemAsync(string documentId, string itemId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveDocumentFromItemTemplateAsync(string documentId, string ItemTemplateId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteDocumentAsync(string documentId)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task DeleteDocumentFromItemAsync(Document document, string itemId)
@@ -121,6 +144,21 @@ namespace Inventory.Services
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static async Task<byte[]> DownloadDocumentFromBlobStorage(string blobId)
+        {
+            var blobContainerEndpoint = "https://storageaccountinventory.blob.core.windows.net/item-documentation";
+            BlobContainerClient blobContainerClient =
+                new BlobContainerClient(new Uri(blobContainerEndpoint), new DefaultAzureCredential());
+
+            using MemoryStream documentStream = new();
+            
+            var blobClient = blobContainerClient.GetBlobClient(blobId);
+
+            await blobClient.DownloadToAsync(documentStream);
+
+            return documentStream.ToArray();
         }
     }
 }
