@@ -16,69 +16,28 @@ namespace Inventory.Services
 
         public async Task<IEnumerable<Item>> GetAllItemsAsync()
         {
-            return await _context.Items
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
-                .ToListAsync();
+            try
+            {
+                return await _context.Items
+                    .Include(c => c.LogEntries)!
+                    .ThenInclude(c => c.CreatedBy)
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page)
         {
-            var result = await _context.Items
-                .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString))
-                .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c.Category)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
-                .Include(c => c.CreatedBy)
-                .Include(c => c.Vendor)
-                .Include(c => c.Location)
-                .Include(c => c.LogEntries)
-                .ThenInclude(c => c.CreatedBy)
-                .OrderBy(c => c.Id)
-                .Take(page * 10)
-                .ToListAsync();
-
-            if (result.Count >= page * 10)
+            try
             {
-                return result;
-            }
-            
-            var remainingItemsCount = page * 10 - result.Count;
-                
-            var templateIds = await _context.ItemTemplates
-                .Where(c => c.Description.Contains(searchString))
-                .OrderBy(c => c.Id)
-                .Select(c => c.Id)
-                .ToListAsync();
-
-            var items = await _context.Items
-                .Where(c => templateIds.Contains(c.ItemTemplateId))
-                .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c.Category)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
-                .Include(c => c.CreatedBy)
-                .Include(c => c.Vendor)
-                .Include(c => c.Location)
-                .Include(c => c.LogEntries)
-                .ThenInclude(c => c.CreatedBy)
-                .OrderBy(c => c.Id)
-                .Take(remainingItemsCount)
-                .ToListAsync();
-                
-            result.AddRange(items);
-
-            return result;
-        }
-        
-        public async Task<IEnumerable<Item>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
-        {   
-            return await _context.Items.Include(c => c.ItemTemplate)
+                var result = await _context.Items
+                    .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString))
+                    .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c.Category)
-                    .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
-                    || c.ItemTemplate.Description.Contains(searchString)
-                    && c.ListId != listId)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.CreatedBy)
@@ -87,57 +46,146 @@ namespace Inventory.Services
                     .Include(c => c.LogEntries)
                     .ThenInclude(c => c.CreatedBy)
                     .OrderBy(c => c.Id)
-                    .Skip(page == 0 ? 0 : (page - 1) * 10)
-                    .Take(10)
+                    .Take(page * 10)
                     .ToListAsync();
+
+                if (result.Count >= page * 10)
+                {
+                    return result;
+                }
+                
+                var remainingItemsCount = page * 10 - result.Count;
+                    
+                var templateIds = await _context.ItemTemplates
+                    .Where(c => c.Description.Contains(searchString))
+                    .OrderBy(c => c.Id)
+                    .Select(c => c.Id)
+                    .ToListAsync();
+
+                var items = await _context.Items
+                    .Where(c => templateIds.Contains(c.ItemTemplateId))
+                    .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c.Category)
+                    .Include(c => c.Parent)
+                    .Include(c => c.Children)
+                    .Include(c => c.CreatedBy)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Location)
+                    .Include(c => c.LogEntries)
+                    .ThenInclude(c => c.CreatedBy)
+                    .OrderBy(c => c.Id)
+                    .Take(remainingItemsCount)
+                    .ToListAsync();
+                    
+                result.AddRange(items);
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+        
+        public async Task<IEnumerable<Item>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
+        {
+            try
+            {
+                return await _context.Items.Include(c => c.ItemTemplate)
+                        .ThenInclude(c => c.Category)
+                        .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
+                        || c.ItemTemplate.Description.Contains(searchString)
+                        && c.ListId != listId)
+                        .Include(c => c.Parent)
+                        .Include(c => c.Children)
+                        .Include(c => c.CreatedBy)
+                        .Include(c => c.Vendor)
+                        .Include(c => c.Location)
+                        .Include(c => c.LogEntries)
+                        .ThenInclude(c => c.CreatedBy)
+                        .OrderBy(c => c.Id)
+                        .Skip(page == 0 ? 0 : (page - 1) * 10)
+                        .Take(10)
+                        .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         
         public async Task<IEnumerable<Item>> GetAllItemsByUserIdAsync(string id, int page)
         {
-            return await _context.Items.Where(c => c.CreatedById == id)
-                .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c.Category)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
-                .Include(c => c.CreatedBy)
-                .Include(c => c.Vendor)
-                .Include(c => c.Location)
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
-                .OrderByDescending(c => c.CreatedDate)
-                .Skip(page == 0 ? 0 : (page - 1) * 10)
-                .Take(10)
-                .ToListAsync();
+            try
+            {
+                return await _context.Items.Where(c => c.CreatedById == id)
+                    .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c.Category)
+                    .Include(c => c.Parent)
+                    .Include(c => c.Children)
+                    .Include(c => c.CreatedBy)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Location)
+                    .Include(c => c.LogEntries)!
+                    .ThenInclude(c => c.CreatedBy)
+                    .OrderByDescending(c => c.CreatedDate)
+                    .Skip(page == 0 ? 0 : (page - 1) * 10)
+                    .Take(10)
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public async Task<IEnumerable<Item>> GetChildrenAsync(string parentId)
         {
-            return await _context.Items.Where(c => c.ParentId == parentId)
-                .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c.Category)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
-                .Include(c => c.CreatedBy)
-                .Include(c => c.Vendor)
-                .Include(c => c.Location)
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
-                .ToListAsync();
+            try
+            {
+                return await _context.Items.Where(c => c.ParentId == parentId)
+                    .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c.Category)
+                    .Include(c => c.Parent)
+                    .Include(c => c.Children)
+                    .Include(c => c.CreatedBy)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Location)
+                    .Include(c => c.LogEntries)!
+                    .ThenInclude(c => c.CreatedBy)
+                    .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public async Task<Item> GetItemByIdAsync(string id)
         {
-            return await _context.Items
-                .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c.Category)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
-                .Include(c => c.CreatedBy)
-                .Include(c => c.Vendor)
-                .Include(c => c.Location)
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            try
+            {
+                return await _context.Items
+                    .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c.Category)
+                    .Include(c => c.Parent)
+                    .Include(c => c.Children)
+                    .Include(c => c.CreatedBy)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Location)
+                    .Include(c => c.LogEntries)!
+                    .ThenInclude(c => c.CreatedBy)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             
         }
         
@@ -168,139 +216,179 @@ namespace Inventory.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return null;
+                throw;
             }
         }
 
         public async Task UpdateItemAsync(string updatedById, Item updatedItem)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
-        
-            if (item != null)
+            try
             {
-                LogEntry logEntry;
-                if (updatedItem.WpId != item.WpId)
+                var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
+            
+                if (item != null)
                 {
-                    logEntry = new LogEntry
+                    LogEntry logEntry;
+                    if (updatedItem.WpId != item.WpId)
                     {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "WellPartner ID changed from " + item.WpId + " to " + updatedItem.WpId,
-                        CreatedDate = DateTime.Now
-                    };
-                    item.WpId = updatedItem.WpId;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
-                
-                if (updatedItem.SerialNumber != item.SerialNumber)
-                {
-                    logEntry = new LogEntry
+                        logEntry = new LogEntry
+                        {
+                            ItemId = item.Id,
+                            CreatedById = updatedById,
+                            Message = "WellPartner ID changed from " + item.WpId + " to " + updatedItem.WpId,
+                            CreatedDate = DateTime.Now
+                        };
+                        item.WpId = updatedItem.WpId;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+                    
+                    if (updatedItem.SerialNumber != item.SerialNumber)
                     {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "Serial number changed from " + item.SerialNumber + " to " + updatedItem.SerialNumber,
-                        CreatedDate = DateTime.Now
-                    };
-                    item.SerialNumber = updatedItem.SerialNumber;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
-                
-                if (updatedItem.LocationId != item.LocationId && updatedItem.LocationId != null)
-                {
-                    var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == updatedItem.LocationId);
-                    logEntry = new LogEntry
+                        logEntry = new LogEntry
+                        {
+                            ItemId = item.Id,
+                            CreatedById = updatedById,
+                            Message = "Serial number changed from " + item.SerialNumber + " to " + updatedItem.SerialNumber,
+                            CreatedDate = DateTime.Now
+                        };
+                        item.SerialNumber = updatedItem.SerialNumber;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+                    
+                    if (updatedItem.LocationId != item.LocationId && updatedItem.LocationId != null)
                     {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "Location changed from " + item.Location?.Name + " to " + location.Name,
-                        CreatedDate = DateTime.Now
-                    };
-                    item.LocationId = updatedItem.LocationId;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
-                
-                if (updatedItem.ParentId != item.ParentId)
-                {
-                    logEntry = new LogEntry
+                        var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == updatedItem.LocationId);
+                        logEntry = new LogEntry
+                        {
+                            ItemId = item.Id,
+                            CreatedById = updatedById,
+                            Message = "Location changed from " + item.Location?.Name + " to " + location.Name,
+                            CreatedDate = DateTime.Now
+                        };
+                        item.LocationId = updatedItem.LocationId;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+                    
+                    if (updatedItem.ParentId != item.ParentId)
                     {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "Parent ID changed from " + item.ParentId + " to " + updatedItem.ParentId,
-                        CreatedDate = DateTime.Now
-                    };
-                    item.ParentId = updatedItem.ParentId;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
-                
-                if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
-                {
-                    var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedItem.VendorId);
-                    logEntry = new LogEntry
+                        logEntry = new LogEntry
+                        {
+                            ItemId = item.Id,
+                            CreatedById = updatedById,
+                            Message = "Parent ID changed from " + item.ParentId + " to " + updatedItem.ParentId,
+                            CreatedDate = DateTime.Now
+                        };
+                        item.ParentId = updatedItem.ParentId;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+                    
+                    if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
                     {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = "Vendor changed from " + item.Vendor?.Name + " to " + vendor.Name,
-                        CreatedDate = DateTime.Now
-                    };
-                    item.VendorId = updatedItem.VendorId;
-                    await _context.LogEntries.AddAsync(logEntry);
-                }
+                        var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedItem.VendorId);
+                        logEntry = new LogEntry
+                        {
+                            ItemId = item.Id,
+                            CreatedById = updatedById,
+                            Message = "Vendor changed from " + item.Vendor?.Name + " to " + vendor.Name,
+                            CreatedDate = DateTime.Now
+                        };
+                        item.VendorId = updatedItem.VendorId;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
 
-                item.CreatedById = updatedItem.CreatedById;
-                item.Comment = updatedItem.Comment;
-                item.ListId = updatedItem.ListId;
-                item.UpdatedDate = DateTime.Now;
-                
-                await _context.SaveChangesAsync();
+                    item.CreatedById = updatedItem.CreatedById;
+                    item.Comment = updatedItem.Comment;
+                    item.ListId = updatedItem.ListId;
+                    item.UpdatedDate = DateTime.Now;
+                    
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
         
         public async Task AddChildItemToParentAsync(string parentItemId, string childItemId)
         {
-            var parentItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == parentItemId);
-            var childItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == childItemId);
-
-            if (parentItem != null && childItem != null)
+            try
             {
-                if (parentItem.Children == null)
+                var parentItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == parentItemId);
+                var childItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == childItemId);
+
+                if (parentItem != null && childItem != null)
                 {
-                    parentItem.Children = new Collection<Item>();
+                    if (parentItem.Children == null)
+                    {
+                        parentItem.Children = new Collection<Item>();
+                    }
+                    parentItem.Children.Add(childItem);
+                    await _context.SaveChangesAsync();
                 }
-                parentItem.Children.Add(childItem);
-                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
         public async Task RemoveParentIdAsync(string itemId)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
-
-            if (item != null)
+            try
             {
-                item.ParentId = null;
-                await _context.SaveChangesAsync();
+                var item = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+
+                if (item != null)
+                {
+                    item.ParentId = null;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
         public async Task DeleteItemAsync(string id)
         {
-            var item = await _context.Items.Include(c => c.Children).FirstOrDefaultAsync(c => c.Id == id);
-            if (item != null)
+            try
             {
-                foreach (var child in item.Children)
+                var item = await _context.Items.Include(c => c.Children).FirstOrDefaultAsync(c => c.Id == id);
+                if (item != null)
                 {
-                    child.ParentId = null;
+                    foreach (var child in item.Children)
+                    {
+                        child.ParentId = null;
+                    }
+                        
+                    _context.Items.Remove(item);
+                    await _context.SaveChangesAsync();
                 }
-                    
-                _context.Items.Remove(item);
-                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
         
         public async Task<bool> IsWpIdUnique(string id)
         {
-            var item = await _context.Items.FirstOrDefaultAsync(c => c.WpId == id);
-            return item == null;
+            try
+            {
+                var item = await _context.Items.FirstOrDefaultAsync(c => c.WpId == id);
+                return item == null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }
