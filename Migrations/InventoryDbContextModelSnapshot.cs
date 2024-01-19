@@ -470,7 +470,7 @@ namespace inventoryapi.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Inventory.Models.ItemTemplate", "ItemTemplate")
-                        .WithMany("Items")
+                        .WithMany()
                         .HasForeignKey("ItemTemplateId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -578,8 +578,6 @@ namespace inventoryapi.Migrations
 
             modelBuilder.Entity("Inventory.Models.ItemTemplate", b =>
                 {
-                    b.Navigation("Items");
-
                     b.Navigation("Sizes");
                 });
 #pragma warning restore 612, 618
