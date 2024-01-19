@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.DocumentTypeValidations
 {
-    public class DocumentTypeCreateValidator : AbstractValidator<DocumentType>, IDocumentTypeCreateValidator
+    public class DocumentTypeCreateValidator : AbstractValidator<DocumentTypeCreateDto>, IDocumentTypeCreateValidator
     {
 
         public DocumentTypeCreateValidator()

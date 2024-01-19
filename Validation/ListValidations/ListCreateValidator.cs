@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.ListValidations
 {
-    public class ListCreateValidator : AbstractValidator<List>, IListCreateValidator
+    public class ListCreateValidator : AbstractValidator<ListCreateDto>, IListCreateValidator
     {
 
         public ListCreateValidator()

@@ -1,8 +1,8 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.ItemValidations;
 
-public interface IItemCreateValidator : IValidator<Item>
+public interface IItemCreateValidator : IValidator<ItemCreateDto>
 {
 }

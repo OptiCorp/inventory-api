@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
@@ -66,7 +67,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
         [SwaggerResponse(201, "Item created", typeof(Item))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<Item>> CreateItem(List<Item> itemCreateList)
+        public async Task<ActionResult<Item>> CreateItem(List<ItemCreateDto> itemCreateList)
         {
             foreach (var itemCreate in itemCreateList)
             {

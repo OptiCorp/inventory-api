@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Services
 {
@@ -6,7 +7,7 @@ namespace Inventory.Services
     {
         Task<IEnumerable<Size>> GetAllSizesAsync();
         Task<Size> GetSizeByIdAsync(string id);
-        Task<string?> CreateSizeAsync(Size size);
+        Task<string?> CreateSizeAsync(SizeCreateDto size);
         Task UpdateSizeAsync(Size size);
         Task DeleteSizeAsync(string id);
     }

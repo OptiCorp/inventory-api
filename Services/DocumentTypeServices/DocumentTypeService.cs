@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
@@ -38,13 +39,20 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<string?> CreateDocumentTypeAsync(DocumentType documentTypeCreate)
+        public async Task<string?> CreateDocumentTypeAsync(DocumentTypeCreateDto documentTypeCreate)
         {
             try
             {
-                await _context.DocumentTypes.AddAsync(documentTypeCreate);
+                var documentType = new DocumentType()
+                {
+                    Name = documentTypeCreate.Name,
+                    Description = documentTypeCreate.Description,
+                    
+                };
+                
+                await _context.DocumentTypes.AddAsync(documentType);
                 await _context.SaveChangesAsync();
-                return documentTypeCreate.Id;
+                return documentType.Id;
             }
             catch (Exception e)
             {

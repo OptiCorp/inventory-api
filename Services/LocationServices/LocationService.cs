@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
@@ -52,14 +53,20 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<string?> CreateLocationAsync(Location locationCreate)
+        public async Task<string?> CreateLocationAsync(LocationCreateDto locationCreate)
         {
             try
             {
-                locationCreate.CreatedDate = DateTime.Now;
-                await _context.Locations.AddAsync(locationCreate);
+                var location = new Location
+                {
+                    Name = locationCreate.Name,
+                    CreatedById = locationCreate.CreatedById,
+                    CreatedDate = DateTime.Now
+                };
+          
+                await _context.Locations.AddAsync(location);
                 await _context.SaveChangesAsync();
-                return locationCreate.Id;
+                return location.Id;
             }
             catch (Exception e)
             {

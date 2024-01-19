@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
@@ -52,14 +53,20 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<string?> CreateCategoryAsync(Category categoryCreate)
+        public async Task<string?> CreateCategoryAsync(CategoryCreateDto categoryCreate)
         {
             try
             {
-                categoryCreate.CreatedDate = DateTime.Now;
-                await _context.Categories.AddAsync(categoryCreate);
+                var category = new Category()
+                {
+                    Name = categoryCreate.Name,
+                    CreatedById = categoryCreate.CreatedById,
+                    CreatedDate = DateTime.Now
+                };
+                
+                await _context.Categories.AddAsync(category);
                 await _context.SaveChangesAsync();
-                return categoryCreate.Id;
+                return category.Id;
             }
             catch (Exception e)
             {

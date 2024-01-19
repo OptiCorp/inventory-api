@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Duende.IdentityServer.Extensions;
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
@@ -159,14 +160,24 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<List<string>?> CreateItemAsync(List<Item> itemsCreate)
+        public async Task<List<string>?> CreateItemAsync(List<ItemCreateDto> itemsCreate)
         {
             try
             {
                 List<string> createdItemIds = new List<string>();
-                foreach (var item in itemsCreate)
+                foreach (var itemCreate in itemsCreate)
                 {
-                   item.CreatedDate = DateTime.Now;
+                    Item item = new Item
+                    {
+                        WpId = itemCreate.WpId,
+                        ParentId = itemCreate.ParentId,
+                        SerialNumber = itemCreate.SerialNumber,
+                        LocationId = itemCreate.LocationId,
+                        VendorId = itemCreate.VendorId,
+                        CreatedById = itemCreate.CreatedById,
+                        Comment = itemCreate.Comment,
+                        CreatedDate = DateTime.Now
+                    };
                     await _context.Items.AddAsync(item);
                     createdItemIds.Add(item.Id);
 

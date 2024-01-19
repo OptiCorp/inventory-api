@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
@@ -82,7 +83,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new location", Description = "Creates a new location.")]
         [SwaggerResponse(201, "Location created", typeof(Location))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<Location>> CreateLocation(Location locationCreate)
+        public async Task<ActionResult<Location>> CreateLocation(LocationCreateDto locationCreate)
         {
             var validationResult = await _createValidator.ValidateAsync(locationCreate);
             if (!validationResult.IsValid)

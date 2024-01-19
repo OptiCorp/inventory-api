@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
@@ -65,7 +66,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new document type", Description = "Creates a new document type.")]
         [SwaggerResponse(201, "Document type created", typeof(DocumentType))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<DocumentType>> CreateDocumentType(DocumentType documentTypeCreate)
+        public async Task<ActionResult<DocumentType>> CreateDocumentType(DocumentTypeCreateDto documentTypeCreate)
         {
             var validationResult = await _createValidator.ValidateAsync(documentTypeCreate);
             if (!validationResult.IsValid)

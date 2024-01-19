@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
@@ -38,13 +39,19 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<string?> CreatePreCheckAsync(PreCheck preCheckCreate)
+        public async Task<string?> CreatePreCheckAsync(PreCheckCreateDto preCheckCreate)
         {
             try
             {
-                await _context.PreChecks.AddAsync(preCheckCreate);
+                var preCheck = new PreCheck()
+                {
+                    Check = preCheckCreate.Check,
+                    Comment = preCheckCreate.Comment
+                };
+                
+                await _context.PreChecks.AddAsync(preCheck);
                 await _context.SaveChangesAsync();
-                return preCheckCreate.Id;
+                return preCheck.Id;
             }
             catch (Exception e)
             {

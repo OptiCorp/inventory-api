@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
@@ -52,14 +53,20 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<string?> CreateVendorAsync(Vendor vendorCreate)
+        public async Task<string?> CreateVendorAsync(VendorCreateDto vendorCreate)
         {
             try
             {
-                vendorCreate.CreatedDate = DateTime.Now;
-                await _context.Vendors.AddAsync(vendorCreate);
+                var vendor = new Vendor
+                {
+                    Name = vendorCreate.Name,
+                    CreatedById = vendorCreate.CreatedById,
+                    CreatedDate = DateTime.Now
+                };
+                
+                await _context.Vendors.AddAsync(vendor);
                 await _context.SaveChangesAsync();
-                return vendorCreate.Id;
+                return vendor.Id;
             }
             catch (Exception e)
             {

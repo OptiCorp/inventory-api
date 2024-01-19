@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
@@ -65,7 +66,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new item template", Description = "Creates a new item template.")]
         [SwaggerResponse(201, "Item template created", typeof(ItemTemplate))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<ItemTemplate>> CreateItemTemplate(ItemTemplate itemTemplateCreate)
+        public async Task<ActionResult<ItemTemplate>> CreateItemTemplate(ItemTemplateCreateDto itemTemplateCreate)
         {
             var validationResult = await _createValidator.ValidateAsync(itemTemplateCreate);
             if (!validationResult.IsValid)
