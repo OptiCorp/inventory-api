@@ -287,9 +287,9 @@ namespace Inventory.Services
 
                             logEntry = new LogEntry()
                             {
-                                ItemId = oldParent.Id,
+                                ItemId = oldParent?.Id,
                                 CreatedById = updatedById,
-                                Message = $"Item {updatedItem.Id} removed from parent {oldParent.Id}",
+                                Message = $"Item {updatedItem.Id} removed from parent {oldParent?.Id}",
                                 CreatedDate = DateTime.Now
                             };
                             
@@ -297,9 +297,9 @@ namespace Inventory.Services
                             
                             logEntry = new LogEntry()
                             {
-                                ItemId = newParent.Id,
+                                ItemId = newParent?.Id,
                                 CreatedById = updatedById,
-                                Message = $"Item {updatedItem.Id} added to parent {newParent.Id}",
+                                Message = $"Item {updatedItem.Id} added to parent {newParent?.Id}",
                                 CreatedDate = DateTime.Now
                             };
                             
