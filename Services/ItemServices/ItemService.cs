@@ -235,7 +235,7 @@ namespace Inventory.Services
                         {
                             ItemId = item.Id,
                             CreatedById = updatedById,
-                            Message = "WellPartner ID changed from " + item.WpId + " to " + updatedItem.WpId,
+                            Message = $"WellPartner ID changed from {item.WpId} to {updatedItem.WpId}",
                             CreatedDate = DateTime.Now
                         };
                         item.WpId = updatedItem.WpId;
@@ -248,7 +248,7 @@ namespace Inventory.Services
                         {
                             ItemId = item.Id,
                             CreatedById = updatedById,
-                            Message = "Serial number changed from " + item.SerialNumber + " to " + updatedItem.SerialNumber,
+                            Message = $"Serial number changed from {item.SerialNumber} to {updatedItem.SerialNumber}",
                             CreatedDate = DateTime.Now
                         };
                         item.SerialNumber = updatedItem.SerialNumber;
@@ -262,7 +262,7 @@ namespace Inventory.Services
                         {
                             ItemId = item.Id,
                             CreatedById = updatedById,
-                            Message = "Location changed from " + item.Location?.Name + " to " + location.Name,
+                            Message = $"Location changed from {item.Location?.Name} to {location.Name}",
                             CreatedDate = DateTime.Now
                         };
                         item.LocationId = updatedItem.LocationId;
@@ -271,15 +271,39 @@ namespace Inventory.Services
                     
                     if (updatedItem.ParentId != item.ParentId)
                     {
-                        logEntry = new LogEntry
-                        {
-                            ItemId = item.Id,
-                            CreatedById = updatedById,
-                            Message = "Parent ID changed from " + item.ParentId + " to " + updatedItem.ParentId,
-                            CreatedDate = DateTime.Now
-                        };
-                        item.ParentId = updatedItem.ParentId;
-                        await _context.LogEntries.AddAsync(logEntry);
+                        var oldParent = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.ParentId);
+                        var newParent = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.ParentId);
+                        
+                            logEntry = new LogEntry
+                            {
+                                ItemId = item.Id,
+                                CreatedById = updatedById,
+                                Message = $"Parent ID changed from {oldParent?.WpId} to {newParent?.WpId}",
+                                CreatedDate = DateTime.Now
+                            };
+                            
+                            item.ParentId = updatedItem.ParentId;
+                            await _context.LogEntries.AddAsync(logEntry);
+
+                            logEntry = new LogEntry()
+                            {
+                                ItemId = oldParent?.Id,
+                                CreatedById = updatedById,
+                                Message = $"Item {updatedItem.Id} removed from parent {oldParent?.Id}",
+                                CreatedDate = DateTime.Now
+                            };
+                            
+                            await _context.LogEntries.AddAsync(logEntry);
+                            
+                            logEntry = new LogEntry()
+                            {
+                                ItemId = newParent?.Id,
+                                CreatedById = updatedById,
+                                Message = $"Item {updatedItem.Id} added to parent {newParent?.Id}",
+                                CreatedDate = DateTime.Now
+                            };
+                            
+                            await _context.LogEntries.AddAsync(logEntry);
                     }
                     
                     if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
@@ -289,7 +313,7 @@ namespace Inventory.Services
                         {
                             ItemId = item.Id,
                             CreatedById = updatedById,
-                            Message = "Vendor changed from " + item.Vendor?.Name + " to " + vendor.Name,
+                            Message = $"Vendor changed from {item.Vendor?.Name} to {vendor.Name}",
                             CreatedDate = DateTime.Now
                         };
                         item.VendorId = updatedItem.VendorId;
