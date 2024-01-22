@@ -32,6 +32,5 @@ namespace Inventory.Models
         public IEnumerable<Document>? Documents { get; set; }
         
         public IEnumerable<Size>? Sizes { get; set; }
-        
     }
 }
