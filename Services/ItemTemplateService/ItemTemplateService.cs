@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
@@ -49,11 +50,22 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<string?> CreateItemTemplateAsync(ItemTemplate itemTemplate)
+        public async Task<string?> CreateItemTemplateAsync(ItemTemplateCreateDto itemTemplateCreate)
         {
             try
             {
-                itemTemplate.CreatedDate = DateTime.Now;
+                var itemTemplate = new ItemTemplate()
+                {
+                    Name = itemTemplateCreate.Name,
+                    ProductNumber = itemTemplateCreate.ProductNumber,
+                    Type = itemTemplateCreate.Type,
+                    CategoryId = itemTemplateCreate.CreatedById,
+                    Revision = itemTemplateCreate.Revision,
+                    CreatedById = itemTemplateCreate.CreatedById,
+                    Description = itemTemplateCreate.Description,
+                    CreatedDate = DateTime.Now
+                };
+                
                 await _context.ItemTemplates.AddAsync(itemTemplate);
                 await _context.SaveChangesAsync();
                 return itemTemplate.Id;

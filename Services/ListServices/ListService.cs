@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services
@@ -92,14 +93,20 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<string?> CreateListAsync(List listCreate)
+        public async Task<string?> CreateListAsync(ListCreateDto listCreate)
         {
             try
             {
-                listCreate.CreatedDate = DateTime.Now;
-                await _context.Lists.AddAsync(listCreate);
+                var list = new List
+                {
+                    Title = listCreate.Title,
+                    CreatedById = listCreate.CreatedById,
+                    CreatedDate = DateTime.Now
+                };
+                
+                await _context.Lists.AddAsync(list);
                 await _context.SaveChangesAsync();
-                return listCreate.Id;
+                return list.Id;
             }
             catch (Exception e)
             {

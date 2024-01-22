@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
@@ -65,7 +66,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new pre check", Description = "Creates a new pre check.")]
         [SwaggerResponse(201, "Pre check created", typeof(PreCheck))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<PreCheck>> CreatePreCheck(PreCheck preCheckCreate)
+        public async Task<ActionResult<PreCheck>> CreatePreCheck(PreCheckCreateDto preCheckCreate)
         {
             var validationResult = await _createValidator.ValidateAsync(preCheckCreate);
             if (!validationResult.IsValid)

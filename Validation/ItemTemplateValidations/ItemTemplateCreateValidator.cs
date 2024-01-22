@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.ItemTemplateValidations
 {
-    public class ItemTemplateCreateValidator : AbstractValidator<ItemTemplate>, IItemTemplateCreateValidator
+    public class ItemTemplateCreateValidator : AbstractValidator<ItemTemplateCreateDto>, IItemTemplateCreateValidator
     {
 
         public ItemTemplateCreateValidator()

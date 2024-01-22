@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Services
 {
@@ -6,7 +7,7 @@ namespace Inventory.Services
     {
         Task<IEnumerable<PreCheck>> GetAllPreChecksAsync();
         Task<PreCheck> GetPreCheckByIdAsync(string id);
-        Task<string?> CreatePreCheckAsync(PreCheck preCheck);
+        Task<string?> CreatePreCheckAsync(PreCheckCreateDto preCheck);
         Task UpdatePreCheckAsync(PreCheck preCheck);
         Task DeletePreCheckAsync(string id);
     }

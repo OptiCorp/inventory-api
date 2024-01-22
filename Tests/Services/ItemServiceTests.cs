@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Inventory.Services;
 using Xunit;
 
@@ -129,7 +130,7 @@ namespace Inventory.Tests.Services
             var dbContext = await testUtilities.GetDbContext("Item");
             var itemService = new ItemService(dbContext);
             
-            var newTestItem1 = new Item()
+            var newTestItem1 = new ItemCreateDto()
             {
                 SerialNumber = "321",
                 WpId = "456",
@@ -140,7 +141,7 @@ namespace Inventory.Tests.Services
                 CreatedById = "654",
             };
             
-            var newTestItem2 = new Item()
+            var newTestItem2 = new ItemCreateDto()
             {
                 SerialNumber = "321",
                 WpId = "789",
@@ -150,7 +151,7 @@ namespace Inventory.Tests.Services
                 VendorId = "AVendor",
                 CreatedById = "654",
             };
-            var itemsToCreate = new List<Item> { newTestItem1, newTestItem2 };
+            var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
             
             //Act
             var newItemIds = await itemService.CreateItemAsync(itemsToCreate);

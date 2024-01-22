@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.CategoryValidations
 {
-    public class CategoryCreateValidator : AbstractValidator<Category>, ICategoryCreateValidator
+    public class CategoryCreateValidator : AbstractValidator<CategoryCreateDto>, ICategoryCreateValidator
     {
 
         public CategoryCreateValidator()

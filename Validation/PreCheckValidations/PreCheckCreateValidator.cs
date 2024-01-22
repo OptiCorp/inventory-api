@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.PreCheckValidations
 {
-    public class PreCheckCreateValidator : AbstractValidator<PreCheck>, IPreCheckCreateValidator
+    public class PreCheckCreateValidator : AbstractValidator<PreCheckCreateDto>, IPreCheckCreateValidator
     {
 
         public PreCheckCreateValidator()

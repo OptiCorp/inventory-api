@@ -1,8 +1,8 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.LocationValidations;
 
-public interface ILocationCreateValidator : IValidator<Location>
+public interface ILocationCreateValidator : IValidator<LocationCreateDto>
 {
 }

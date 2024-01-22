@@ -1,4 +1,5 @@
 using Inventory.Models;
+using Inventory.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
@@ -105,7 +106,7 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Create a new list", Description = "Creates a new list.")]
         [SwaggerResponse(201, "List created", typeof(List))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<List>> CreateList(List listCreate)
+        public async Task<ActionResult<List>> CreateList(ListCreateDto listCreate)
         {
             var validationResult = await _createValidator.ValidateAsync(listCreate);
             if (!validationResult.IsValid)

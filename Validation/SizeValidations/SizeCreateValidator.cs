@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.SizeValidations
 {
-    public class SizeCreateValidator : AbstractValidator<Size>, ISizeCreateValidator
+    public class SizeCreateValidator : AbstractValidator<SizeCreateDto>, ISizeCreateValidator
     {
 
         public SizeCreateValidator()

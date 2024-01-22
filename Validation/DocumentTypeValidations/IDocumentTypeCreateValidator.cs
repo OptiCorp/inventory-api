@@ -1,8 +1,8 @@
 using FluentValidation;
-using Inventory.Models;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.DocumentTypeValidations;
 
-public interface IDocumentTypeCreateValidator : IValidator<DocumentType>
+public interface IDocumentTypeCreateValidator : IValidator<DocumentTypeCreateDto>
 {
 }
