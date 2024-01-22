@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
@@ -149,11 +150,11 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItemsBySearchString(string searchString, int page, string? type)
+        public async Task<ActionResult<IEnumerable<Item>>> GetItemsBySearchString(string searchString, [Required] int page)
         {
             try
             {
-                return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString, page, type));
+                return Ok(await _itemService.GetAllItemsBySearchStringAsync(searchString, page));
             }
             catch (Exception e)
             {
