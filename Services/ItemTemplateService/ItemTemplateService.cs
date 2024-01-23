@@ -32,7 +32,7 @@ namespace Inventory.Services
         }
         
 
-        public async Task<ItemTemplate> GetItemTemplateByIdAsync(string id)
+        public async Task<ItemTemplate?> GetItemTemplateByIdAsync(string id)
         {
             try
             {

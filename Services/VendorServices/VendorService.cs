@@ -30,7 +30,7 @@ namespace Inventory.Services
         {
             try
             {
-                return await _context.Vendors.Where(vendor => vendor.Name.Contains(searchString))
+                return await _context.Vendors.Where(vendor => vendor.Name != null && vendor.Name.Contains(searchString))
                                         .ToListAsync();
             }
             catch (Exception e)
@@ -40,7 +40,7 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<Vendor> GetVendorByIdAsync(string id)
+        public async Task<Vendor?> GetVendorByIdAsync(string id)
         {
             try
             {

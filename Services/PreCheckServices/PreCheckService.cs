@@ -26,7 +26,7 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<PreCheck> GetPreCheckByIdAsync(string id)
+        public async Task<PreCheck?> GetPreCheckByIdAsync(string id)
         {
             try
             {

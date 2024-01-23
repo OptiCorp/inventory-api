@@ -7,7 +7,7 @@ namespace Inventory.Services
     {
         Task<IEnumerable<Category>> GetAllCategoriesAsync();
         Task<IEnumerable<Category>> GetAllCategoriesBySearchStringAsync(string searchString);
-        Task<Category> GetCategoryByIdAsync(string id);
+        Task<Category?> GetCategoryByIdAsync(string id);
         Task<string?> CreateCategoryAsync(CategoryCreateDto category);
         Task UpdateCategoryAsync(Category category);
         Task DeleteCategoryAsync(string id);

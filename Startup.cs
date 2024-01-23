@@ -162,7 +162,6 @@ namespace inventory
             dbContext.Database.Migrate();
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -179,13 +178,17 @@ namespace inventory
             });
         }
 
-        private string GetSecretValueFromKeyVault(string secretName)
+        private string? GetSecretValueFromKeyVault(string? secretName)
         {
             var keyVaultUrl = Configuration["AzureKeyVault:VaultUrl"];
             var credential = new DefaultAzureCredential();
-            var client = new SecretClient(new Uri(keyVaultUrl), credential);
-            var secret = client.GetSecret(secretName);
-            return secret.Value.Value;
+            if (keyVaultUrl != null)
+            {
+                var client = new SecretClient(new Uri(keyVaultUrl), credential);
+                var secret = client.GetSecret(secretName);
+                return secret.Value.Value;
+            }
+            return null;
         }
 
     }

@@ -16,7 +16,7 @@ namespace Inventory.Controllers
         private readonly IItemService _itemService;
         private readonly IListService _listService;
         private readonly IItemCreateValidator _createValidator;
-        private IItemUpdateValidator _updateValidator;
+        private readonly IItemUpdateValidator _updateValidator;
 
         public ItemController(IItemService itemService, IListService listService, IItemCreateValidator createValidator, IItemUpdateValidator updateValidator)
         {
@@ -90,18 +90,23 @@ namespace Inventory.Controllers
             try
             {
                 var itemIds = await _itemService.CreateItemAsync(itemCreateList);
-                if (itemIds == null)
+                if (itemIds is { Count: 0 })
                 {
                     return BadRequest("Item creation failed");
                 }
 
                 var items = new List<Item>();
-                foreach (var itemId in itemIds)
+                if (itemIds != null)
                 {
-                    var item = await _itemService.GetItemByIdAsync(itemId);
-                    items.Add(item);
+                    foreach (var itemId in itemIds)
+                    {
+                        {
+                            var item = await _itemService.GetItemByIdAsync(itemId);
+                            if (item != null) items.Add(item);
+                        }
+                    }
+
                 }
-                
                 return CreatedAtAction(nameof(GetItem), new { ids = itemIds }, items);
             }
             catch (Exception e)

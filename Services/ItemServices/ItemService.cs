@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using Duende.IdentityServer.Extensions;
 using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
@@ -36,15 +35,15 @@ namespace Inventory.Services
             try
             {
                 var result = await _context.Items
-                    .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString))
+                    .Where(c => c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)))
                     .Include(c => c.ItemTemplate)
-                    .ThenInclude(c => c.Category)
+                    .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.CreatedBy)
                     .Include(c => c.Vendor)
                     .Include(c => c.Location)
-                    .Include(c => c.LogEntries)
+                    .Include(c => c.LogEntries)!
                     .ThenInclude(c => c.CreatedBy)
                     .OrderBy(c => c.Id)
                     .Take(page * 10)
@@ -58,7 +57,7 @@ namespace Inventory.Services
                 var remainingItemsCount = page * 10 - result.Count;
                     
                 var templateIds = await _context.ItemTemplates
-                    .Where(c => c.Description.Contains(searchString))
+                    .Where(c => c.Description != null && c.Description.Contains(searchString))
                     .OrderBy(c => c.Id)
                     .Select(c => c.Id)
                     .ToListAsync();
@@ -66,13 +65,13 @@ namespace Inventory.Services
                 var items = await _context.Items
                     .Where(c => templateIds.Contains(c.ItemTemplateId))
                     .Include(c => c.ItemTemplate)
-                    .ThenInclude(c => c.Category)
+                    .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.CreatedBy)
                     .Include(c => c.Vendor)
                     .Include(c => c.Location)
-                    .Include(c => c.LogEntries)
+                    .Include(c => c.LogEntries)!
                     .ThenInclude(c => c.CreatedBy)
                     .OrderBy(c => c.Id)
                     .Take(remainingItemsCount)
@@ -94,16 +93,16 @@ namespace Inventory.Services
             try
             {
                 return await _context.Items.Include(c => c.ItemTemplate)
-                        .ThenInclude(c => c.Category)
-                        .Where(c => c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
+                    .ThenInclude(c => c!.Category)
+                    .Where(c => c.ItemTemplate != null && c.ItemTemplate.Description != null && c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
                         || c.ItemTemplate.Description.Contains(searchString)
-                        && c.ListId != listId)
-                        .Include(c => c.Parent)
-                        .Include(c => c.Children)
-                        .Include(c => c.CreatedBy)
-                        .Include(c => c.Vendor)
-                        .Include(c => c.Location)
-                        .Include(c => c.LogEntries)
+                        && c.ListId != listId))
+                    .Include(c => c.Parent)
+                    .Include(c => c.Children)
+                    .Include(c => c.CreatedBy)
+                    .Include(c => c.Vendor)
+                    .Include(c => c.Location)
+                    .Include(c => c.LogEntries)!
                         .ThenInclude(c => c.CreatedBy)
                         .OrderBy(c => c.Id)
                         .Skip(page == 0 ? 0 : (page - 1) * 10)
@@ -123,7 +122,7 @@ namespace Inventory.Services
             {
                 return await _context.Items.Where(c => c.CreatedById == id)
                     .Include(c => c.ItemTemplate)
-                    .ThenInclude(c => c.Category)
+                    .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.CreatedBy)
@@ -149,7 +148,7 @@ namespace Inventory.Services
             {
                 return await _context.Items.Where(c => c.ParentId == parentId)
                     .Include(c => c.ItemTemplate)
-                    .ThenInclude(c => c.Category)
+                    .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.CreatedBy)
@@ -166,13 +165,13 @@ namespace Inventory.Services
             }
         }
 
-        public async Task<Item> GetItemByIdAsync(string id)
+        public async Task<Item?> GetItemByIdAsync(string id)
         {
             try
             {
                 return await _context.Items
                     .Include(c => c.ItemTemplate)
-                    .ThenInclude(c => c.Category)
+                    .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
                     .Include(c => c.CreatedBy)
@@ -209,17 +208,21 @@ namespace Inventory.Services
                         CreatedDate = DateTime.Now
                     };
                     await _context.Items.AddAsync(item);
-                    createdItemIds.Add(item.Id);
-
-                    LogEntry logEntry = new LogEntry
+                    if (item.Id != null)
                     {
-                        ItemId = item.Id,
-                        CreatedById = item.CreatedById,
-                        Message = "Item added",
-                        CreatedDate = item.CreatedDate
-                    };
+                        createdItemIds.Add(item.Id);
 
-                    await _context.LogEntries.AddAsync(logEntry);
+                        LogEntry logEntry = new LogEntry
+                        {
+                            ItemId = item.Id,
+                            CreatedById = item.CreatedById,
+                            Message = "Item added",
+                            CreatedDate = item.CreatedDate
+                        };
+
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 return createdItemIds;
@@ -235,7 +238,10 @@ namespace Inventory.Services
         {
             try
             {
-                var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
+                var item = await _context.Items
+                    .Include(item => item.Location)
+                    .Include(item => item.Vendor)
+                    .FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
             
                 if (item != null)
                 {
@@ -273,7 +279,7 @@ namespace Inventory.Services
                         {
                             ItemId = item.Id,
                             CreatedById = updatedById,
-                            Message = $"Location changed from {item.Location?.Name} to {location.Name}",
+                            Message = $"Location changed from {item.Location?.Name} to {location?.Name}",
                             CreatedDate = DateTime.Now
                         };
                         item.LocationId = updatedItem.LocationId;
@@ -324,7 +330,7 @@ namespace Inventory.Services
                         {
                             ItemId = item.Id,
                             CreatedById = updatedById,
-                            Message = $"Vendor changed from {item.Vendor?.Name} to {vendor.Name}",
+                            Message = $"Vendor changed from {item.Vendor?.Name} to {vendor?.Name}",
                             CreatedDate = DateTime.Now
                         };
                         item.VendorId = updatedItem.VendorId;
@@ -350,7 +356,7 @@ namespace Inventory.Services
         {
             try
             {
-                var parentItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == parentItemId);
+                var parentItem = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(i => i.Id == parentItemId);
                 var childItem = await _context.Items.FirstOrDefaultAsync(i => i.Id == childItemId);
 
                 if (parentItem != null && childItem != null)
@@ -396,11 +402,12 @@ namespace Inventory.Services
                 var item = await _context.Items.Include(c => c.Children).FirstOrDefaultAsync(c => c.Id == id);
                 if (item != null)
                 {
-                    foreach (var child in item.Children)
-                    {
-                        child.ParentId = null;
-                    }
-                        
+                    if (item.Children != null)
+                        foreach (var child in item.Children)
+                        {
+                            child.ParentId = null;
+                        }
+
                     _context.Items.Remove(item);
                     await _context.SaveChangesAsync();
                 }

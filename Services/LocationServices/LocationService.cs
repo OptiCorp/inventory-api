@@ -30,7 +30,7 @@ namespace Inventory.Services
         {
             try
             {
-                return await _context.Locations.Where(location => location.Name.Contains(searchString))
+                return await _context.Locations.Where(location => location.Name != null && location.Name.Contains(searchString))
                     .ToListAsync();
             }
             catch (Exception e)
@@ -40,7 +40,7 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<Location> GetLocationByIdAsync(string id)
+        public async Task<Location?> GetLocationByIdAsync(string id)
         {
             try
             {
