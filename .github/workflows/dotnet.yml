@@ -25,6 +25,7 @@ jobs:
         uses: xt0rted/dotnet-format@v1
         with:
           only-changed-files: "true"
+          workspace: "inventory-api.sln"
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
