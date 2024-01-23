@@ -12,18 +12,37 @@ namespace Inventory.Controllers
     {
         private readonly IDocumentService _documentService;
         private readonly IItemService _itemService;
+        private readonly IItemTemplateService _itemTemplateService;
 
-        public DocumentController(IDocumentService documentService, IItemService itemService)
+        public DocumentController(IDocumentService documentService, IItemService itemService, IItemTemplateService itemTemplateService)
         {
             _documentService = documentService;
             _itemService = itemService;
+            _itemTemplateService = itemTemplateService;
         }
 
-        [HttpGet("ByItemId/{id}")]
-        [SwaggerOperation(Summary = "Get documentation by item ID", Description = "Retrieves all files related to an item")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<Document>))]
+        [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get a document by its ID", Description = "Retrieves a document with the specified ID")]
+        [SwaggerResponse(200, "Success", typeof(DocumentResponseDto))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<IEnumerable<Document>>> GetDocumentsByItemId(string id)
+        public async Task<ActionResult<DocumentResponseDto>> GetDocumentById(string id)
+        {
+            try
+            {
+                return Ok(await _documentService.GetDocumentByIdAsync(id));
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
+        }
+        
+        
+        [HttpGet("ByItemId/{id}")]
+        [SwaggerOperation(Summary = "Get documentation by item ID", Description = "Retrives all files related to an item")]
+        [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentResponseDto>))]
+        [SwaggerResponse(400, "Invalid request")]
+        public async Task<ActionResult<IEnumerable<DocumentResponseDto>>> GetDocumentsByItemId(string id)
         {
             try
             {
@@ -32,7 +51,9 @@ namespace Inventory.Controllers
                 {
                     return NotFound("Item not found");
                 }
-                return Ok(item.Documents);
+
+                var response = await _documentService.GetDocumentsByItemIdAsync(id);
+                return Ok(response);
             }
             catch (Exception e)
             {
@@ -40,32 +61,48 @@ namespace Inventory.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("AddDocToItem/{itemId}")]
         [SwaggerOperation(Summary = "Upload documentation for item", Description = "Uploads documents for item")]
         [SwaggerResponse(201, "Document uploaded", typeof(Document))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult> UploadDocument([FromForm] DocumentUploadDto document)
+        public async Task<ActionResult> AddDocumentToItem([FromForm] DocumentUploadDto document, string itemId)
         {
             try
             {
-                if (document.ItemId != null)
+                var item = await _itemService.GetItemByIdAsync(itemId);
+                if (item == null)
                 {
-                    var item = await _itemService.GetItemByIdAsync(document.ItemId);
-                    if (item == null)
-                    {
-                        return NotFound("Item not found");
-                    }
+                    return NotFound("Item not found");
                 }
 
-                string? newDocumentId = await _documentService.UploadDocumentAsync(document);
+                await _documentService.AddDocumentToItemAsync(document, itemId);
 
-                Document? newDocument = null;
-                if (newDocumentId != null)
+                return Ok("Document was added to item");
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
+        }
+
+        [HttpPost("AddDocToItemTemplate/{itemTemplateId}")]
+        [SwaggerOperation(Summary = "Upload documentation for item template", Description = "Uploads documents for item template")]
+        [SwaggerResponse(201, "Document uploaded", typeof(Document))]
+        [SwaggerResponse(400, "Invalid request")]
+        public async Task<ActionResult> AddDocumentToItemTemplate([FromForm] DocumentUploadDto document, string itemTemplateId)
+        {
+            try
+            {
+                var itemTemplate = _itemTemplateService.GetItemTemplateByIdAsync(itemTemplateId);
+                if (itemTemplate == null)
                 {
-                    newDocument = await _documentService.GetDocumentByIdAsync(newDocumentId); 
-                
+                    return NotFound("Item not found");
                 }
-                return CreatedAtAction(nameof(UploadDocument), new { id = newDocumentId }, newDocument);
+
+                await _documentService.AddDocumentToItemTemplateAsync(document, itemTemplateId);
+
+                return Ok("Document was added to item template");
+
             }
             catch (Exception e)
             {
@@ -74,11 +111,11 @@ namespace Inventory.Controllers
         }
 
         [HttpDelete("{documentId}")]
-        [SwaggerOperation(Summary = "Remove a document from an item", Description = "Removes a document from an item")]
+        [SwaggerOperation(Summary = "Delete a document", Description = "Delete a document")]
         [SwaggerResponse(200, "Document removed")]
         [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "User or document not found")]
-        public async Task<IActionResult> DeleteDocumentFromItem(string documentId, string itemId)
+        [SwaggerResponse(404, "Item or document not found")]
+        public async Task<IActionResult> DeleteDocument(string documentId)
         {
             try
             {
@@ -88,7 +125,7 @@ namespace Inventory.Controllers
                     return NotFound("Document not found");
                 }
 
-                await _documentService.DeleteDocumentFromItemAsync(document, itemId);
+                await _documentService.DeleteDocumentAsync(documentId);
 
                 return Ok();
             }
