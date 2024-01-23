@@ -10,14 +10,14 @@ namespace Inventory.Services
     public class UserUpdateHandler : BackgroundService
     {
         private readonly AppSettings _appSettings;
-        private ServiceBusClient _client;
-        private ServiceBusProcessor _processor;
-        public readonly IServiceProvider _serviceProdiver;
+        private ServiceBusClient? _client;
+        private ServiceBusProcessor? _processor;
+        private readonly IServiceProvider _serviceProvider;
 
         public UserUpdateHandler(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
         {
             _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
-            _serviceProdiver = serviceProvider;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -41,41 +41,41 @@ namespace Inventory.Services
             Console.WriteLine($"{nameof(UserUpdateHandler)} service has stopped.");
 
             // Stop processing messages and clean up resources.
-            await _processor.StopProcessingAsync();
+            await _processor.StopProcessingAsync(stoppingToken);
             await _processor.DisposeAsync();
             await _client.DisposeAsync();
         }
 
         private async Task MessageHandler(ProcessMessageEventArgs args)
         {
-            using (var scope = _serviceProdiver.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
                 if (args == null)
                     throw new ArgumentNullException(nameof(args));
 
                 string body = args.Message.Body.ToString();
-                UserUpdateDto updatedUserDto = JsonSerializer.Deserialize<UserUpdateDto>(body);
+                UserBusUpdateDto? updatedUserDto = JsonSerializer.Deserialize<UserBusUpdateDto>(body);
 
-                Console.WriteLine(updatedUserDto.Username);
+                Console.WriteLine(updatedUserDto?.Username);
 
                 var scopedService = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
 
-                var user = await scopedService.User.FirstOrDefaultAsync(u => u.UmId == updatedUserDto.Id);
+                var user = await scopedService.User.FirstOrDefaultAsync(u => updatedUserDto != null && u.UmId == updatedUserDto.Id);
                 if (user != null)
                 {
-                    if (updatedUserDto.Username != null)
+                    if (updatedUserDto?.Username != null)
                         user.Username = updatedUserDto.Username;
-                    if (updatedUserDto.FirstName != null)
+                    if (updatedUserDto?.FirstName != null)
                         user.FirstName = updatedUserDto.FirstName;
-                    if (updatedUserDto.LastName != null)
+                    if (updatedUserDto?.LastName != null)
                         user.LastName = updatedUserDto.LastName;
-                    if (updatedUserDto.Email != null)
+                    if (updatedUserDto?.Email != null)
                         user.Email = updatedUserDto.Email;
-                    if (updatedUserDto.UserRole != null)
+                    if (updatedUserDto?.UserRole != null)
                         user.UserRole = updatedUserDto.UserRole;
-                    if (updatedUserDto.AzureAdUserId != null)
+                    if (updatedUserDto?.AzureAdUserId != null)
                         user.AzureAdUserId = updatedUserDto.AzureAdUserId;
-                    if (updatedUserDto.Status != null)
+                    if (updatedUserDto?.Status != null)
                     {
                         string status = updatedUserDto.Status.ToLower();
                         switch (status)
@@ -94,7 +94,10 @@ namespace Inventory.Services
                         }
                     }
                 }
-                user.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+
+                if (user != null)
+                    user.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
+                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
                 await scopedService.SaveChangesAsync();
                 await args.CompleteMessageAsync(args.Message);
             }

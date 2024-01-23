@@ -1,7 +1,5 @@
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using FluentValidation;
-using Inventory.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Logging;
@@ -10,7 +8,15 @@ using Serilog;
 using Inventory.Models;
 using Inventory.Services;
 using Inventory.Utilities;
-using Inventory.Utilities.DocumentationUtilities;
+using Inventory.Validations.CategoryValidations;
+using Inventory.Validations.DocumentTypeValidations;
+using Inventory.Validations.ItemTemplateValidations;
+using Inventory.Validations.ItemValidations;
+using Inventory.Validations.ListValidations;
+using Inventory.Validations.LocationValidations;
+using Inventory.Validations.PreCheckValidations;
+using Inventory.Validations.SizeValidations;
+using Inventory.Validations.VendorValidations;
 
 namespace inventory
 
@@ -55,18 +61,33 @@ namespace inventory
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IVendorService, VendorService>();
-            services.AddScoped<IDocumentationService, DocumentationService>();
+            services.AddScoped<IDocumentService, DocumentService>();
+            services.AddScoped<IItemTemplateService, ItemTemplateService>();
+            services.AddScoped<ISizeService, SizeService>();
+            services.AddScoped<IPreCheckService, PreCheckService>();
+            services.AddScoped<IDocumentTypeService, DocumentTypeService>();
             
             services.AddScoped<IUserUtilities, UserUtilities>();
-            services.AddScoped<IItemUtilities, ItemUtilities>();
-            services.AddScoped<IListUtilities, ListUtilities>();
-            services.AddScoped<ICategoryUtilities, CategoryUtilities>();
-            services.AddScoped<ILocationUtilities, LocationUtilities>();
-            services.AddScoped<IVendorUtilities, VendorUtilities>();
-            services.AddScoped<IDocumentationUtilities, DocumentationUtilities>();
             
-            services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
-
+            services.AddScoped<ICategoryCreateValidator, CategoryCreateValidator>();
+            services.AddScoped<ICategoryUpdateValidator, CategoryUpdateValidator>();
+            services.AddScoped<IItemCreateValidator, ItemCreateValidator>();
+            services.AddScoped<IItemUpdateValidator, ItemUpdateValidator>();
+            services.AddScoped<IItemTemplateCreateValidator, ItemTemplateCreateValidator>();
+            services.AddScoped<IItemTemplateUpdateValidator, ItemTemplateUpdateValidator>();
+            services.AddScoped<IListCreateValidator, ListCreateValidator>();
+            services.AddScoped<IListUpdateValidator, ListUpdateValidator>();
+            services.AddScoped<ILocationCreateValidator, LocationCreateValidator>();
+            services.AddScoped<ILocationUpdateValidator, LocationUpdateValidator>();
+            services.AddScoped<IVendorCreateValidator, VendorCreateValidator>();
+            services.AddScoped<IVendorUpdateValidator, VendorUpdateValidator>();
+            services.AddScoped<IPreCheckCreateValidator, PreCheckCreateValidator>();
+            services.AddScoped<IPreCheckUpdateValidator, PreCheckUpdateValidator>();
+            services.AddScoped<ISizeCreateValidator, SizeCreateValidator>();
+            services.AddScoped<ISizeUpdateValidator, SizeUpdateValidator>();
+            services.AddScoped<IDocumentTypeCreateValidator, DocumentTypeCreateValidator>();
+            services.AddScoped<IDocumentTypeUpdateValidator, DocumentTypeUpdateValidator>();
+            
             services.AddHostedService<UserCreateHandler>();
             services.AddHostedService<UserUpdateHandler>();
             services.AddHostedService<UserDeleteHandler>();
@@ -77,14 +98,10 @@ namespace inventory
 
             // Add DbContext
             var connectionString = GetSecretValueFromKeyVault(Configuration["AzureKeyVault:ConnectionStringSecretName"]);
+            
 
-
-            services.AddDbContext<InventoryDbContext>(options =>
-                options.UseSqlServer(connectionString
-            ));
-
-
-
+            services.AddDbContext<InventoryDbContext>(options => options.UseSqlServer(connectionString));
+            
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
@@ -108,7 +125,10 @@ namespace inventory
                 policyBuilder.Requirements.Add(new ScopeAuthorizationRequirement() { RequiredScopesConfigurationKey = $"AzureAd.Scopes" }));
             });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
             services.AddRazorPages();
         }
 
@@ -142,7 +162,6 @@ namespace inventory
             dbContext.Database.Migrate();
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -159,13 +178,17 @@ namespace inventory
             });
         }
 
-        private string GetSecretValueFromKeyVault(string secretName)
+        private string? GetSecretValueFromKeyVault(string? secretName)
         {
             var keyVaultUrl = Configuration["AzureKeyVault:VaultUrl"];
             var credential = new DefaultAzureCredential();
-            var client = new SecretClient(new Uri(keyVaultUrl), credential);
-            var secret = client.GetSecret(secretName);
-            return secret.Value.Value;
+            if (keyVaultUrl != null)
+            {
+                var client = new SecretClient(new Uri(keyVaultUrl), credential);
+                var secret = client.GetSecret(secretName);
+                return secret.Value.Value;
+            }
+            return null;
         }
 
     }

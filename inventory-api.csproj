@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="8.0.0-preview.6.23329.11" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="7.0.0-preview.6.22330.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.1" />
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
@@ -27,6 +28,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Graph" Version="5.38.0" />
     <PackageReference Include="Microsoft.Identity.Web" Version="2.15.5" />
     <PackageReference Include="Microsoft.TestPlatform" Version="17.9.0-preview-23531-01" />
     <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.9.0-preview-23531-01" />
@@ -58,10 +60,7 @@
     <None Remove="Validation\ChecklistTaskValidations\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Validation\DocumentationValidations\" />
-    <Folder Include="Validation\UserValidations\" />
-    <Folder Include="Validation\UserRoleValidations\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="WeatherForecast.cs" />

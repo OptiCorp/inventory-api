@@ -22,61 +22,96 @@ namespace inventoryapi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DocumentItem", b =>
+                {
+                    b.Property<string>("DocumentsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ItemId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("DocumentsId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("DocumentItem");
+                });
+
+            modelBuilder.Entity("DocumentItemTemplate", b =>
+                {
+                    b.Property<string>("DocumentsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ItemTemplateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("DocumentsId", "ItemTemplateId");
+
+                    b.HasIndex("ItemTemplateId");
+
+                    b.ToTable("DocumentItemTemplate");
+                });
+
             modelBuilder.Entity("Inventory.Models.Category", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("CreatedDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Inventory.Models.Documentation", b =>
+            modelBuilder.Entity("Inventory.Models.Document", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("BlobRef")
-                        .IsRequired()
+                    b.Property<string>("BlobId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ItemId")
-                        .IsRequired()
+                    b.Property<string>("DocumentTypeId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentTypeId");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("Inventory.Models.DocumentType", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("Documentations");
+                    b.ToTable("DocumentTypes");
                 });
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
@@ -85,25 +120,20 @@ namespace inventoryapi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CategoryId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime?>("CreatedDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
+                    b.Property<string>("ItemTemplateId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DocumentationId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ListId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocationId")
                         .HasColumnType("nvarchar(450)");
@@ -111,45 +141,34 @@ namespace inventoryapi.Migrations
                     b.Property<string>("ParentId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ProductNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerialNumber")
-                        .IsRequired()
+                    b.Property<string>("PreCheckId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("SerialNumber")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("VendorId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("WpId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CreatedById");
 
-                    b.HasIndex("Description");
-
-                    b.HasIndex("ListId");
+                    b.HasIndex("ItemTemplateId");
 
                     b.HasIndex("LocationId");
 
                     b.HasIndex("ParentId");
 
-                    b.HasIndex("SerialNumber");
+                    b.HasIndex("PreCheckId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SerialNumber");
 
                     b.HasIndex("VendorId");
 
@@ -158,32 +177,71 @@ namespace inventoryapi.Migrations
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("Inventory.Models.ItemTemplate", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CategoryId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Revision")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.ToTable("ItemTemplates");
+                });
+
             modelBuilder.Entity("Inventory.Models.List", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime?>("CreatedDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("Title");
+                    b.HasIndex("CreatedById");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Title");
 
                     b.ToTable("Lists");
                 });
@@ -194,24 +252,19 @@ namespace inventoryapi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("CreatedDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Locations");
                 });
@@ -222,29 +275,67 @@ namespace inventoryapi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime?>("CreatedDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ItemId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.HasIndex("ItemId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("LogEntries");
+                });
+
+            modelBuilder.Entity("Inventory.Models.PreCheck", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool?>("Check")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PreChecks");
+                });
+
+            modelBuilder.Entity("Inventory.Models.Size", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<float?>("Amount")
+                        .HasColumnType("real");
+
+                    b.Property<string>("ItemTemplateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Property")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemTemplateId");
+
+                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("Inventory.Models.User", b =>
@@ -257,21 +348,17 @@ namespace inventoryapi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -285,12 +372,10 @@ namespace inventoryapi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserRole")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -305,150 +390,183 @@ namespace inventoryapi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
+                    b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedDate")
-                        .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Vendors");
                 });
 
-            modelBuilder.Entity("Inventory.Models.Category", b =>
+            modelBuilder.Entity("ItemList", b =>
                 {
-                    b.HasOne("Inventory.Models.User", "User")
+                    b.Property<string>("ItemsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ListId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ItemsId", "ListId");
+
+                    b.HasIndex("ListId");
+
+                    b.ToTable("ItemList");
+                });
+
+            modelBuilder.Entity("DocumentItem", b =>
+                {
+                    b.HasOne("Inventory.Models.Document", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("DocumentsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Inventory.Models.Documentation", b =>
-                {
-                    b.HasOne("Inventory.Models.Item", "Item")
+                    b.HasOne("Inventory.Models.Item", null)
                         .WithMany()
                         .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DocumentItemTemplate", b =>
+                {
+                    b.HasOne("Inventory.Models.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Item");
+                    b.HasOne("Inventory.Models.ItemTemplate", null)
+                        .WithMany()
+                        .HasForeignKey("ItemTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Inventory.Models.Document", b =>
+                {
+                    b.HasOne("Inventory.Models.DocumentType", "DocumentType")
+                        .WithMany()
+                        .HasForeignKey("DocumentTypeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("DocumentType");
                 });
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
                 {
-                    b.HasOne("Inventory.Models.Category", "Category")
+                    b.HasOne("Inventory.Models.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Inventory.Models.List", null)
-                        .WithMany("Items")
-                        .HasForeignKey("ListId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                    b.HasOne("Inventory.Models.ItemTemplate", "ItemTemplate")
+                        .WithMany()
+                        .HasForeignKey("ItemTemplateId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Inventory.Models.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId");
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Inventory.Models.Item", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Inventory.Models.User", "User")
+                    b.HasOne("Inventory.Models.PreCheck", "PreCheck")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("PreCheckId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Inventory.Models.Vendor", "Vendor")
                         .WithMany()
-                        .HasForeignKey("VendorId");
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("Category");
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ItemTemplate");
 
                     b.Navigation("Location");
 
                     b.Navigation("Parent");
 
-                    b.Navigation("User");
+                    b.Navigation("PreCheck");
 
                     b.Navigation("Vendor");
                 });
 
-            modelBuilder.Entity("Inventory.Models.List", b =>
+            modelBuilder.Entity("Inventory.Models.ItemTemplate", b =>
                 {
-                    b.HasOne("Inventory.Models.User", "User")
+                    b.HasOne("Inventory.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("User");
+                    b.HasOne("Inventory.Models.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CreatedBy");
                 });
 
-            modelBuilder.Entity("Inventory.Models.Location", b =>
+            modelBuilder.Entity("Inventory.Models.List", b =>
                 {
-                    b.HasOne("Inventory.Models.User", "User")
+                    b.HasOne("Inventory.Models.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.Navigation("User");
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Inventory.Models.LogEntry", b =>
                 {
+                    b.HasOne("Inventory.Models.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
                     b.HasOne("Inventory.Models.Item", null)
                         .WithMany("LogEntries")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ItemId");
 
-                    b.HasOne("Inventory.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                    b.Navigation("CreatedBy");
                 });
 
-            modelBuilder.Entity("Inventory.Models.Vendor", b =>
+            modelBuilder.Entity("Inventory.Models.Size", b =>
                 {
-                    b.HasOne("Inventory.Models.User", "User")
+                    b.HasOne("Inventory.Models.ItemTemplate", null)
+                        .WithMany("Sizes")
+                        .HasForeignKey("ItemTemplateId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("ItemList", b =>
+                {
+                    b.HasOne("Inventory.Models.Item", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("ItemsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("Inventory.Models.List", null)
+                        .WithMany()
+                        .HasForeignKey("ListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
@@ -458,9 +576,9 @@ namespace inventoryapi.Migrations
                     b.Navigation("LogEntries");
                 });
 
-            modelBuilder.Entity("Inventory.Models.List", b =>
+            modelBuilder.Entity("Inventory.Models.ItemTemplate", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("Sizes");
                 });
 #pragma warning restore 612, 618
         }

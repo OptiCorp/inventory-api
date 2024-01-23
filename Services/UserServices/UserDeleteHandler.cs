@@ -10,14 +10,14 @@ namespace Inventory.Services
     public class UserDeleteHandler : BackgroundService
     {
         private readonly AppSettings _appSettings;
-        private ServiceBusClient _client;
-        private ServiceBusProcessor _processor;
-        public readonly IServiceProvider _serviceProdiver;
+        private ServiceBusClient? _client;
+        private ServiceBusProcessor? _processor;
+        private readonly IServiceProvider _serviceProvider;
 
         public UserDeleteHandler(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
         {
             _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
-            _serviceProdiver = serviceProvider;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -41,25 +41,25 @@ namespace Inventory.Services
             Console.WriteLine($"{nameof(UserDeleteHandler)} service has stopped.");
 
             // Stop processing messages and clean up resources.
-            await _processor.StopProcessingAsync();
+            await _processor.StopProcessingAsync(stoppingToken);
             await _processor.DisposeAsync();
             await _client.DisposeAsync();
         }
 
         private async Task MessageHandler(ProcessMessageEventArgs args)
         {
-            using (var scope = _serviceProdiver.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
                 if (args == null)
                     throw new ArgumentNullException(nameof(args));
 
                 string body = args.Message.Body.ToString();
 
-                UserBusDeleteDto userBody = JsonSerializer.Deserialize<UserBusDeleteDto>(body);
+                UserBusDeleteDto? userBody = JsonSerializer.Deserialize<UserBusDeleteDto>(body);
 
                 var scopedService = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
 
-                if (userBody.DeleteMode == "Soft")
+                if (userBody?.DeleteMode == "Soft")
                 {
                     var user = await scopedService.User.FirstOrDefaultAsync(u => u.UmId == userBody.Id);
                     if (user != null)
@@ -68,7 +68,7 @@ namespace Inventory.Services
                     }
                 }
 
-                if (userBody.DeleteMode == "Hard")
+                if (userBody?.DeleteMode == "Hard")
                 {
                     var user = await scopedService.User.FirstOrDefaultAsync(u => u.UmId == userBody.Id);
                     if (user != null)

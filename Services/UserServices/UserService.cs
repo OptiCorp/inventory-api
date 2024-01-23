@@ -1,58 +1,110 @@
-﻿using Inventory.Models;
-using Inventory.Models.DTO;
-using Microsoft.EntityFrameworkCore;
-using Inventory.Utilities;
+﻿using Microsoft.EntityFrameworkCore;
+using Inventory.Models;
 
 namespace Inventory.Services
 {
     public class UserService : IUserService
     {
         private readonly InventoryDbContext _context;
-        private readonly IUserUtilities _userUtilities;
 
-        public UserService(InventoryDbContext context, IUserUtilities userUtilities)
+        public UserService(InventoryDbContext context)
         {
             _context = context;
-            _userUtilities = userUtilities;
         }
-
-        public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+        
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _context.User
+            try
+            {
+                return await _context.User
                             .Where(s => s.Status == UserStatus.Active)
-                            .Select(u => _userUtilities.UserToDto(u))
                             .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
-        public async Task<IEnumerable<UserDto>> GetAllUsersAdminAsync()
+        
+        public async Task<IEnumerable<User>> GetAllUsersAdminAsync()
         {
-            return await _context.User
-                            .Select(u => _userUtilities.UserToDto(u))
-                            .ToListAsync();
+            try
+            {
+                return await _context.User.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
-        public async Task<UserDto> GetUserByIdAsync(string id)
+        public async Task<User?> GetUserByIdAsync(string id)
         {
-            var user = await _context.User
-                            .FirstOrDefaultAsync(u => u.Id == id);
-
-            if (user == null) return null;
-
-            return _userUtilities.UserToDto(user);
+            try
+            {
+                return await _context.User.FirstOrDefaultAsync(u => u.Id == id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
-        public async Task<User> GetUserByAzureAdUserIdAsync(string id)
+        public async Task<User?> GetUserByAzureAdUserIdAsync(string azureAdUserId)
         {
-            return await _context.User
-                            .FirstOrDefaultAsync(u => u.AzureAdUserId == id);
+            try
+            {
+                return await _context.User.FirstOrDefaultAsync(u => u.AzureAdUserId == azureAdUserId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
-        public async Task<UserDto> GetUserByUsernameAsync(string username)
+        
+        public async Task<User?> GetUserByUsernameAsync(string username)
         {
-            var user = await _context.User
-                            .FirstOrDefaultAsync(u => u.Username == username);
+            try
+            {
+                return await _context.User.FirstOrDefaultAsync(u => u.Username == username);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+        
+        public async Task<bool> IsUsernameTaken(string userName)
+        {
+            try
+            {
+                var users = await _context.User.ToListAsync();
+                return users.Any(user => user.Username == userName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
 
-            if (user == null) return null;
-
-            return _userUtilities.UserToDto(user);
+        public async Task<bool> IsEmailTaken(string userEmail)
+        {
+            try
+            {
+                var users = await _context.User.ToListAsync();
+                return users.Any(user => user.Email == userEmail);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

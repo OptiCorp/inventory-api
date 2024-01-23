@@ -1,14 +1,14 @@
-﻿using Inventory.Models.DTO;
-using Inventory.Models;
+﻿using Inventory.Models;
 
 namespace Inventory.Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserDto>> GetAllUsersAsync();
-        Task<IEnumerable<UserDto>> GetAllUsersAdminAsync();
-        Task<UserDto> GetUserByUsernameAsync(string name);
-        Task<User> GetUserByAzureAdUserIdAsync(string azureAdUserId);
-        Task<UserDto> GetUserByIdAsync(string id);
+        Task<bool> IsUsernameTaken(string userName);
+        Task<bool> IsEmailTaken(string userEmail);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<User?> GetUserByUsernameAsync(string name);
+        Task<User?> GetUserByAzureAdUserIdAsync(string azureAdUserId);
+        Task<User?> GetUserByIdAsync(string id);
     }
 }

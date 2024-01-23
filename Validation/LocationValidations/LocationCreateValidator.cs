@@ -1,9 +1,9 @@
 using FluentValidation;
-using Inventory.Models.DTOs.LocationDTOs;
+using Inventory.Models.DTO;
 
 namespace Inventory.Validations.LocationValidations
 {
-    public class LocationCreateValidator : AbstractValidator<LocationCreateDto>
+    public class LocationCreateValidator : AbstractValidator<LocationCreateDto>, ILocationCreateValidator
     {
 
         public LocationCreateValidator()
@@ -14,7 +14,7 @@ namespace Inventory.Validations.LocationValidations
                 .MaximumLength(40).WithMessage("Location name cannot exceed 40 characters.")
                 .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Location name can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
             
-            RuleFor(location => location.AddedById).NotEmpty().WithMessage("AddedById is required.")
+            RuleFor(location => location.CreatedById).NotEmpty().WithMessage("AddedById is required.")
                 .NotNull().WithMessage("AddedById cannot be null.");
         }
     }

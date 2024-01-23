@@ -12,7 +12,7 @@ namespace Inventory.Tests.Services
                 .Options;
 
             var databaseContext = new InventoryDbContext(options);
-            databaseContext.Database.EnsureCreated();
+            await databaseContext.Database.EnsureCreatedAsync();
 
             if (testType == "User")
             {
@@ -23,13 +23,12 @@ namespace Inventory.Tests.Services
                         await databaseContext.User.AddAsync(
                             new User
                             {
-                                Id = string.Format("User {0}", i),
-                                AzureAdUserId = string.Format("AzureAD{0}@bouvet.no", i),
-                                UserRole = i % 2 == 0 ? "Inspector" : "Leader",
+                                Id = $"User {i}",
+                                AzureAdUserId = $"AzureAD{i}@bouvet.no",
                                 FirstName = "name",
                                 LastName = "nameson",
                                 Email = "some email",
-                                Username = string.Format("Username {0}", i),
+                                Username = $"Username {i}",
                                 Status = i % 5 == 0 ? UserStatus.Deleted : UserStatus.Active,
                                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                                     TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
@@ -48,7 +47,6 @@ namespace Inventory.Tests.Services
                 {
                     Id = "User 1",
                     AzureAdUserId = "Some email",
-                    UserRole = "Inspector",
                     FirstName = "name",
                     LastName = "nameson",
                     Email = "some email",
@@ -61,7 +59,6 @@ namespace Inventory.Tests.Services
                 {
                     Id = "User 2",
                     AzureAdUserId = "Some email",
-                    UserRole = "Leader",
                     FirstName = "name",
                     LastName = "nameson",
                     Email = "some email",
@@ -74,7 +71,6 @@ namespace Inventory.Tests.Services
                 {
                     Id = "User 3",
                     AzureAdUserId = "Some email",
-                    UserRole = "Inspector",
                     FirstName = "name",
                     LastName = "nameson",
                     Email = "some email",
@@ -94,18 +90,12 @@ namespace Inventory.Tests.Services
                     {
                         var newItem = new Item
                         {
-                            Id = string.Format("Item {0}", i),
-                            WpId = string.Format("ItemWpId {0}", i),
-                            ParentId = string.Format("ItemParentId {0}", i),
-                            UserId = string.Format("User {0}", i),
-                            DocumentationId = string.Format("ItemDocumentationId {0}", i),
-                            Description = string.Format("ItemDescription {0}", i),
-                            Comment = string.Format("ItemComment {0}", i),
-                            // LocationId = string.Format("ItemLocation {0}", i),
-                            SerialNumber = string.Format("ItemSerialNumber {0}", i),
-                            ProductNumber = string.Format("ItemProductNumber {0}", i),
-                            // VendorId = string.Format("ItemVendor {0}", i),
-                            Type = string.Format("ItemType {0}", i),
+                            Id = $"Item {i}",
+                            WpId = $"ItemWpId {i}",
+                            ParentId = $"ItemParentId {i}",
+                            CreatedById = $"User {i}",
+                            Comment = $"ItemComment {i}",
+                            SerialNumber = $"ItemSerialNumber {i}",
                             Children = new List<Item>(),
                             CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                                 TimeZoneInfo.FindSystemTimeZoneById(("Central European Standard Time"))),
@@ -118,16 +108,11 @@ namespace Inventory.Tests.Services
                                 Id = $"{i}-{j}",
                                 WpId = $"ItemChildWpId {i}-{j}",
                                 ParentId = newItem.Id,
-                                UserId = $"ItemChildUserId {i}-{j}", 
-                                DocumentationId = $"ItemChildDocumentationId {i}-{j}",
-                                Description = $"ItemChildDescription {i}-{j}",
+                                CreatedById = $"ItemChildUserId {i}-{j}", 
                                 Comment = $"ItemChildComment {i}-{j}",
                                 LocationId = $"ItemChildLocation {i}-{j}",
                                 SerialNumber = $"ItemChildSerialNumber {i}-{j}",
-                                ProductNumber = $"ItemChildProductNumber {i}-{j}",
                                 VendorId = $"ItemChildVendor {i}-{j}",
-                                Type = $"ItemChildType {i}-{j}",
-                                Parent = newItem,
                                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                                     TimeZoneInfo.FindSystemTimeZoneById(("Central European Standard Time"))),
                                 

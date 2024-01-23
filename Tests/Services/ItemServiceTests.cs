@@ -1,7 +1,6 @@
 using Inventory.Models;
-using Inventory.Models.DTOs.ItemDTOs;
+using Inventory.Models.DTO;
 using Inventory.Services;
-using Inventory.Utilities;
 using Xunit;
 
 namespace Inventory.Tests.Services
@@ -14,15 +13,13 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            var userUtilities = new UserUtilities();
-            var itemUtilities = new ItemUtilities(userUtilities);
-            var itemService = new ItemService(dbContext, itemUtilities);
+            var itemService = new ItemService(dbContext);
             
             // Act
             var items = await itemService.GetAllItemsAsync();
             
             // Assert
-            Assert.IsType<List<ItemResponseDto>>(items);
+            Assert.IsType<List<Item>>(items);
             Assert.Equal(10, items.Count());
         }
         
@@ -32,9 +29,7 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            var userUtilities = new UserUtilities();
-            var itemUtilities = new ItemUtilities(userUtilities);
-            var itemService = new ItemService(dbContext, itemUtilities);
+            var itemService = new ItemService(dbContext);
         
             const string userId1 = "User 2";
             const string userId2 = "User 15";
@@ -46,9 +41,9 @@ namespace Inventory.Tests.Services
             var itemsByUserId2 = await itemService.GetAllItemsByUserIdAsync(userId2, page2);
             
             // Assert 
-            Assert.IsType<List<ItemResponseDto>>(itemsByUserId1);
-            Assert.Equal(1, itemsByUserId1.Count());
-            Assert.Equal(0, itemsByUserId2.Count());
+            Assert.IsType<List<Item>>(itemsByUserId1);
+            Assert.Single(itemsByUserId1);
+            Assert.Empty(itemsByUserId2);
         }
         
         [Fact]
@@ -57,15 +52,13 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            var userUtilities = new UserUtilities();
-            var itemUtilities = new ItemUtilities(userUtilities);
-            var itemService = new ItemService(dbContext, itemUtilities);
+            var itemService = new ItemService(dbContext);
             
             // Act
             var items = await itemService.GetAllItemsBySearchStringAsync("a", 1, null);
             
             //Assert
-            Assert.IsType<List<ItemResponseDto>>(items);
+            Assert.IsType<List<Item>>(items);
             Assert.Equal(10, items.Count());
         }
         
@@ -76,8 +69,6 @@ namespace Inventory.Tests.Services
         {
             // Arrange
             var testUtilities = new TestUtilities();
-            var userUtilities = new UserUtilities();
-            var itemUtilities = new ItemUtilities(userUtilities);
             var dbContext = await testUtilities.GetDbContext("Item");
             const string parentId = "parentId 1";
             
@@ -89,8 +80,6 @@ namespace Inventory.Tests.Services
                     ParentId = parentId,
                     Children = new List<Item>(),
                     CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time")),
-                    Description = "Test Description",
-                    ProductNumber = "TestProductNumber",
                     SerialNumber = "TestSerialNumber",
                     VendorId = "TestVendor",
                     WpId = "TestWpId",
@@ -102,19 +91,18 @@ namespace Inventory.Tests.Services
             await dbContext.SaveChangesAsync();
             
             // Act
-            var itemService = new ItemService(dbContext, itemUtilities);
+            var itemService = new ItemService(dbContext);
             var result = await itemService.GetChildrenAsync(parentId);
             
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<List<ItemResponseDto>>(result);
-            
-            Assert.Equal(expectedItems.Count, result.Count());
+            Assert.IsType<List<Item>>(result);
 
-            var firstResultItem = result.FirstOrDefault();
+            var enumerable = result as Item[] ?? result.ToArray();
+            Assert.Equal(expectedItems.Count, enumerable.Count());
+
+            var firstResultItem = enumerable.FirstOrDefault();
             Assert.NotNull(firstResultItem);
-            Assert.Equal(expectedItems[0].Description, firstResultItem.Description);
-            Assert.Equal(expectedItems[0].ProductNumber, firstResultItem.ProductNumber);
         }
                 
         
@@ -125,16 +113,13 @@ namespace Inventory.Tests.Services
             //Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            var userUtilities = new UserUtilities();
-            var itemUtilities = new ItemUtilities(userUtilities);
-            var itemService = new ItemService(dbContext, itemUtilities);
+            var itemService = new ItemService(dbContext);
             
             //Act
             var item = await itemService.GetItemByIdAsync("Item 1");
             
             //Assert
-            Assert.IsType<ItemResponseDto>(item);
-            Assert.Equal("ItemProductNumber 1", item.ProductNumber);
+            Assert.IsType<Item>(item);
             Assert.Equal("Item 1", item.Id);
         }
         
@@ -144,36 +129,28 @@ namespace Inventory.Tests.Services
             //Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            var userUtilities = new UserUtilities();
-            var itemUtilities = new ItemUtilities(userUtilities);
-            var itemService = new ItemService(dbContext, itemUtilities);
+            var itemService = new ItemService(dbContext);
             
             var newTestItem1 = new ItemCreateDto()
             {
-                ProductNumber = "123",
-                Description = "ADescription",
                 SerialNumber = "321",
                 WpId = "456",
                 Comment = "AComment",
                 LocationId = "ALocation",
                 ParentId = "789",
-                Type = "AType",
                 VendorId = "AVendor",
-                AddedById = "654",
+                CreatedById = "654",
             };
             
             var newTestItem2 = new ItemCreateDto()
             {
-                ProductNumber = "456",
-                Description = "ADescription",
                 SerialNumber = "321",
                 WpId = "789",
                 Comment = "AComment",
                 LocationId = "ALocation",
                 ParentId = "789",
-                Type = "BType",
                 VendorId = "AVendor",
-                AddedById = "654",
+                CreatedById = "654",
             };
             var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
             
@@ -193,32 +170,24 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            var userUtilities = new UserUtilities();
-            var itemUtilities = new ItemUtilities(userUtilities);
-            var itemService = new ItemService(dbContext, itemUtilities);
+            var itemService = new ItemService(dbContext);
 
-            var updatedItem = new ItemUpdateDto()
+            var updatedItem = new Item()
             {
                 Id = "Item 1",
                 WpId = "5",
                 ParentId = "4",
-                AddedById = "2",
-                Description = "Item 10",
+                CreatedById = "2",
                 Comment = "Item Comment 1",
-                ProductNumber = "123",
                 SerialNumber = "456",
-                // LocationId = "ALocation2",
-                Type = "AType2",
-                // VendorId = "AVendor2"
             };
             
             // Act
-            await itemService.UpdateItemAsync(updatedItem.AddedById, updatedItem);
+            await itemService.UpdateItemAsync(updatedItem.CreatedById, updatedItem);
             var item = await itemService.GetItemByIdAsync("Item 1");
             
             // Assert
-            Assert.Equal("Item 10", item.Description);
-            Assert.Equal("Item Comment 1", item.Comment);
+            Assert.Equal("Item Comment 1", item?.Comment);
         }
 
         [Fact]
@@ -227,9 +196,7 @@ namespace Inventory.Tests.Services
             // Arrange
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
-            var userUtilities = new UserUtilities();
-            var itemUtilities = new ItemUtilities(userUtilities);
-            var itemService = new ItemService(dbContext, itemUtilities);
+            var itemService = new ItemService(dbContext);
 
             const string itemId = "Item 1";
             
