@@ -100,7 +100,7 @@ namespace Inventory.Tests.Services
                             CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                                 TimeZoneInfo.FindSystemTimeZoneById(("Central European Standard Time"))),
                         };
- 
+
                         for (int j = 0; j < 10; j++)
                         {
                             var childItem = new Item
@@ -108,14 +108,14 @@ namespace Inventory.Tests.Services
                                 Id = $"{i}-{j}",
                                 WpId = $"ItemChildWpId {i}-{j}",
                                 ParentId = newItem.Id,
-                                CreatedById = $"ItemChildUserId {i}-{j}", 
+                                CreatedById = $"ItemChildUserId {i}-{j}",
                                 Comment = $"ItemChildComment {i}-{j}",
                                 LocationId = $"ItemChildLocation {i}-{j}",
                                 SerialNumber = $"ItemChildSerialNumber {i}-{j}",
                                 VendorId = $"ItemChildVendor {i}-{j}",
                                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                                     TimeZoneInfo.FindSystemTimeZoneById(("Central European Standard Time"))),
-                                
+
                             };
                             newItem.Children.ToList().Add(childItem);
                         }

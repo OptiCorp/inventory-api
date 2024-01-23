@@ -25,7 +25,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<Category>> GetAllCategoriesBySearchStringAsync(string searchString)
         {
             try
@@ -39,7 +39,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<Category?> GetCategoryByIdAsync(string id)
         {
             try
@@ -52,7 +52,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreateCategoryAsync(CategoryCreateDto categoryCreate)
         {
             try
@@ -63,7 +63,7 @@ namespace Inventory.Services
                     CreatedById = categoryCreate.CreatedById,
                     CreatedDate = DateTime.Now
                 };
-                
+
                 await _context.Categories.AddAsync(category);
                 await _context.SaveChangesAsync();
                 return category.Id;
@@ -80,12 +80,12 @@ namespace Inventory.Services
             try
             {
                 var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == categoryUpdate.Id);
-        
+
                 if (category != null)
                 {
                     category.Name = categoryUpdate.Name;
                     category.UpdatedDate = DateTime.Now;
-        
+
                     await _context.SaveChangesAsync();
                 }
             }

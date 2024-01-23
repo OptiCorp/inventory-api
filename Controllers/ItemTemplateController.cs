@@ -22,7 +22,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all item templates", Description = "Retrieves a list of all item templates.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemTemplate>))]
@@ -38,7 +38,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get item template", Description = "Retrieves an item template.")]
         [SwaggerResponse(200, "Success", typeof(ItemTemplate))]
@@ -61,7 +61,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new item template", Description = "Creates a new item template.")]
         [SwaggerResponse(201, "Item template created", typeof(ItemTemplate))]
@@ -99,7 +99,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update item template", Description = "Updates an item template.")]
         [SwaggerResponse(200, "Item template updated")]
@@ -143,7 +143,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete item template", Description = "Deletes an item template.")]
         [SwaggerResponse(200, "Item template deleted")]

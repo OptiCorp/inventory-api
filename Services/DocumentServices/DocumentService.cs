@@ -25,10 +25,10 @@ namespace Inventory.Services
                 {
                     BlobContainerClient containerClient =
                         new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
-            
+
                     var item = await _context.Items.Where(item => item.Id == id)
                         .Include(item => item.Documents)!.ThenInclude(doc => doc.DocumentType).FirstOrDefaultAsync();
-                
+
                     var documents = item?.Documents;
 
                     if (documents != null)
@@ -64,7 +64,7 @@ namespace Inventory.Services
                 }
                 return documentList;
             }
-            
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -95,13 +95,13 @@ namespace Inventory.Services
                     BlobId = Guid.NewGuid().ToString(),
                     ContentType = document.File?.ContentType
                 };
-            
+
                 var item = await _context.Items.Where(item => item.Id == document.ItemId)
                     .Include(item => item.Documents)
                     .FirstOrDefaultAsync();
                 item?.Documents?.Add(newDocument);
                 await _context.SaveChangesAsync();
-            
+
                 return newDocument.Id;
             }
             catch (Exception e)

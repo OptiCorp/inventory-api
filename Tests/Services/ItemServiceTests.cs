@@ -14,15 +14,15 @@ namespace Inventory.Tests.Services
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
             var itemService = new ItemService(dbContext);
-            
+
             // Act
             var items = await itemService.GetAllItemsAsync();
-            
+
             // Assert
             Assert.IsType<List<Item>>(items);
             Assert.Equal(10, items.Count());
         }
-        
+
         [Fact]
         public async void ItemService_GetAllItemsByUserId_ReturnsItemList()
         {
@@ -30,22 +30,22 @@ namespace Inventory.Tests.Services
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
             var itemService = new ItemService(dbContext);
-        
+
             const string userId1 = "User 2";
             const string userId2 = "User 15";
             const int page1 = 1;
             const int page2 = 1;
-            
+
             // Act
             var itemsByUserId1 = await itemService.GetAllItemsByUserIdAsync(userId1, page1);
             var itemsByUserId2 = await itemService.GetAllItemsByUserIdAsync(userId2, page2);
-            
+
             // Assert 
             Assert.IsType<List<Item>>(itemsByUserId1);
             Assert.Single(itemsByUserId1);
             Assert.Empty(itemsByUserId2);
         }
-        
+
         [Fact]
         public async Task ItemService_GetAllItemsBySearchString_ReturnsItemList()
         {
@@ -53,16 +53,16 @@ namespace Inventory.Tests.Services
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
             var itemService = new ItemService(dbContext);
-            
+
             // Act
             var items = await itemService.GetAllItemsBySearchStringAsync("a", 1, null);
-            
+
             //Assert
             Assert.IsType<List<Item>>(items);
             Assert.Equal(10, items.Count());
         }
-        
-        
+
+
 
         [Fact]
         public async Task ItemService_GetChildren_ReturnsItemList()
@@ -71,8 +71,8 @@ namespace Inventory.Tests.Services
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
             const string parentId = "parentId 1";
-            
-            
+
+
             var expectedItems = new List<Item>
             {
                 new Item
@@ -83,17 +83,17 @@ namespace Inventory.Tests.Services
                     SerialNumber = "TestSerialNumber",
                     VendorId = "TestVendor",
                     WpId = "TestWpId",
-                    
+
                 }
             };
-            
+
             dbContext.Items.AddRange(expectedItems);
             await dbContext.SaveChangesAsync();
-            
+
             // Act
             var itemService = new ItemService(dbContext);
             var result = await itemService.GetChildrenAsync(parentId);
-            
+
             // Assert
             Assert.NotNull(result);
             Assert.IsType<List<Item>>(result);
@@ -104,8 +104,8 @@ namespace Inventory.Tests.Services
             var firstResultItem = enumerable.FirstOrDefault();
             Assert.NotNull(firstResultItem);
         }
-                
-        
+
+
 
         [Fact]
         public async void ItemService_GetItemById_ReturnsItem()
@@ -114,15 +114,15 @@ namespace Inventory.Tests.Services
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
             var itemService = new ItemService(dbContext);
-            
+
             //Act
             var item = await itemService.GetItemByIdAsync("Item 1");
-            
+
             //Assert
             Assert.IsType<Item>(item);
             Assert.Equal("Item 1", item.Id);
         }
-        
+
         [Fact]
         public async void ItemService_CreateItem_ReturnsString()
         {
@@ -130,7 +130,7 @@ namespace Inventory.Tests.Services
             var testUtilities = new TestUtilities();
             var dbContext = await testUtilities.GetDbContext("Item");
             var itemService = new ItemService(dbContext);
-            
+
             var newTestItem1 = new ItemCreateDto()
             {
                 SerialNumber = "321",
@@ -141,7 +141,7 @@ namespace Inventory.Tests.Services
                 VendorId = "AVendor",
                 CreatedById = "654",
             };
-            
+
             var newTestItem2 = new ItemCreateDto()
             {
                 SerialNumber = "321",
@@ -153,11 +153,11 @@ namespace Inventory.Tests.Services
                 CreatedById = "654",
             };
             var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
-            
+
             //Act
             var newItemIds = await itemService.CreateItemAsync(itemsToCreate);
             var items = await itemService.GetAllItemsAsync();
-            
+
             //Assert
             Assert.IsType<List<string>>(newItemIds);
             Assert.Equal(12, items.Count());
@@ -181,11 +181,11 @@ namespace Inventory.Tests.Services
                 Comment = "Item Comment 1",
                 SerialNumber = "456",
             };
-            
+
             // Act
             await itemService.UpdateItemAsync(updatedItem.CreatedById, updatedItem);
             var item = await itemService.GetItemByIdAsync("Item 1");
-            
+
             // Assert
             Assert.Equal("Item Comment 1", item?.Comment);
         }
@@ -199,11 +199,11 @@ namespace Inventory.Tests.Services
             var itemService = new ItemService(dbContext);
 
             const string itemId = "Item 1";
-            
+
             // Act
             await itemService.DeleteItemAsync(itemId);
             var allItems = await itemService.GetAllItemsAsync();
-            
+
             // Assert
             var deletedItem = allItems.FirstOrDefault(i => i.Id == itemId);
             Assert.Null(deletedItem);

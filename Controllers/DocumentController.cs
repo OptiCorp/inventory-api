@@ -62,8 +62,8 @@ namespace Inventory.Controllers
                 Document? newDocument = null;
                 if (newDocumentId != null)
                 {
-                    newDocument = await _documentService.GetDocumentByIdAsync(newDocumentId); 
-                
+                    newDocument = await _documentService.GetDocumentByIdAsync(newDocumentId);
+
                 }
                 return CreatedAtAction(nameof(UploadDocument), new { id = newDocumentId }, newDocument);
             }

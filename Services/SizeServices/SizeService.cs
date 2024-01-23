@@ -25,7 +25,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<Size?> GetSizeByIdAsync(string id)
         {
             try
@@ -38,7 +38,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreateSizeAsync(SizeCreateDto sizeCreate)
         {
             try
@@ -50,7 +50,7 @@ namespace Inventory.Services
                     Amount = sizeCreate.Amount,
                     Unit = sizeCreate.Unit
                 };
-                
+
                 await _context.Sizes.AddAsync(size);
                 await _context.SaveChangesAsync();
                 return size.Id;
@@ -67,14 +67,14 @@ namespace Inventory.Services
             try
             {
                 var size = await _context.Sizes.FirstOrDefaultAsync(c => c.Id == sizeUpdate.Id);
-        
+
                 if (size != null)
                 {
                     size.ItemTemplateId = sizeUpdate.ItemTemplateId;
                     size.Property = sizeUpdate.Property;
                     size.Amount = sizeUpdate.Amount;
                     size.Unit = sizeUpdate.Unit;
-        
+
                     await _context.SaveChangesAsync();
                 }
             }

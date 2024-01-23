@@ -25,7 +25,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<DocumentType?> GetDocumentTypeByIdAsync(string id)
         {
             try
@@ -38,7 +38,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreateDocumentTypeAsync(DocumentTypeCreateDto documentTypeCreate)
         {
             try
@@ -47,9 +47,9 @@ namespace Inventory.Services
                 {
                     Name = documentTypeCreate.Name,
                     Description = documentTypeCreate.Description,
-                    
+
                 };
-                
+
                 await _context.DocumentTypes.AddAsync(documentType);
                 await _context.SaveChangesAsync();
                 return documentType.Id;
@@ -66,12 +66,12 @@ namespace Inventory.Services
             try
             {
                 var documentType = await _context.DocumentTypes.FirstOrDefaultAsync(c => c.Id == documentTypeUpdate.Id);
-        
+
                 if (documentType != null)
                 {
                     documentType.Name = documentTypeUpdate.Name;
                     documentType.Description = documentTypeUpdate.Description;
-        
+
                     await _context.SaveChangesAsync();
                 }
             }

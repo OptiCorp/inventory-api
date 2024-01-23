@@ -22,7 +22,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all vendors", Description = "Retrieves a list of all vendors.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Vendor>))]
@@ -38,7 +38,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get vendor", Description = "Retrieves a vendor.")]
         [SwaggerResponse(200, "Success", typeof(Vendor))]
@@ -61,7 +61,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get vendors containing search string", Description = "Retrieves vendors containing search string in name.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Vendor>))]
@@ -69,7 +69,7 @@ namespace Inventory.Controllers
         public async Task<ActionResult<IEnumerable<Vendor>>> GetVendorBySearchString(string searchString)
         {
             try
-            { 
+            {
                 return Ok(await _vendorService.GetAllVendorsBySearchStringAsync(searchString));
             }
             catch (Exception e)
@@ -77,7 +77,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new vendor", Description = "Creates a new vendor.")]
         [SwaggerResponse(201, "Vendor created", typeof(Vendor))]
@@ -115,7 +115,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update vendor", Description = "Updates a vendor.")]
         [SwaggerResponse(200, "Vendor updated")]
@@ -159,7 +159,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete vendor", Description = "Deletes a vendor.")]
         [SwaggerResponse(200, "Vendor deleted")]

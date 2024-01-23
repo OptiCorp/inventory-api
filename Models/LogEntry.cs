@@ -8,11 +8,11 @@ namespace Inventory.Models
         public string? Id { get; set; }
 
         public string? ItemId { get; set; }
-        
+
         public string? CreatedById { get; set; }
-        
+
         public string? Message { get; set; }
-        
+
         public DateTime? CreatedDate { get; set; }
 
         public User? CreatedBy { get; set; }

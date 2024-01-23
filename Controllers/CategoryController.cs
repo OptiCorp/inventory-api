@@ -22,7 +22,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all categories", Description = "Retrieves a list of all categories.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Category>))]
@@ -38,7 +38,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get category", Description = "Retrieves a category.")]
         [SwaggerResponse(200, "Success", typeof(Category))]
@@ -60,7 +60,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get categories containing search string", Description = "Retrieves categories containing search string in title.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Category>))]
@@ -76,7 +76,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new category", Description = "Creates a new category.")]
         [SwaggerResponse(201, "Category created", typeof(Category))]
@@ -96,7 +96,7 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
+
             try
             {
                 var categoryId = await _categoryService.CreateCategoryAsync(categoryCreate);
@@ -109,7 +109,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update category", Description = "Updates a category.")]
         [SwaggerResponse(200, "Category updated")]
@@ -130,7 +130,7 @@ namespace Inventory.Controllers
                 }
                 return ValidationProblem(modelStateDictionary);
             }
-            
+
             if (id != categoryUpdate.Id)
             {
                 return BadRequest("Id does not match");
@@ -155,7 +155,7 @@ namespace Inventory.Controllers
             }
 
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete category", Description = "Deletes a category.")]
         [SwaggerResponse(200, "Category deleted")]
