@@ -30,12 +30,13 @@ namespace Inventory.Services
             }
         }
 
-        public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page)
+        public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page, string? listId)
         {
             try
             {
                 var result = await _context.Items
                     .Where(c => c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)))
+                    .Where(c => listId == null || c.ListId != listId)
                     .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
@@ -64,6 +65,7 @@ namespace Inventory.Services
 
                 var items = await _context.Items
                     .Where(c => templateIds.Contains(c.ItemTemplateId))
+                    .Where(c => listId == null || c.ListId != listId)
                     .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
@@ -80,34 +82,6 @@ namespace Inventory.Services
                 result.AddRange(items);
 
                 return result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-        
-        public async Task<IEnumerable<Item>> GetAllItemsNotInListBySearchStringAsync(string searchString, string listId, int page)
-        {
-            try
-            {
-                return await _context.Items.Include(c => c.ItemTemplate)
-                    .ThenInclude(c => c!.Category)
-                    .Where(c => c.ItemTemplate != null && c.ItemTemplate.Description != null && c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)
-                        || c.ItemTemplate.Description.Contains(searchString)
-                        && c.ListId != listId))
-                    .Include(c => c.Parent)
-                    .Include(c => c.Children)
-                    .Include(c => c.CreatedBy)
-                    .Include(c => c.Vendor)
-                    .Include(c => c.Location)
-                    .Include(c => c.LogEntries)!
-                        .ThenInclude(c => c.CreatedBy)
-                        .OrderBy(c => c.Id)
-                        .Skip(page == 0 ? 0 : (page - 1) * 10)
-                        .Take(10)
-                        .ToListAsync();
             }
             catch (Exception e)
             {
