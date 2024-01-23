@@ -47,7 +47,7 @@ namespace Inventory.Configuration
                 .HasMany(c => c.Documents)
                 .WithOne()
                 .HasForeignKey(c => c.ItemId);
-            
+
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.Vendor)
                 .WithMany()
@@ -143,7 +143,7 @@ namespace Inventory.Configuration
                 .HasMany(d => d.Documents)
                 .WithOne()
                 .HasForeignKey(c => c.ItemTemplateId);
-            
+
             modelBuilder.Entity<ItemTemplate>()
                 .HasOne(c => c.Category)
                 .WithMany()

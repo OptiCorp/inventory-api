@@ -36,8 +36,8 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
-        
+
+
         [HttpGet("ByItemId/{id}")]
         [SwaggerOperation(Summary = "Get documentation by item ID", Description = "Retrives all files related to an item")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentResponseDto>))]

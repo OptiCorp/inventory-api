@@ -12,11 +12,11 @@ namespace Inventory.Models
         public string? BlobId { get; set; }
 
         public string? ContentType { get; set; }
-        
+
         public string? ItemId { get; set; }
 
         public string? ItemTemplateId { get; set; }
-        
+
         public DocumentType? DocumentType { get; set; }
 
     }

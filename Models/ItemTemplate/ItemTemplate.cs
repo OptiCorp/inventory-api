@@ -30,7 +30,7 @@ namespace Inventory.Models
         public Category? Category { get; set; }
 
         public ICollection<Document>? Documents { get; set; }
-        
+
         public IEnumerable<Size>? Sizes { get; set; }
     }
 }
