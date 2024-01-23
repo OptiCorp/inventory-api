@@ -11,7 +11,7 @@ namespace Inventory.Services
         {
             _context = context;
         }
-        
+
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             try
@@ -26,7 +26,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<User>> GetAllUsersAdminAsync()
         {
             try
@@ -65,7 +65,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
             try
@@ -78,7 +78,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<bool> IsUsernameTaken(string userName)
         {
             try

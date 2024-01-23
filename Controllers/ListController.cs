@@ -24,7 +24,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all lists", Description = "Retrieves a list of all lists.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
@@ -40,7 +40,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get list", Description = "Retrieves a list.")]
         [SwaggerResponse(200, "Success", typeof(List))]
@@ -63,7 +63,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("ByUserId/{id}")]
         [SwaggerOperation(Summary = "Get lists added by user", Description = "Retrieves lists added by the user.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
@@ -79,7 +79,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get lists containing search string", Description = "Retrieves lists containing search string in title, WpId, serial number or description.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<List>))]
@@ -101,7 +101,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new list", Description = "Creates a new list.")]
         [SwaggerResponse(201, "List created", typeof(List))]
@@ -139,7 +139,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost("AddItems")]
         [SwaggerOperation(Summary = "Add items to a list", Description = "Adds items to a list.")]
         [SwaggerResponse(200, "Items added", typeof(List))]
@@ -164,7 +164,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost("RemoveItems")]
         [SwaggerOperation(Summary = "Remove items from a list", Description = "Removes items to a list.")]
         [SwaggerResponse(201, "Items removed", typeof(List))]
@@ -189,7 +189,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update list", Description = "Updates a list.")]
         [SwaggerResponse(200, "List updated")]
@@ -233,7 +233,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete list", Description = "Deletes an list.")]
         [SwaggerResponse(200, "List deleted")]

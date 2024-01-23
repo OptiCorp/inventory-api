@@ -22,7 +22,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all pre checks", Description = "Retrieves a list of all pre checks.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<PreCheck>))]
@@ -38,7 +38,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get pre check", Description = "Retrieves a pre check.")]
         [SwaggerResponse(200, "Success", typeof(PreCheck))]
@@ -61,7 +61,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new pre check", Description = "Creates a new pre check.")]
         [SwaggerResponse(201, "Pre check created", typeof(PreCheck))]
@@ -100,7 +100,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update pre check", Description = "Updates a pre check.")]
         [SwaggerResponse(200, "PreCheck updated")]
@@ -144,7 +144,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete pre check", Description = "Deletes a pre check.")]
         [SwaggerResponse(200, "PreCheck deleted")]

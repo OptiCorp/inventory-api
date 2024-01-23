@@ -28,7 +28,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<List>> GetAllListsBySearchStringAsync(string searchString, int page, string userId)
         {
             try
@@ -55,7 +55,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<List>> GetAllListsByUserIdAsync(string id, int page)
         {
             try
@@ -92,7 +92,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreateListAsync(ListCreateDto listCreate)
         {
             try
@@ -103,7 +103,7 @@ namespace Inventory.Services
                     CreatedById = listCreate.CreatedById,
                     CreatedDate = DateTime.Now
                 };
-                
+
                 await _context.Lists.AddAsync(list);
                 await _context.SaveChangesAsync();
                 return list.Id;
@@ -124,7 +124,7 @@ namespace Inventory.Services
                     var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
                     if (item != null) item.ListId = listId;
                 }
-            
+
                 var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
                 if (list != null) list.UpdatedDate = DateTime.Now;
 
@@ -136,7 +136,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task RemoveItemsFromListAsync(IEnumerable<string> itemIds, string listId)
         {
             try
@@ -146,7 +146,7 @@ namespace Inventory.Services
                     var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
                     if (item != null) item.ListId = null;
                 }
-            
+
                 var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
                 if (list != null) list.UpdatedDate = DateTime.Now;
 
@@ -164,12 +164,12 @@ namespace Inventory.Services
             try
             {
                 var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listUpdate.Id);
-        
+
                 if (list != null)
                 {
                     list.Title = listUpdate.Title;
                     list.UpdatedDate = DateTime.Now;
-        
+
                     await _context.SaveChangesAsync();
                 }
             }

@@ -22,7 +22,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all categories", Description = "Retrieves a list of all categories.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Size>))]
@@ -39,7 +39,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get size", Description = "Retrieves a size.")]
         [SwaggerResponse(200, "Success", typeof(Size))]
@@ -62,7 +62,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new size", Description = "Creates a new size.")]
         [SwaggerResponse(201, "Size created", typeof(Size))]
@@ -100,7 +100,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update size", Description = "Updates a size.")]
         [SwaggerResponse(200, "Size updated")]
@@ -146,7 +146,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete size", Description = "Deletes a size.")]
         [SwaggerResponse(200, "Size deleted")]
