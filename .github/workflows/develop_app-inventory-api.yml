@@ -13,6 +13,8 @@ jobs:
   dotnet-format:
     runs-on: ubuntu latest
     steps:
+      - uses: actions/checkout@v4
+        
       - name: Run dotnet format
         id: format
         uses: jfversluis/dotnet-format@v1.0.5
