@@ -26,7 +26,7 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<DocumentType> GetDocumentTypeByIdAsync(string id)
+        public async Task<DocumentType?> GetDocumentTypeByIdAsync(string id)
         {
             try
             {

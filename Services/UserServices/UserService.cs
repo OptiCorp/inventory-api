@@ -40,7 +40,7 @@ namespace Inventory.Services
             }
         }
 
-        public async Task<User> GetUserByIdAsync(string id)
+        public async Task<User?> GetUserByIdAsync(string id)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Inventory.Services
             }
         }
 
-        public async Task<User> GetUserByAzureAdUserIdAsync(string azureAdUserId)
+        public async Task<User?> GetUserByAzureAdUserIdAsync(string azureAdUserId)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<User> GetUserByUsernameAsync(string username)
+        public async Task<User?> GetUserByUsernameAsync(string username)
         {
             try
             {

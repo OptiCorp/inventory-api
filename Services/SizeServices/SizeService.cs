@@ -26,7 +26,7 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<Size> GetSizeByIdAsync(string id)
+        public async Task<Size?> GetSizeByIdAsync(string id)
         {
             try
             {

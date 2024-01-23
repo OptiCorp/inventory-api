@@ -20,7 +20,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet("ByItemId/{id}")]
-        [SwaggerOperation(Summary = "Get documentation by item ID", Description = "Retrives all files related to an item")]
+        [SwaggerOperation(Summary = "Get documentation by item ID", Description = "Retrieves all files related to an item")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Document>))]
         [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<Document>>> GetDocumentsByItemId(string id)
@@ -48,16 +48,23 @@ namespace Inventory.Controllers
         {
             try
             {
-                var item = await _itemService.GetItemByIdAsync(document.ItemId);
-                if (item == null)
+                if (document.ItemId != null)
                 {
-                    return NotFound("Item not found");
+                    var item = await _itemService.GetItemByIdAsync(document.ItemId);
+                    if (item == null)
+                    {
+                        return NotFound("Item not found");
+                    }
                 }
 
-                string newDocumentId = await _documentService.UploadDocumentAsync(document);
+                string? newDocumentId = await _documentService.UploadDocumentAsync(document);
+
+                Document? newDocument = null;
+                if (newDocumentId != null)
+                {
+                    newDocument = await _documentService.GetDocumentByIdAsync(newDocumentId); 
                 
-                Document newDocument = await _documentService.GetDocumentByIdAsync(newDocumentId); 
-                
+                }
                 return CreatedAtAction(nameof(UploadDocument), new { id = newDocumentId }, newDocument);
             }
             catch (Exception e)

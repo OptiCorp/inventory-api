@@ -30,7 +30,7 @@ namespace Inventory.Services
         {
             try
             {
-                return await _context.Categories.Where(category => category.Name.Contains(searchString))
+                return await _context.Categories.Where(category => category.Name != null && category.Name.Contains(searchString))
                                             .ToListAsync();
             }
             catch (Exception e)
@@ -40,7 +40,7 @@ namespace Inventory.Services
             }
         }
         
-        public async Task<Category> GetCategoryByIdAsync(string id)
+        public async Task<Category?> GetCategoryByIdAsync(string id)
         {
             try
             {

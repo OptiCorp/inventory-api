@@ -42,8 +42,8 @@ namespace Inventory.Tests.Services
             
             // Assert 
             Assert.IsType<List<Item>>(itemsByUserId1);
-            Assert.Equal(1, itemsByUserId1.Count());
-            Assert.Equal(0, itemsByUserId2.Count());
+            Assert.Single(itemsByUserId1);
+            Assert.Empty(itemsByUserId2);
         }
         
         [Fact]
@@ -97,10 +97,11 @@ namespace Inventory.Tests.Services
             // Assert
             Assert.NotNull(result);
             Assert.IsType<List<Item>>(result);
-            
-            Assert.Equal(expectedItems.Count, result.Count());
 
-            var firstResultItem = result.FirstOrDefault();
+            var enumerable = result as Item[] ?? result.ToArray();
+            Assert.Equal(expectedItems.Count, enumerable.Count());
+
+            var firstResultItem = enumerable.FirstOrDefault();
             Assert.NotNull(firstResultItem);
         }
                 
@@ -186,7 +187,7 @@ namespace Inventory.Tests.Services
             var item = await itemService.GetItemByIdAsync("Item 1");
             
             // Assert
-            Assert.Equal("Item Comment 1", item.Comment);
+            Assert.Equal("Item Comment 1", item?.Comment);
         }
 
         [Fact]

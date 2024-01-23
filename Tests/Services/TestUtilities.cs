@@ -12,7 +12,7 @@ namespace Inventory.Tests.Services
                 .Options;
 
             var databaseContext = new InventoryDbContext(options);
-            databaseContext.Database.EnsureCreated();
+            await databaseContext.Database.EnsureCreatedAsync();
 
             if (testType == "User")
             {
@@ -23,12 +23,12 @@ namespace Inventory.Tests.Services
                         await databaseContext.User.AddAsync(
                             new User
                             {
-                                Id = string.Format("User {0}", i),
-                                AzureAdUserId = string.Format("AzureAD{0}@bouvet.no", i),
+                                Id = $"User {i}",
+                                AzureAdUserId = $"AzureAD{i}@bouvet.no",
                                 FirstName = "name",
                                 LastName = "nameson",
                                 Email = "some email",
-                                Username = string.Format("Username {0}", i),
+                                Username = $"Username {i}",
                                 Status = i % 5 == 0 ? UserStatus.Deleted : UserStatus.Active,
                                 CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                                     TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
@@ -90,12 +90,12 @@ namespace Inventory.Tests.Services
                     {
                         var newItem = new Item
                         {
-                            Id = string.Format("Item {0}", i),
-                            WpId = string.Format("ItemWpId {0}", i),
-                            ParentId = string.Format("ItemParentId {0}", i),
-                            CreatedById = string.Format("User {0}", i),
-                            Comment = string.Format("ItemComment {0}", i),
-                            SerialNumber = string.Format("ItemSerialNumber {0}", i),
+                            Id = $"Item {i}",
+                            WpId = $"ItemWpId {i}",
+                            ParentId = $"ItemParentId {i}",
+                            CreatedById = $"User {i}",
+                            Comment = $"ItemComment {i}",
+                            SerialNumber = $"ItemSerialNumber {i}",
                             Children = new List<Item>(),
                             CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
                                 TimeZoneInfo.FindSystemTimeZoneById(("Central European Standard Time"))),

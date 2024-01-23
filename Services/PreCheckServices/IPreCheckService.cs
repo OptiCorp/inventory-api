@@ -6,7 +6,7 @@ namespace Inventory.Services
     public interface IPreCheckService
     {
         Task<IEnumerable<PreCheck>> GetAllPreChecksAsync();
-        Task<PreCheck> GetPreCheckByIdAsync(string id);
+        Task<PreCheck?> GetPreCheckByIdAsync(string id);
         Task<string?> CreatePreCheckAsync(PreCheckCreateDto preCheck);
         Task UpdatePreCheckAsync(PreCheck preCheck);
         Task DeletePreCheckAsync(string id);

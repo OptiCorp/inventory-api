@@ -9,14 +9,14 @@ namespace Inventory.Services
     public class UserCreateHandler : BackgroundService
     {
         private readonly AppSettings _appSettings;
-        private ServiceBusClient _client;
-        private ServiceBusProcessor _processor;
-        public readonly IServiceProvider _serviceProdiver;
+        private ServiceBusClient? _client;
+        private ServiceBusProcessor? _processor;
+        private readonly IServiceProvider _serviceProvider;
 
         public UserCreateHandler(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
         {
             _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
-            _serviceProdiver = serviceProvider;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -40,34 +40,34 @@ namespace Inventory.Services
             Console.WriteLine($"{nameof(UserCreateHandler)} service has stopped.");
 
             // Stop processing messages and clean up resources.
-            await _processor.StopProcessingAsync();
+            await _processor.StopProcessingAsync(stoppingToken);
             await _processor.DisposeAsync();
             await _client.DisposeAsync();
         }
 
         private async Task MessageHandler(ProcessMessageEventArgs args)
         {
-            using (var scope = _serviceProdiver.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
                 if (args == null)
                     throw new ArgumentNullException(nameof(args));
 
                 string body = args.Message.Body.ToString();
-                UserBusCreateDto userBody = JsonSerializer.Deserialize<UserBusCreateDto>(body);
+                UserBusCreateDto? userBody = JsonSerializer.Deserialize<UserBusCreateDto>(body);
 
                 var scopedService = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
 
                 var user = new User
                 {
-                    UmId = userBody.Id,
-                    AzureAdUserId = userBody.AzureAdUserId,
-                    Username = userBody.Username,
-                    FirstName = userBody.FirstName,
-                    LastName = userBody.LastName,
-                    Email = userBody.Email,
-                    UserRole = userBody.UserRole,
-                    CreatedDate = userBody.CreatedDate,
-                    Status = Enum.Parse<UserStatus>(userBody.Status)
+                    UmId = userBody?.Id,
+                    AzureAdUserId = userBody?.AzureAdUserId,
+                    Username = userBody?.Username,
+                    FirstName = userBody?.FirstName,
+                    LastName = userBody?.LastName,
+                    Email = userBody?.Email,
+                    UserRole = userBody?.UserRole,
+                    CreatedDate = userBody?.CreatedDate,
+                    Status = Enum.Parse<UserStatus>(userBody?.Status!)
                 };
                 await scopedService.User.AddAsync(user);
 

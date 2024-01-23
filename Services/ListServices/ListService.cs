@@ -18,7 +18,7 @@ namespace Inventory.Services
             try
             {
                 return await _context.Lists.Include(c => c.CreatedBy)
-                    .Include(c => c.Items)
+                    .Include(c => c.Items)!
                     .ThenInclude(c => c.ItemTemplate)
                     .ToListAsync();
             }
@@ -33,16 +33,16 @@ namespace Inventory.Services
         {
             try
             {
-                return await _context.Lists.Include(c => c.Items)
+                return await _context.Lists.Include(c => c.Items)!
                     .ThenInclude(c => c.ItemTemplate)
                     .Where(c => c.CreatedById == userId)
                     .Where(list =>
-                        list.Title.Contains(searchString) ||
-                        list.Items.Any(item =>
-                            item.WpId.Contains(searchString) ||
-                            item.SerialNumber.Contains(searchString) ||
-                            item.ItemTemplate.Description.Contains(searchString)
-                        ))
+                        list.Items != null && list.Title != null && (list.Title.Contains(searchString) ||
+                                                                     list.Items.Any(item =>
+                                                                         item.WpId != null && item.ItemTemplate != null && item.SerialNumber != null && item.ItemTemplate.Description != null && (item.WpId.Contains(searchString) ||
+                                                                             item.SerialNumber.Contains(searchString) ||
+                                                                             item.ItemTemplate.Description.Contains(searchString))
+                                                                     )))
                     .Include(c => c.CreatedBy)
                     .OrderByDescending(c => c.CreatedDate)
                     .Skip(page == 0 ? 0 : (page - 1) * 10)
@@ -62,7 +62,7 @@ namespace Inventory.Services
             {
                 return await _context.Lists.Where(c => c.CreatedById == id)
                     .Include(c => c.CreatedBy)
-                    .Include(c => c.Items)
+                    .Include(c => c.Items)!
                     .ThenInclude(c => c.ItemTemplate)
                     .OrderByDescending(c => c.CreatedDate)
                     .Skip(page == 0 ? 0 : (page - 1) * 10)
@@ -76,13 +76,13 @@ namespace Inventory.Services
             }
         }
 
-        public async Task<List> GetListByIdAsync(string id)
+        public async Task<List?> GetListByIdAsync(string id)
         {
             try
             {
                 return await _context.Lists
                     .Include(c => c.CreatedBy)
-                    .Include(c => c.Items)
+                    .Include(c => c.Items)!
                     .ThenInclude(c => c.ItemTemplate)
                     .FirstOrDefaultAsync(c => c.Id == id);
             }
@@ -122,12 +122,12 @@ namespace Inventory.Services
                 foreach (var itemId in itemIds)
                 {
                     var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
-                    item.ListId = listId;
+                    if (item != null) item.ListId = listId;
                 }
             
                 var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
-                list.UpdatedDate = DateTime.Now;
-            
+                if (list != null) list.UpdatedDate = DateTime.Now;
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -144,12 +144,12 @@ namespace Inventory.Services
                 foreach (var itemId in itemIds)
                 {
                     var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
-                    item.ListId = null;
+                    if (item != null) item.ListId = null;
                 }
             
                 var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
-                list.UpdatedDate = DateTime.Now;
-            
+                if (list != null) list.UpdatedDate = DateTime.Now;
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception e)
@@ -187,11 +187,12 @@ namespace Inventory.Services
                 var list = await _context.Lists.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == id);
                 if (list != null)
                 {
-                    foreach (var item in list.Items)
-                    {
-                        item.ListId = null;
-                    }
-                    
+                    if (list.Items != null)
+                        foreach (var item in list.Items)
+                        {
+                            item.ListId = null;
+                        }
+
                     _context.Lists.Remove(list);
                     await _context.SaveChangesAsync();
                 }

@@ -100,7 +100,7 @@ namespace Inventory.Controllers
             try
             {
                 var categoryId = await _categoryService.CreateCategoryAsync(categoryCreate);
-                var category = await _categoryService.GetCategoryByIdAsync(categoryId);
+                var category = await _categoryService.GetCategoryByIdAsync(categoryId!);
 
                 return CreatedAtAction(nameof(GetCategory), new { id = categoryId }, category);
             }
