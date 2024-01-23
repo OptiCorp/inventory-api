@@ -87,6 +87,7 @@ namespace Inventory.Services
                 {
                     itemTemplate.Name = itemTemplateUpdate.Name;
                     itemTemplate.Type = itemTemplateUpdate.Type;
+                    itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
                     itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
                     itemTemplate.Revision = itemTemplateUpdate.Revision;
                     itemTemplate.Description = itemTemplateUpdate.Description;
