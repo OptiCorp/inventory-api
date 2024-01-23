@@ -32,7 +32,7 @@ jobs:
 
       - name: Check dotnet format result
         if: steps.format.outputs.has-changes == 'true'
-        run: exit 1
+        run: echo "Please run dotnet format" && exit 1
       
       
       - name: Build with dotnet
