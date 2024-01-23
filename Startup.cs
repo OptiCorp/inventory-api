@@ -54,7 +54,7 @@ namespace inventory
             {
                 c.EnableAnnotations();
             });
-            
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IListService, ListService>();
@@ -66,9 +66,9 @@ namespace inventory
             services.AddScoped<ISizeService, SizeService>();
             services.AddScoped<IPreCheckService, PreCheckService>();
             services.AddScoped<IDocumentTypeService, DocumentTypeService>();
-            
+
             services.AddScoped<IUserUtilities, UserUtilities>();
-            
+
             services.AddScoped<ICategoryCreateValidator, CategoryCreateValidator>();
             services.AddScoped<ICategoryUpdateValidator, CategoryUpdateValidator>();
             services.AddScoped<IItemCreateValidator, ItemCreateValidator>();
@@ -87,7 +87,7 @@ namespace inventory
             services.AddScoped<ISizeUpdateValidator, SizeUpdateValidator>();
             services.AddScoped<IDocumentTypeCreateValidator, DocumentTypeCreateValidator>();
             services.AddScoped<IDocumentTypeUpdateValidator, DocumentTypeUpdateValidator>();
-            
+
             services.AddHostedService<UserCreateHandler>();
             services.AddHostedService<UserUpdateHandler>();
             services.AddHostedService<UserDeleteHandler>();
@@ -98,10 +98,10 @@ namespace inventory
 
             // Add DbContext
             var connectionString = GetSecretValueFromKeyVault(Configuration["AzureKeyVault:ConnectionStringSecretName"]);
-            
+
 
             services.AddDbContext<InventoryDbContext>(options => options.UseSqlServer(connectionString));
-            
+
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();

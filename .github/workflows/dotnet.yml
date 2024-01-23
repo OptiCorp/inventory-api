@@ -20,7 +20,19 @@ jobs:
         with:
           dotnet-version: '8.0.x'
           include-prerelease: true
+          
+      - name: Run dotnet format
+        id: format
+        uses: jfversluis/dotnet-format@v1.0.5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          action: "fix"
+          workspace: "inventory-api.sln"
 
+      - name: Check dotnet format result
+        if: steps.format.outputs.has-changes == 'true'
+        run: echo "Please run dotnet format" && exit 1
+      
       - name: Build with dotnet
         run: dotnet build --configuration Release
 

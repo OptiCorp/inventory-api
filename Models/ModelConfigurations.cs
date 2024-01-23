@@ -11,7 +11,7 @@ namespace Inventory.Configuration
                 .HasKey(u => u.Id);
         }
     }
-    
+
     public static class ItemConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace Inventory.Configuration
                 .WithMany(c => c.Children)
                 .HasForeignKey(c => c.ParentId)
                 .OnDelete(DeleteBehavior.NoAction);
-            
+
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.CreatedBy)
                 .WithMany()
@@ -36,7 +36,7 @@ namespace Inventory.Configuration
 
             modelBuilder.Entity<Item>()
                 .HasIndex(c => c.SerialNumber);
-            
+
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.ItemTemplate)
                 .WithMany()
@@ -53,7 +53,7 @@ namespace Inventory.Configuration
                 .WithMany()
                 .HasForeignKey(c => c.VendorId)
                 .OnDelete(DeleteBehavior.SetNull);
-            
+
             modelBuilder.Entity<Item>()
                 .HasOne(c => c.Location)
                 .WithMany()
@@ -61,7 +61,7 @@ namespace Inventory.Configuration
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }
-    
+
     public static class ListConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -72,21 +72,21 @@ namespace Inventory.Configuration
             modelBuilder.Entity<List>()
                 .HasMany(c => c.Items)
                 .WithMany();
-            
+
             modelBuilder.Entity<List>()
                 .HasOne(c => c.CreatedBy)
                 .WithMany()
                 .HasForeignKey(c => c.CreatedById)
                 .OnDelete(DeleteBehavior.NoAction);
-            
+
             modelBuilder.Entity<List>()
                 .HasIndex(c => c.Title);
-            
+
             modelBuilder.Entity<Item>()
                 .HasIndex(c => c.CreatedById);
         }
     }
-    
+
     public static class DocumentTypeConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -95,7 +95,7 @@ namespace Inventory.Configuration
                 .HasKey(d => d.Id);
         }
     }
-    
+
     public static class DocumentConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -110,7 +110,7 @@ namespace Inventory.Configuration
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }
-    
+
     public static class PreCheckConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -125,7 +125,7 @@ namespace Inventory.Configuration
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }
-    
+
     public static class ItemTemplateConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -151,7 +151,7 @@ namespace Inventory.Configuration
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }
-    
+
     public static class SizeConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -160,7 +160,7 @@ namespace Inventory.Configuration
                 .HasKey(d => d.Id);
         }
     }
-    
+
     public static class LocationConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -169,7 +169,7 @@ namespace Inventory.Configuration
                 .HasKey(d => d.Id);
         }
     }
-    
+
     public static class CategoryConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -178,7 +178,7 @@ namespace Inventory.Configuration
                 .HasKey(d => d.Id);
         }
     }
-    
+
     public static class VendorConfigurations
     {
         public static void Configure(ModelBuilder modelBuilder)
@@ -187,5 +187,5 @@ namespace Inventory.Configuration
                 .HasKey(d => d.Id);
         }
     }
-    
+
 }

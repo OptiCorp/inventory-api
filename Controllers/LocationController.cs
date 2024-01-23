@@ -22,7 +22,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all locations", Description = "Retrieves a list of all locations.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Location>))]
@@ -38,7 +38,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get location", Description = "Retrieves a location.")]
         [SwaggerResponse(200, "Success", typeof(Location))]
@@ -61,8 +61,8 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
-        
+
+
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get locations containing search string", Description = "Retrieves locations containing search string in name.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Location>))]
@@ -78,7 +78,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new location", Description = "Creates a new location.")]
         [SwaggerResponse(201, "Location created", typeof(Location))]
@@ -116,7 +116,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update location", Description = "Updates a location.")]
         [SwaggerResponse(200, "Location updated")]
@@ -160,7 +160,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete location", Description = "Deletes a location.")]
         [SwaggerResponse(200, "Location deleted")]

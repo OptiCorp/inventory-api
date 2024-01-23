@@ -6,9 +6,9 @@ namespace Inventory.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
-        
+
         public bool? Check { get; set; }
-        
+
         public string? Comment { get; set; }
     }
 }

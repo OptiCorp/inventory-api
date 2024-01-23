@@ -25,7 +25,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<Location>> GetAllLocationsBySearchStringAsync(string searchString)
         {
             try
@@ -39,7 +39,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<Location?> GetLocationByIdAsync(string id)
         {
             try
@@ -52,7 +52,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreateLocationAsync(LocationCreateDto locationCreate)
         {
             try
@@ -63,7 +63,7 @@ namespace Inventory.Services
                     CreatedById = locationCreate.CreatedById,
                     CreatedDate = DateTime.Now
                 };
-          
+
                 await _context.Locations.AddAsync(location);
                 await _context.SaveChangesAsync();
                 return location.Id;
@@ -80,12 +80,12 @@ namespace Inventory.Services
             try
             {
                 var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == locationUpdate.Id);
-        
+
                 if (location != null)
                 {
                     location.Name = locationUpdate.Name;
                     location.UpdatedDate = DateTime.Now;
-        
+
                     await _context.SaveChangesAsync();
                 }
             }

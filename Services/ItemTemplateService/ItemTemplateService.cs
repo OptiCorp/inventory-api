@@ -30,7 +30,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
 
         public async Task<ItemTemplate?> GetItemTemplateByIdAsync(string id)
         {
@@ -49,7 +49,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreateItemTemplateAsync(ItemTemplateCreateDto itemTemplateCreate)
         {
             try
@@ -65,7 +65,7 @@ namespace Inventory.Services
                     Description = itemTemplateCreate.Description,
                     CreatedDate = DateTime.Now
                 };
-                
+
                 await _context.ItemTemplates.AddAsync(itemTemplate);
                 await _context.SaveChangesAsync();
                 return itemTemplate.Id;
@@ -76,13 +76,13 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task UpdateItemTemplateAsync(ItemTemplate itemTemplateUpdate)
         {
             try
             {
                 var itemTemplate = await _context.ItemTemplates.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.Id);
-        
+
                 if (itemTemplate != null)
                 {
                     itemTemplate.Name = itemTemplateUpdate.Name;
@@ -93,7 +93,7 @@ namespace Inventory.Services
                     itemTemplate.Description = itemTemplateUpdate.Description;
                     itemTemplate.CreatedById = itemTemplateUpdate.CreatedById;
                     itemTemplate.UpdatedDate = DateTime.Now;
-        
+
                     await _context.SaveChangesAsync();
                 }
             }

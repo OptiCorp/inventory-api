@@ -96,7 +96,9 @@ namespace Inventory.Controllers
                 var itemTemplate = _itemTemplateService.GetItemTemplateByIdAsync(itemTemplateId);
                 if (itemTemplate == null)
                 {
+
                     return NotFound("Item not found");
+
                 }
 
                 await _documentService.AddDocumentToItemTemplateAsync(document, itemTemplateId);

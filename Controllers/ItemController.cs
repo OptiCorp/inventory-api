@@ -25,7 +25,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all items", Description = "Retrieves a list of all items.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
@@ -41,7 +41,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get item", Description = "Retrieves an item.")]
         [SwaggerResponse(200, "Success", typeof(Item))]
@@ -63,7 +63,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
         [SwaggerResponse(201, "Item created", typeof(Item))]
@@ -166,7 +166,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("ByUserId/{id}")]
         [SwaggerOperation(Summary = "Get items added by user", Description = "Retrieves items added by the user.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
@@ -182,7 +182,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update item", Description = "Updates an item.")]
         [SwaggerResponse(200, "Item updated")]
@@ -250,7 +250,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete item", Description = "Deletes an item.")]
         [SwaggerResponse(200, "Item deleted")]
@@ -275,7 +275,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("IsWpIdUnique/{wpId}")]
         [SwaggerOperation(Summary = "Unique WellPartner Id check", Description = "Checks if WellPartner Id is unique.")]
         [SwaggerResponse(200, "Success", typeof(bool))]
