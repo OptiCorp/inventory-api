@@ -60,7 +60,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-
+        
         [HttpGet("BySearchString/{searchString}")]
         [SwaggerOperation(Summary = "Get categories containing search string", Description = "Retrieves categories containing search string in title.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<Category>))]
