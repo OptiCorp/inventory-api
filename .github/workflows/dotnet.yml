@@ -26,7 +26,6 @@ jobs:
         uses: jfversluis/dotnet-format@v1.0.5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          action: "fix"
           only-changed-files: true
           workspace: "inventory-api.sln"
 
