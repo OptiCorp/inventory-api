@@ -27,7 +27,6 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           action: "fix"
-          only-changed-files: true
           workspace: "inventory-api.sln"
 
       - name: Check dotnet format result
