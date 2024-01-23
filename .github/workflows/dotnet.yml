@@ -31,8 +31,8 @@ jobs:
           workspace: "inventory-api.sln"
 
       - name: Check dotnet format result
-        run: exit ${{ steps.format.outcome }}
-
+        run: exit ${{ steps.format.outcome == 'success' && 0 || 1 }}
+      
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
