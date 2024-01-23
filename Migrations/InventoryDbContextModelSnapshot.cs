@@ -34,7 +34,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("DocumentItem");
+                    b.ToTable("DocumentItem", (string)null);
                 });
 
             modelBuilder.Entity("DocumentItemTemplate", b =>
@@ -49,7 +49,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("ItemTemplateId");
 
-                    b.ToTable("DocumentItemTemplate");
+                    b.ToTable("DocumentItemTemplate", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.Category", b =>
@@ -72,7 +72,7 @@ namespace inventoryapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.Document", b =>
@@ -94,7 +94,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("DocumentTypeId");
 
-                    b.ToTable("Documents");
+                    b.ToTable("Documents", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.DocumentType", b =>
@@ -111,7 +111,7 @@ namespace inventoryapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DocumentTypes");
+                    b.ToTable("DocumentTypes", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
@@ -174,7 +174,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("WpId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.ItemTemplate", b =>
@@ -216,7 +216,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("ItemTemplates");
+                    b.ToTable("ItemTemplates", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.List", b =>
@@ -243,7 +243,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("Title");
 
-                    b.ToTable("Lists");
+                    b.ToTable("Lists", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.Location", b =>
@@ -266,7 +266,7 @@ namespace inventoryapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.LogEntry", b =>
@@ -293,7 +293,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("LogEntries");
+                    b.ToTable("LogEntries", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.PreCheck", b =>
@@ -310,7 +310,7 @@ namespace inventoryapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PreChecks");
+                    b.ToTable("PreChecks", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.Size", b =>
@@ -335,7 +335,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("ItemTemplateId");
 
-                    b.ToTable("Sizes");
+                    b.ToTable("Sizes", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.User", b =>
@@ -381,7 +381,7 @@ namespace inventoryapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("Inventory.Models.Vendor", b =>
@@ -404,7 +404,7 @@ namespace inventoryapi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vendors");
+                    b.ToTable("Vendors", (string)null);
                 });
 
             modelBuilder.Entity("ItemList", b =>
@@ -419,7 +419,7 @@ namespace inventoryapi.Migrations
 
                     b.HasIndex("ListId");
 
-                    b.ToTable("ItemList");
+                    b.ToTable("ItemList", (string)null);
                 });
 
             modelBuilder.Entity("DocumentItem", b =>
