@@ -31,8 +31,7 @@ jobs:
           workspace: "inventory-api.sln"
 
       - name: Check dotnet format result
-        if: steps.format.outputs.has-changes == 'true'
-        run: echo "Please run dotnet format" && exit 1
+        run: exit ${{ steps.format.output.has-changes == 'true' && 1 || 0 }}
       
       
       - name: Build with dotnet
