@@ -10,18 +10,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  dotnet-format:
+    runs-on: ubuntu latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '8.0.x'
-          include-prerelease: true
-          
       - name: Run dotnet format
         id: format
         uses: jfversluis/dotnet-format@v1.0.5
@@ -33,6 +24,18 @@ jobs:
 
       - name: Check dotnet format result
         run: exit ${{ steps.format.outcome }}
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+          include-prerelease: true
 
       - name: Build with dotnet
         run: dotnet build --configuration Release

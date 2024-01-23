@@ -9,6 +9,21 @@ on:
   workflow_dispatch:
 
 jobs:
+  dotnet-format:
+    runs-on: ubuntu latest
+    steps:
+      - name: Run dotnet format
+        id: format
+        uses: jfversluis/dotnet-format@v1.0.5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          action: "fix"
+          only-changed-files: true
+          workspace: "inventory-api.sln"
+
+      - name: Check dotnet format result
+        run: exit ${{ steps.format.outcome }}
+        
   build:
     runs-on: ubuntu-latest
 
@@ -20,18 +35,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
           include-prerelease: true
-          
-      - name: Run dotnet format
-        id: format
-        uses: jfversluis/dotnet-format@v1.0.5
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          action: "fix"
-          only-changed-files: true
-          workspace: "inventory-api.sln"
-          
-      - name: Check dotnet format result
-        run: exit ${{ steps.format.outcome }}
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
