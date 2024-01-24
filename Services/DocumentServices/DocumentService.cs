@@ -30,8 +30,9 @@ namespace Inventory.Services
                     .FirstOrDefaultAsync();
 
                 var allDocuments = new List<Document>();
-                allDocuments.AddRange(item?.Documents!);
-                allDocuments.AddRange(itemTemplate?.Documents!);
+                if (item?.Documents != null) allDocuments.AddRange(item.Documents);
+                if (itemTemplate?.Documents != null)
+                    allDocuments.AddRange(itemTemplate.Documents);
 
                 if (!allDocuments.Any()) return new List<DocumentResponseDto>();
 
@@ -107,28 +108,32 @@ namespace Inventory.Services
                     blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
                 }
 
-                var newDocument = new Document
+                if (document.File != null)
                 {
-                    DocumentTypeId = document.DocumentTypeId,
-                    BlobId = blobId,
-                    ContentType = document.File!.ContentType,
-                    ItemId = itemId
-                };
+                    var newDocument = new Document
+                    {
+                        DocumentTypeId = document.DocumentTypeId,
+                        BlobId = blobId,
+                        ContentType = document.File.ContentType,
+                        ItemId = itemId
+                    };
 
-                await blobContainerClient.CreateIfNotExistsAsync();
+                    await blobContainerClient.CreateIfNotExistsAsync();
 
-                using (MemoryStream documentStream = new())
-                {
-                    await document.File.CopyToAsync(documentStream);
-                    documentStream.Position = 0;
-                    await blobContainerClient.UploadBlobAsync(newDocument.BlobId, documentStream);
+                    using (MemoryStream documentStream = new())
+                    {
+                        if (document.File != null) await document.File.CopyToAsync(documentStream);
+                        documentStream.Position = 0;
+                        await blobContainerClient.UploadBlobAsync(newDocument.BlobId, documentStream);
+                    }
+
+                    await _context.Documents.AddAsync(newDocument);
+                    await _context.SaveChangesAsync();
+
+                    return newDocument.Id;
                 }
 
-                await _context.Documents.AddAsync(newDocument);
-                await _context.SaveChangesAsync();
-
-                return newDocument.Id;
-
+                return null;
             }
             catch (Exception e)
             {
@@ -154,27 +159,32 @@ namespace Inventory.Services
                     blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
                 }
 
-                var newDocument = new Document
+                if (document.File != null)
                 {
-                    DocumentTypeId = document.DocumentTypeId,
-                    BlobId = blobId,
-                    ContentType = document.File!.ContentType,
-                    ItemTemplateId = itemTemplateId
-                };
+                    var newDocument = new Document
+                    {
+                        DocumentTypeId = document.DocumentTypeId,
+                        BlobId = blobId,
+                        ContentType = document.File.ContentType,
+                        ItemTemplateId = itemTemplateId
+                    };
 
-                await blobContainerClient.CreateIfNotExistsAsync();
+                    await blobContainerClient.CreateIfNotExistsAsync();
 
-                using (MemoryStream documentStream = new())
-                {
-                    await document.File.CopyToAsync(documentStream);
-                    documentStream.Position = 0;
-                    await blobContainerClient.UploadBlobAsync(newDocument.BlobId, documentStream);
+                    using (MemoryStream documentStream = new())
+                    {
+                        await document.File.CopyToAsync(documentStream);
+                        documentStream.Position = 0;
+                        await blobContainerClient.UploadBlobAsync(newDocument.BlobId, documentStream);
+                    }
+
+                    await _context.Documents.AddAsync(newDocument);
+                    await _context.SaveChangesAsync();
+
+                    return newDocument.Id;
                 }
 
-                await _context.Documents.AddAsync(newDocument);
-                await _context.SaveChangesAsync();
-
-                return newDocument.Id;
+                return null;
             }
             catch (Exception e)
             {
