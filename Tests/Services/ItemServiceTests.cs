@@ -55,7 +55,7 @@ namespace Inventory.Tests.Services
             var itemService = new ItemService(dbContext);
 
             // Act
-            var items = await itemService.GetAllItemsBySearchStringAsync("a", 1, null);
+            var items = await itemService.GetAllItemsBySearchStringAsync("a", 1);
 
             //Assert
             Assert.IsType<List<Item>>(items);

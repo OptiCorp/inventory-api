@@ -15,7 +15,7 @@ namespace Inventory.Models
 
         public DateTime? UpdatedDate { get; set; }
 
-        public IEnumerable<Item>? Items { get; set; }
+        public ICollection<Item>? Items { get; set; }
 
         public User? CreatedBy { get; set; }
     }

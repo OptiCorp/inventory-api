@@ -4,6 +4,7 @@ using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace inventoryapi.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240124123657_removedListId")]
+    partial class removedListId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,36 @@ namespace inventoryapi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("DocumentItem", b =>
+                {
+                    b.Property<string>("DocumentsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ItemId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("DocumentsId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("DocumentItem");
+                });
+
+            modelBuilder.Entity("DocumentItemTemplate", b =>
+                {
+                    b.Property<string>("DocumentsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ItemTemplateId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("DocumentsId", "ItemTemplateId");
+
+                    b.HasIndex("ItemTemplateId");
+
+                    b.ToTable("DocumentItemTemplate");
+                });
 
             modelBuilder.Entity("Inventory.Models.Category", b =>
                 {
@@ -60,19 +93,9 @@ namespace inventoryapi.Migrations
                     b.Property<string>("DocumentTypeId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ItemId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ItemTemplateId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DocumentTypeId");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("ItemTemplateId");
 
                     b.ToTable("Documents");
                 });
@@ -399,20 +422,42 @@ namespace inventoryapi.Migrations
                     b.ToTable("ItemList");
                 });
 
+            modelBuilder.Entity("DocumentItem", b =>
+                {
+                    b.HasOne("Inventory.Models.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Models.Item", null)
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DocumentItemTemplate", b =>
+                {
+                    b.HasOne("Inventory.Models.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Models.ItemTemplate", null)
+                        .WithMany()
+                        .HasForeignKey("ItemTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Inventory.Models.Document", b =>
                 {
                     b.HasOne("Inventory.Models.DocumentType", "DocumentType")
                         .WithMany()
                         .HasForeignKey("DocumentTypeId")
                         .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Inventory.Models.Item", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("ItemId");
-
-                    b.HasOne("Inventory.Models.ItemTemplate", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("ItemTemplateId");
 
                     b.Navigation("DocumentType");
                 });
@@ -528,15 +573,11 @@ namespace inventoryapi.Migrations
                 {
                     b.Navigation("Children");
 
-                    b.Navigation("Documents");
-
                     b.Navigation("LogEntries");
                 });
 
             modelBuilder.Entity("Inventory.Models.ItemTemplate", b =>
                 {
-                    b.Navigation("Documents");
-
                     b.Navigation("Sizes");
                 });
 #pragma warning restore 612, 618

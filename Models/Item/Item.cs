@@ -21,8 +21,6 @@ namespace Inventory.Models
 
         public string? Comment { get; set; }
 
-        public string? ListId { get; set; }
-
         public string? ItemTemplateId { get; set; }
 
         public string? PreCheckId { get; set; }
