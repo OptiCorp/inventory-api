@@ -19,64 +19,42 @@ namespace Inventory.Services
         {
             try
             {
-                var documentList = new List<DocumentResponseDto>();
-                var containerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
-                if (containerEndpoint != null)
+                var item = await _context.Items
+                    .Where(item => item.Id == id)
+                    .Include(item => item.Documents)
+                    .FirstOrDefaultAsync();
+
+                var itemTemplate = await _context.ItemTemplates
+                    .Where(temp => temp.Id == item!.ItemTemplateId)
+                    .Include(doc => doc.Documents)
+                    .FirstOrDefaultAsync();
+
+                var allDocuments = new List<Document>();
+                if (item?.Documents != null) allDocuments.AddRange(item.Documents);
+                if (itemTemplate?.Documents != null)
+                    allDocuments.AddRange(itemTemplate.Documents);
+
+                if (!allDocuments.Any()) return new List<DocumentResponseDto>();
+
+                List<DocumentResponseDto> documentResponseList = new List<DocumentResponseDto>();
+
+                foreach (var document in allDocuments)
                 {
-                    BlobContainerClient containerClient =
-                        new BlobContainerClient(new Uri(containerEndpoint), new DefaultAzureCredential());
+                    var fileBytes = await DownloadDocumentFromBlobStorage(document.BlobId!);
 
-                    var item = await _context.Items.Where(item => item.Id == id)
-                        .Include(item => item.Documents)!.ThenInclude(doc => doc.DocumentType).FirstOrDefaultAsync();
+                    var documentResponse = new DocumentResponseDto
+                    {
+                        Id = document.Id,
+                        Name = await _context.DocumentTypes.Where(doc => doc.Id == document.DocumentTypeId)
+                            .Select(doc => doc.Name).FirstOrDefaultAsync(),
+                        ContentType = document.ContentType,
+                        Bytes = fileBytes
+                    };
 
-                    var documents = item?.Documents;
-
-                    if (documents != null)
-                        foreach (var document in documents)
-                        {
-                            try
-                            {
-                                using (MemoryStream stream = new MemoryStream())
-                                {
-                                    var blobClient = containerClient.GetBlobClient(document.BlobId);
-
-                                    await blobClient.DownloadToAsync(stream);
-
-                                    var documentResponse = new DocumentResponseDto()
-                                    {
-                                        Id = document.Id,
-                                        Name = document.DocumentType?.Name,
-                                        BlobId = document.BlobId,
-                                        ContentType = document.ContentType,
-                                        Bytes = stream.ToArray()
-                                    };
-
-                                    documentList.Add(documentResponse);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e);
-                                throw;
-                            }
-                        }
-
+                    documentResponseList.Add(documentResponse);
                 }
-                return documentList;
-            }
 
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        public async Task<Document?> GetDocumentByIdAsync(string id)
-        {
-            try
-            {
-                return await _context.Documents.FirstOrDefaultAsync(document => document.Id == id);
+                return documentResponseList;
             }
             catch (Exception e)
             {
@@ -85,24 +63,26 @@ namespace Inventory.Services
             }
         }
 
-        public async Task<string?> UploadDocumentAsync(DocumentUploadDto document)
+        public async Task<DocumentResponseDto> GetDocumentByIdAsync(string id)
         {
             try
             {
-                var newDocument = new Document
+                var document = await _context.Documents
+                    .Where(doc => doc.Id == id)
+                    .Include(doc => doc.DocumentType)
+                    .FirstOrDefaultAsync();
+
+                var fileBytes = await DownloadDocumentFromBlobStorage(document!.BlobId!);
+
+                var documentResponse = new DocumentResponseDto
                 {
-                    DocumentTypeId = document.DocumentTypeId,
-                    BlobId = Guid.NewGuid().ToString(),
-                    ContentType = document.File?.ContentType
+                    Id = document.Id,
+                    Name = document.DocumentType!.Name,
+                    ContentType = document.ContentType,
+                    Bytes = fileBytes
                 };
 
-                var item = await _context.Items.Where(item => item.Id == document.ItemId)
-                    .Include(item => item.Documents)
-                    .FirstOrDefaultAsync();
-                item?.Documents?.Add(newDocument);
-                await _context.SaveChangesAsync();
-
-                return newDocument.Id;
+                return documentResponse;
             }
             catch (Exception e)
             {
@@ -111,16 +91,152 @@ namespace Inventory.Services
             }
         }
 
-        public async Task DeleteDocumentFromItemAsync(Document document, string itemId)
+        public async Task<string?> AddDocumentToItemAsync(DocumentUploadDto document, string itemId)
         {
             try
             {
-                var item = await _context.Items.Where(item => item.Id == itemId)
-                    .Include(item => item.Documents)
-                    .FirstOrDefaultAsync();
+                var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
+                BlobContainerClient blobContainerClient =
+                    new BlobContainerClient(new Uri(blobContainerEndpoint!), new DefaultAzureCredential());
 
-                item?.Documents?.Remove(document);
+                var blobId = Guid.NewGuid().ToString();
+                var blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
+
+                while (blobExists == true)
+                {
+                    blobId = Guid.NewGuid().ToString();
+                    blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
+                }
+
+                if (document.File != null)
+                {
+                    var newDocument = new Document
+                    {
+                        DocumentTypeId = document.DocumentTypeId,
+                        BlobId = blobId,
+                        ContentType = document.File.ContentType,
+                        ItemId = itemId
+                    };
+
+                    await blobContainerClient.CreateIfNotExistsAsync();
+
+                    using (MemoryStream documentStream = new())
+                    {
+                        if (document.File != null) await document.File.CopyToAsync(documentStream);
+                        documentStream.Position = 0;
+                        await blobContainerClient.UploadBlobAsync(newDocument.BlobId, documentStream);
+                    }
+
+                    await _context.Documents.AddAsync(newDocument);
+                    await _context.SaveChangesAsync();
+
+                    return newDocument.Id;
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<string?> AddDocumentToItemTemplateAsync(DocumentUploadDto document, string itemTemplateId)
+        {
+            try
+            {
+                var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
+                BlobContainerClient blobContainerClient =
+                    new BlobContainerClient(new Uri(blobContainerEndpoint!), new DefaultAzureCredential());
+
+                var blobId = Guid.NewGuid().ToString();
+                var blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
+
+                while (blobExists == true)
+                {
+                    blobId = Guid.NewGuid().ToString();
+                    blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
+                }
+
+                if (document.File != null)
+                {
+                    var newDocument = new Document
+                    {
+                        DocumentTypeId = document.DocumentTypeId,
+                        BlobId = blobId,
+                        ContentType = document.File.ContentType,
+                        ItemTemplateId = itemTemplateId
+                    };
+
+                    await blobContainerClient.CreateIfNotExistsAsync();
+
+                    using (MemoryStream documentStream = new())
+                    {
+                        await document.File.CopyToAsync(documentStream);
+                        documentStream.Position = 0;
+                        await blobContainerClient.UploadBlobAsync(newDocument.BlobId, documentStream);
+                    }
+
+                    await _context.Documents.AddAsync(newDocument);
+                    await _context.SaveChangesAsync();
+
+                    return newDocument.Id;
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+
+        public async Task DeleteDocumentAsync(string documentId)
+        {
+            try
+            {
+                var document = await _context.Documents.FirstOrDefaultAsync(doc => doc.Id == documentId);
+
+                var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
+                BlobContainerClient blobContainerClient =
+                    new BlobContainerClient(new Uri(blobContainerEndpoint!), new DefaultAzureCredential());
+
+                var blobClient = blobContainerClient.GetBlobClient(document!.BlobId);
+
+                var response = await blobClient.DeleteAsync();
+
+                if (response.Status != StatusCodes.Status200OK) return;
+
+                _context.Documents.Remove(document);
                 await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+
+        }
+
+        private static async Task<byte[]> DownloadDocumentFromBlobStorage(string blobId)
+        {
+            try
+            {
+                var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
+                BlobContainerClient blobContainerClient =
+                    new BlobContainerClient(new Uri(blobContainerEndpoint!), new DefaultAzureCredential());
+
+                using MemoryStream documentStream = new();
+
+                var blobClient = blobContainerClient.GetBlobClient(blobId);
+
+                await blobClient.DownloadToAsync(documentStream);
+
+                return documentStream.ToArray();
             }
             catch (Exception e)
             {
@@ -130,4 +246,3 @@ namespace Inventory.Services
         }
     }
 }
-
