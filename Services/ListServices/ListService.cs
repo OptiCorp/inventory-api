@@ -115,14 +115,27 @@ namespace Inventory.Services
             }
         }
 
-        public async Task AddItemsToListAsync(IEnumerable<string> itemIds, string listId)
+        public async Task AddItemsToListAsync(IEnumerable<string> itemIds, string listId, bool? addSubItems)
         {
             try
             {
                 foreach (var itemId in itemIds)
                 {
-                    var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
+                    var item = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(c => c.Id == itemId);
                     if (item != null) item.ListId = listId;
+                    
+                    var subItemIds = new List<string>();
+
+                    if (addSubItems == true)
+                    {
+                        if (item?.Children != null)
+                            foreach (var child in item.Children)
+                            {
+                                if (child.Id != null) subItemIds.Add(child.Id);
+                            }
+
+                        await AddItemsToListAsync(subItemIds, listId, addSubItems);
+                    }
                 }
 
                 var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
@@ -137,14 +150,27 @@ namespace Inventory.Services
             }
         }
 
-        public async Task RemoveItemsFromListAsync(IEnumerable<string> itemIds, string listId)
+        public async Task RemoveItemsFromListAsync(IEnumerable<string> itemIds, string listId, bool? removeSubItems)
         {
             try
             {
                 foreach (var itemId in itemIds)
                 {
-                    var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
+                    var item = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(c => c.Id == itemId);
                     if (item != null) item.ListId = null;
+                    
+                    var subItemIds = new List<string>();
+
+                    if (removeSubItems == true)
+                    {
+                        if (item?.Children != null)
+                            foreach (var child in item.Children)
+                            {
+                                if (child.Id != null) subItemIds.Add(child.Id);
+                            }
+
+                        await RemoveItemsFromListAsync(subItemIds, listId, removeSubItems);
+                    }
                 }
 
                 var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
