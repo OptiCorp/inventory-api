@@ -145,7 +145,7 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Items added", typeof(List))]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
-        public async Task<ActionResult<List>> AddItemsToList(IEnumerable<string> itemIds, string listId)
+        public async Task<ActionResult<List>> AddItemsToList(IEnumerable<string> itemIds, string listId, bool? addSubItems)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace Inventory.Controllers
                     return NotFound("List not found");
                 }
 
-                await _listService.AddItemsToListAsync(itemIds, listId);
+                await _listService.AddItemsToListAsync(itemIds, listId, addSubItems);
 
                 return NoContent();
             }
@@ -170,7 +170,7 @@ namespace Inventory.Controllers
         [SwaggerResponse(201, "Items removed", typeof(List))]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "List not found")]
-        public async Task<ActionResult<List>> RemoveItemsFromList(IEnumerable<string> itemIds, string listId)
+        public async Task<ActionResult<List>> RemoveItemsFromList(IEnumerable<string> itemIds, string listId, bool? removeSubItems)
         {
             try
             {
@@ -180,7 +180,7 @@ namespace Inventory.Controllers
                     return NotFound("List not found");
                 }
 
-                await _listService.RemoveItemsFromListAsync(itemIds, listId);
+                await _listService.RemoveItemsFromListAsync(itemIds, listId, removeSubItems);
 
                 return NoContent();
             }

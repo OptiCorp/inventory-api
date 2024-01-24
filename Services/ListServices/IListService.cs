@@ -10,8 +10,8 @@ namespace Inventory.Services
         Task<IEnumerable<List>> GetAllListsByUserIdAsync(string id, int page);
         Task<List?> GetListByIdAsync(string id);
         Task<string?> CreateListAsync(ListCreateDto list);
-        Task AddItemsToListAsync(IEnumerable<string> itemIds, string listId);
-        Task RemoveItemsFromListAsync(IEnumerable<string> itemIds, string listId);
+        Task AddItemsToListAsync(IEnumerable<string> itemIds, string listId, bool? addSubItems);
+        Task RemoveItemsFromListAsync(IEnumerable<string> itemIds, string listId, bool? removeSubItems);
         Task UpdateListAsync(List list);
         Task DeleteListAsync(string id);
     }
