@@ -39,7 +39,7 @@ namespace Inventory.Controllers
 
 
         [HttpGet("ByItemId/{id}")]
-        [SwaggerOperation(Summary = "Get documentation by item ID", Description = "Retrives all files related to an item")]
+        [SwaggerOperation(Summary = "Get documents by item ID", Description = "Retrieves all files related to an item")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentResponseDto>))]
         [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult<IEnumerable<DocumentResponseDto>>> GetDocumentsByItemId(string id)
@@ -62,8 +62,8 @@ namespace Inventory.Controllers
         }
 
         [HttpPost("AddDocToItem/{itemId}")]
-        [SwaggerOperation(Summary = "Upload documentation for item", Description = "Uploads documents for item")]
-        [SwaggerResponse(201, "Document uploaded", typeof(Document))]
+        [SwaggerOperation(Summary = "Upload documents for an item", Description = "Uploads documents for item")]
+        [SwaggerResponse(201, "Documents uploaded", typeof(Document))]
         [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult> AddDocumentToItem([FromForm] DocumentUploadDto document, string itemId)
         {
@@ -86,8 +86,8 @@ namespace Inventory.Controllers
         }
 
         [HttpPost("AddDocToItemTemplate/{itemTemplateId}")]
-        [SwaggerOperation(Summary = "Upload documentation for item template", Description = "Uploads documents for item template")]
-        [SwaggerResponse(201, "Document uploaded", typeof(Document))]
+        [SwaggerOperation(Summary = "Upload documents for aan item template", Description = "Uploads documents for item template")]
+        [SwaggerResponse(201, "Documents uploaded", typeof(Document))]
         [SwaggerResponse(400, "Invalid request")]
         public async Task<ActionResult> AddDocumentToItemTemplate([FromForm] DocumentUploadDto document, string itemTemplateId)
         {
@@ -97,7 +97,7 @@ namespace Inventory.Controllers
                 if (itemTemplate == null)
                 {
 
-                    return NotFound("Item not found");
+                    return NotFound("Item template not found");
 
                 }
 
