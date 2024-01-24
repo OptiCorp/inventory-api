@@ -119,10 +119,12 @@ namespace Inventory.Services
         {
             try
             {
+                var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
+
                 foreach (var itemId in itemIds)
                 {
                     var item = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(c => c.Id == itemId);
-                    if (item != null) item.ListId = listId;
+                    if (item != null) list?.Items?.Add(item);
 
                     var subItemIds = new List<string>();
 
@@ -138,7 +140,6 @@ namespace Inventory.Services
                     }
                 }
 
-                var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
                 if (list != null) list.UpdatedDate = DateTime.Now;
 
                 await _context.SaveChangesAsync();
@@ -154,10 +155,12 @@ namespace Inventory.Services
         {
             try
             {
+                var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
+
                 foreach (var itemId in itemIds)
                 {
                     var item = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(c => c.Id == itemId);
-                    if (item != null) item.ListId = null;
+                    if (item != null) list?.Items?.Remove(item);
 
                     var subItemIds = new List<string>();
 
@@ -173,7 +176,6 @@ namespace Inventory.Services
                     }
                 }
 
-                var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
                 if (list != null) list.UpdatedDate = DateTime.Now;
 
                 await _context.SaveChangesAsync();
@@ -213,12 +215,6 @@ namespace Inventory.Services
                 var list = await _context.Lists.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == id);
                 if (list != null)
                 {
-                    if (list.Items != null)
-                        foreach (var item in list.Items)
-                        {
-                            item.ListId = null;
-                        }
-
                     _context.Lists.Remove(list);
                     await _context.SaveChangesAsync();
                 }

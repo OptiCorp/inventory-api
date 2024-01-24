@@ -45,11 +45,6 @@ namespace Inventory.Validations.ItemValidations
 
             RuleFor(item => item.Comment)
                 .MaximumLength(200).WithMessage("Comment cannot exceed 200 characters.");
-
-            RuleFor(item => item.ListId)
-                .MinimumLength(3).WithMessage("List Id must be at least 3 characters.")
-                .MaximumLength(40).WithMessage("List Id cannot exceed 40 characters.")
-                .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("List Id can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
         }
     }
 }

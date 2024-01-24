@@ -30,13 +30,12 @@ namespace Inventory.Services
             }
         }
 
-        public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page, string? listId)
+        public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page)
         {
             try
             {
                 var result = await _context.Items
                     .Where(c => c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)))
-                    .Where(c => listId == null || c.ListId != listId)
                     .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
@@ -65,7 +64,6 @@ namespace Inventory.Services
 
                 var items = await _context.Items
                     .Where(c => templateIds.Contains(c.ItemTemplateId))
-                    .Where(c => listId == null || c.ListId != listId)
                     .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
@@ -313,7 +311,6 @@ namespace Inventory.Services
 
                     item.CreatedById = updatedItem.CreatedById;
                     item.Comment = updatedItem.Comment;
-                    item.ListId = updatedItem.ListId;
                     item.UpdatedDate = DateTime.Now;
 
                     await _context.SaveChangesAsync();
