@@ -25,21 +25,21 @@ namespace Inventory.Services
                     .FirstOrDefaultAsync();
 
                 var itemTemplate = await _context.ItemTemplates
-                    .Where(temp => temp.Id == item.ItemTemplateId)
+                    .Where(temp => temp.Id == item!.ItemTemplateId)
                     .Include(doc => doc.Documents)
                     .FirstOrDefaultAsync();
 
                 var allDocuments = new List<Document>();
-                allDocuments.AddRange(item.Documents);
-                allDocuments.AddRange(itemTemplate.Documents);
+                allDocuments.AddRange(item?.Documents!);
+                allDocuments.AddRange(itemTemplate?.Documents!);
 
-                if (!allDocuments.Any() || allDocuments == null) return null;
+                if (!allDocuments.Any()) return new List<DocumentResponseDto>();
 
                 List<DocumentResponseDto> documentResponseList = new List<DocumentResponseDto>();
 
                 foreach (var document in allDocuments)
                 {
-                    var fileBytes = await DownloadDocumentFromBlobStorage(document.BlobId);
+                    var fileBytes = await DownloadDocumentFromBlobStorage(document.BlobId!);
 
                     var documentResponse = new DocumentResponseDto
                     {
@@ -76,7 +76,7 @@ namespace Inventory.Services
                 var documentResponse = new DocumentResponseDto
                 {
                     Id = document.Id,
-                    Name = document.DocumentType.Name,
+                    Name = document.DocumentType!.Name,
                     ContentType = document.ContentType,
                     Bytes = fileBytes
                 };
