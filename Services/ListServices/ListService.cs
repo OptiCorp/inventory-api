@@ -123,7 +123,7 @@ namespace Inventory.Services
                 {
                     var item = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(c => c.Id == itemId);
                     if (item != null) item.ListId = listId;
-                    
+
                     var subItemIds = new List<string>();
 
                     if (addSubItems == true)
@@ -158,7 +158,7 @@ namespace Inventory.Services
                 {
                     var item = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(c => c.Id == itemId);
                     if (item != null) item.ListId = null;
-                    
+
                     var subItemIds = new List<string>();
 
                     if (removeSubItems == true)
