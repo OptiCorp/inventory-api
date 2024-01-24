@@ -22,7 +22,7 @@ namespace Inventory.Controllers
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
-        
+
         [HttpGet]
         [SwaggerOperation(Summary = "Get all document types", Description = "Retrieves a list of all document types.")]
         [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentType>))]
@@ -38,7 +38,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get document type", Description = "Retrieves a document type.")]
         [SwaggerResponse(200, "Success", typeof(DocumentType))]
@@ -61,7 +61,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPost]
         [SwaggerOperation(Summary = "Create a new document type", Description = "Creates a new document type.")]
         [SwaggerResponse(201, "Document type created", typeof(DocumentType))]
@@ -99,7 +99,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update document type", Description = "Updates a document type.")]
         [SwaggerResponse(200, "Document type updated")]
@@ -143,7 +143,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete document type", Description = "Deletes a document type.")]
         [SwaggerResponse(200, "Document type deleted")]

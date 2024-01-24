@@ -28,7 +28,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<List>> GetAllListsBySearchStringAsync(string searchString, int page, string userId)
         {
             try
@@ -55,7 +55,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<List>> GetAllListsByUserIdAsync(string id, int page)
         {
             try
@@ -92,7 +92,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreateListAsync(ListCreateDto listCreate)
         {
             try
@@ -103,7 +103,7 @@ namespace Inventory.Services
                     CreatedById = listCreate.CreatedById,
                     CreatedDate = DateTime.Now
                 };
-                
+
                 await _context.Lists.AddAsync(list);
                 await _context.SaveChangesAsync();
                 return list.Id;
@@ -115,17 +115,31 @@ namespace Inventory.Services
             }
         }
 
-        public async Task AddItemsToListAsync(IEnumerable<string> itemIds, string listId)
+        public async Task AddItemsToListAsync(IEnumerable<string> itemIds, string listId, bool? addSubItems)
         {
             try
             {
+                var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
+
                 foreach (var itemId in itemIds)
                 {
-                    var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
-                    if (item != null) item.ListId = listId;
+                    var item = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(c => c.Id == itemId);
+                    if (item != null) list?.Items?.Add(item);
+
+                    var subItemIds = new List<string>();
+
+                    if (addSubItems == true)
+                    {
+                        if (item?.Children != null)
+                            foreach (var child in item.Children)
+                            {
+                                if (child.Id != null) subItemIds.Add(child.Id);
+                            }
+
+                        await AddItemsToListAsync(subItemIds, listId, addSubItems);
+                    }
                 }
-            
-                var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
+
                 if (list != null) list.UpdatedDate = DateTime.Now;
 
                 await _context.SaveChangesAsync();
@@ -136,18 +150,32 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
-        public async Task RemoveItemsFromListAsync(IEnumerable<string> itemIds, string listId)
+
+        public async Task RemoveItemsFromListAsync(IEnumerable<string> itemIds, string listId, bool? removeSubItems)
         {
             try
             {
+                var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
+
                 foreach (var itemId in itemIds)
                 {
-                    var item = await _context.Items.FirstOrDefaultAsync(c => c.Id == itemId);
-                    if (item != null) item.ListId = null;
+                    var item = await _context.Items.Include(item => item.Children).FirstOrDefaultAsync(c => c.Id == itemId);
+                    if (item != null) list?.Items?.Remove(item);
+
+                    var subItemIds = new List<string>();
+
+                    if (removeSubItems == true)
+                    {
+                        if (item?.Children != null)
+                            foreach (var child in item.Children)
+                            {
+                                if (child.Id != null) subItemIds.Add(child.Id);
+                            }
+
+                        await RemoveItemsFromListAsync(subItemIds, listId, removeSubItems);
+                    }
                 }
-            
-                var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listId);
+
                 if (list != null) list.UpdatedDate = DateTime.Now;
 
                 await _context.SaveChangesAsync();
@@ -164,12 +192,12 @@ namespace Inventory.Services
             try
             {
                 var list = await _context.Lists.FirstOrDefaultAsync(c => c.Id == listUpdate.Id);
-        
+
                 if (list != null)
                 {
                     list.Title = listUpdate.Title;
                     list.UpdatedDate = DateTime.Now;
-        
+
                     await _context.SaveChangesAsync();
                 }
             }
@@ -187,12 +215,6 @@ namespace Inventory.Services
                 var list = await _context.Lists.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == id);
                 if (list != null)
                 {
-                    if (list.Items != null)
-                        foreach (var item in list.Items)
-                        {
-                            item.ListId = null;
-                        }
-
                     _context.Lists.Remove(list);
                     await _context.SaveChangesAsync();
                 }

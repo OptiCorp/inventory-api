@@ -25,7 +25,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<PreCheck?> GetPreCheckByIdAsync(string id)
         {
             try
@@ -38,7 +38,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreatePreCheckAsync(PreCheckCreateDto preCheckCreate)
         {
             try
@@ -48,7 +48,7 @@ namespace Inventory.Services
                     Check = preCheckCreate.Check,
                     Comment = preCheckCreate.Comment
                 };
-                
+
                 await _context.PreChecks.AddAsync(preCheck);
                 await _context.SaveChangesAsync();
                 return preCheck.Id;
@@ -65,12 +65,12 @@ namespace Inventory.Services
             try
             {
                 var preCheck = await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == preCheckUpdate.Id);
-        
+
                 if (preCheck != null)
                 {
                     preCheck.Check = preCheckUpdate.Check;
                     preCheck.Comment = preCheckUpdate.Comment;
-        
+
                     await _context.SaveChangesAsync();
                 }
             }

@@ -5,7 +5,7 @@ namespace Inventory.Common
     public class ValidationHelper
     {
         private readonly IUserUtilities _userUtilities;
-        
+
         public ValidationHelper(IUserUtilities userUtilities)
         {
             _userUtilities = userUtilities;

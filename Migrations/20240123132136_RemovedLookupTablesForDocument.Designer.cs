@@ -4,6 +4,7 @@ using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace inventoryapi.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240123132136_RemovedLookupTablesForDocument")]
+    partial class RemovedLookupTablesForDocument
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,6 +114,9 @@ namespace inventoryapi.Migrations
 
                     b.Property<string>("ItemTemplateId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ListId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocationId")
                         .HasColumnType("nvarchar(450)");

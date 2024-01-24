@@ -12,13 +12,25 @@ This section contains information about the API endpoints.
 
 ### Category
 
-- CRUD for item categories such as bolt, electrical etc.
+- CRUD for item template categories such as bolt, electrical etc.
 
+### Document
+
+- Add documents to an item template or item using Azure Blob Storage
+- Get documents for an item template or item
+
+### Document type
+
+- CRUD for document types to describe documents
 
 ### Item
 
 - CRUD for items
 - Get items containing search string
+
+### Item template
+
+- CRUD for item templates containing common data for items
 
 ### List
 
@@ -29,10 +41,21 @@ This section contains information about the API endpoints.
 
 - CRUD for item locations to keep track of where they are located
 
+### PreCheck
+
+- CRUD for pre checks for when adding an item
+
+### Size
+
+- CRUD for sizes belonging to an item template
+
 ### User
 
 - CRUD for users of the system
 
+### Vendor
+
+- CRUD for vendors to know where the items are bought from
 
 ## Architecture
 
@@ -52,17 +75,44 @@ Clone and Run the API Application:
 3. Run the API: `dotnet run`
 4. Use Swagger for endpoint documentation: `http://localhost:5026/swagger/index.html`
 
+## Issues
+
+Issues should have the following format:
+
+1. **Type**: Use one of the following prefixes to specify the nature of the change:
+    - **feat** for new features or enhancements.
+    - **fix** for bug fixes.
+    - **chore** for routine tasks or maintenance.
+    - **refactor** for code restructuring.
+2. **Descriptive Text**: Add a concise descriptive text.
+
+If applicable, also give the issue a label.
+
+**Example**
+```
+fix: Failed to Login BrowserAuthError
+```
+
+## Formatting
+
+Make sure to run 
+```
+dotnet format inventory-api.sln
+```
+before creating pull requests.
 
 ## Branch name convention
-1. type (feat, fix, chore, refactor)
-2. Issue number
-3. Descriptive text.
+Branches should have the auto-generated name given to branches created from issues.
 
-### Example:
+**Example**
+```
+205-fix-failed-to-login-browserautherror
+```
 
-```
-feat/#1/users-endpoint
-```
+### Commit Messages
+
+-   [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+
 
 ## Database Migration
 

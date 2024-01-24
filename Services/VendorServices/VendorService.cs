@@ -25,7 +25,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<IEnumerable<Vendor>> GetAllVendorsBySearchStringAsync(string searchString)
         {
             try
@@ -39,7 +39,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<Vendor?> GetVendorByIdAsync(string id)
         {
             try
@@ -52,7 +52,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<string?> CreateVendorAsync(VendorCreateDto vendorCreate)
         {
             try
@@ -63,7 +63,7 @@ namespace Inventory.Services
                     CreatedById = vendorCreate.CreatedById,
                     CreatedDate = DateTime.Now
                 };
-                
+
                 await _context.Vendors.AddAsync(vendor);
                 await _context.SaveChangesAsync();
                 return vendor.Id;
@@ -80,12 +80,12 @@ namespace Inventory.Services
             try
             {
                 var vendor = await _context.Vendors.FirstOrDefaultAsync(c => c.Id == vendorUpdate.Id);
-            
+
                 if (vendor != null)
                 {
                     vendor.Name = vendorUpdate.Name;
                     vendor.UpdatedDate = DateTime.Now;
-            
+
                     await _context.SaveChangesAsync();
                 }
             }

@@ -26,6 +26,6 @@ namespace Inventory.Utilities
                     return "Active";
             }
         }
-        
+
     }
 }

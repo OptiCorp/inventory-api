@@ -17,11 +17,11 @@ namespace Inventory.Models
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
-        
+
         public string? UmId { get; set; }
 
         public string? AzureAdUserId { get; set; }
-        
+
         [StringLength(150)]
         public string? UserRole { get; set; }
 
