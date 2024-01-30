@@ -15,7 +15,7 @@ namespace Inventory.Controllers
         private readonly IListService _listService;
         private readonly IUserService _userService;
         private readonly IListCreateValidator _createValidator;
-        private IListUpdateValidator _updateValidator;
+        private readonly IListUpdateValidator _updateValidator;
 
         public ListController(IListService listService, IUserService userService, IListCreateValidator createValidator, IListUpdateValidator updateValidator)
         {
