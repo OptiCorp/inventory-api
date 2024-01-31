@@ -7,6 +7,8 @@ namespace Inventory.Models.DTO
 
         public string? SerialNumber { get; set; }
 
+        public string? ItemTemplateId { get; set; }
+
         public string? ParentId { get; set; }
 
         public string? VendorId { get; set; }

@@ -172,6 +172,7 @@ namespace Inventory.Services
                     {
                         WpId = itemCreate.WpId,
                         ParentId = itemCreate.ParentId,
+                        ItemTemplateId = itemCreate.ItemTemplateId,
                         SerialNumber = itemCreate.SerialNumber,
                         LocationId = itemCreate.LocationId,
                         VendorId = itemCreate.VendorId,
