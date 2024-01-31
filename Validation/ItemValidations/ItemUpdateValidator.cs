@@ -17,6 +17,12 @@ namespace Inventory.Validations.ItemValidations
                 .MaximumLength(40).WithMessage("WellPartner Id cannot exceed 40 characters.")
                 .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("WellPartner Id can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
 
+            RuleFor(item => item.ItemTemplateId).NotEmpty().WithMessage("Item template ID is requried.")
+                .NotNull().WithMessage("Item template ID cannot be null")
+                .MinimumLength(3).WithMessage("Item template must be at least 3 characters.")
+                .MaximumLength(40).WithMessage("Item template ID cannot exceed 40 characters.")
+                .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Serial number can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
+
             RuleFor(item => item.SerialNumber).NotEmpty().WithMessage("Serial number is required.")
                 .NotNull().WithMessage("Serial number cannot be null.")
                 .MinimumLength(3).WithMessage("Serial number must be at least 3 characters.")
