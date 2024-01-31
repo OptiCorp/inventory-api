@@ -59,7 +59,7 @@ namespace Inventory.Services
                     Name = itemTemplateCreate.Name,
                     ProductNumber = itemTemplateCreate.ProductNumber,
                     Type = itemTemplateCreate.Type,
-                    CategoryId = itemTemplateCreate.CreatedById,
+                    CategoryId = itemTemplateCreate.CategoryId,
                     Revision = itemTemplateCreate.Revision,
                     CreatedById = itemTemplateCreate.CreatedById,
                     Description = itemTemplateCreate.Description,
