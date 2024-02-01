@@ -107,7 +107,7 @@ namespace Inventory.Controllers
                     }
 
                 }
-                return CreatedAtAction(nameof(GetItem), new { ids = itemIds }, items);
+                return CreatedAtAction(nameof(GetItem), new { id = itemIds }, items);
             }
             catch (Exception e)
             {
