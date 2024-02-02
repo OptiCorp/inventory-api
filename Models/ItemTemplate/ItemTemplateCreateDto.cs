@@ -3,8 +3,6 @@ namespace Inventory.Models.DTO
 {
     public class ItemTemplateCreateDto
     {
-        public string? Name { get; set; }
-
         public string? ProductNumber { get; set; }
 
         public string? Type { get; set; }
