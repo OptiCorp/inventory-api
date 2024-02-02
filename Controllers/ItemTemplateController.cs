@@ -105,7 +105,7 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Item template updated")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Item template not found")]
-        public async Task<IActionResult> UpdateItemTemplate(string id, ItemTemplate itemTemplateUpdate)
+        public async Task<IActionResult> UpdateItemTemplate(string id, string updatedById, ItemTemplate itemTemplateUpdate)
         {
             var validationResult = await _updateValidator.ValidateAsync(itemTemplateUpdate);
             if (!validationResult.IsValid)
@@ -134,7 +134,7 @@ namespace Inventory.Controllers
                     return NotFound("Item template not found");
                 }
 
-                await _itemTemplateService.UpdateItemTemplateAsync(itemTemplateUpdate);
+                await _itemTemplateService.UpdateItemTemplateAsync(itemTemplateUpdate, updatedById);
 
                 return NoContent();
             }
