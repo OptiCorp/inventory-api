@@ -11,12 +11,6 @@ namespace Inventory.Validations.ItemTemplateValidations
             RuleFor(itemTemplate => itemTemplate.Id).NotEmpty().WithMessage("Item template Id is required.")
                 .NotNull().WithMessage("Item template Id cannot be null.");
 
-            RuleFor(itemTemplate => itemTemplate.Name).NotEmpty().WithMessage("Item template name is required.")
-                .NotNull().WithMessage("Item template name cannot be null.")
-                .MinimumLength(3).WithMessage("Item template name must be at least 3 characters.")
-                .MaximumLength(40).WithMessage("Item template name cannot exceed 40 characters.")
-                .Matches("^[a-zA-Z0-9_,.:\\- ]+$").WithMessage("Item template name can only contain letters, numbers, underscores, commas, colons, periods or hyphens.");
-
             RuleFor(itemTemplate => itemTemplate.Type).NotEmpty().WithMessage("Item template type is required.")
                 .NotNull().WithMessage("Item template type cannot be null.")
                 .MinimumLength(3).WithMessage("Item template type must be at least 3 characters.")
