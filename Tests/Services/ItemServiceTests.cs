@@ -201,7 +201,7 @@ namespace Inventory.Tests.Services
             const string itemId = "Item 1";
 
             // Act
-            await itemService.DeleteItemAsync(itemId);
+            await itemService.DeleteItemAsync(itemId, false);
             var allItems = await itemService.GetAllItemsAsync();
 
             // Assert

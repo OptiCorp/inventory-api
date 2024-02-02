@@ -367,7 +367,7 @@ namespace Inventory.Services
             }
         }
 
-        public async Task DeleteItemAsync(string id)
+        public async Task DeleteItemAsync(string id, bool? deleteSubItems)
         {
             try
             {
@@ -378,6 +378,8 @@ namespace Inventory.Services
                         foreach (var child in item.Children)
                         {
                             child.ParentId = null;
+                            if (deleteSubItems != true) continue;
+                            if (child.Id != null) await DeleteItemAsync(child.Id, deleteSubItems);
                         }
 
                     _context.Items.Remove(item);
