@@ -56,7 +56,6 @@ namespace Inventory.Services
             {
                 var itemTemplate = new ItemTemplate()
                 {
-                    Name = itemTemplateCreate.Name,
                     ProductNumber = itemTemplateCreate.ProductNumber,
                     Type = itemTemplateCreate.Type,
                     CategoryId = itemTemplateCreate.CategoryId,
@@ -85,7 +84,6 @@ namespace Inventory.Services
 
                 if (itemTemplate != null)
                 {
-                    itemTemplate.Name = itemTemplateUpdate.Name;
                     itemTemplate.Type = itemTemplateUpdate.Type;
                     itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
                     itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
