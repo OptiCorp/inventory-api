@@ -99,7 +99,7 @@ namespace Inventory.Services
                         itemTemplate.Type = itemTemplateUpdate.Type;
                         await _context.LogEntries.AddAsync(logEntry);
                     }
-                    
+
                     if (itemTemplateUpdate.CategoryId != itemTemplate.CategoryId)
                     {
                         logEntry = new LogEntry
@@ -112,7 +112,7 @@ namespace Inventory.Services
                         itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
                         await _context.LogEntries.AddAsync(logEntry);
                     }
-                    
+
                     if (itemTemplateUpdate.ProductNumber != itemTemplate.ProductNumber)
                     {
                         logEntry = new LogEntry
@@ -125,7 +125,7 @@ namespace Inventory.Services
                         itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
                         await _context.LogEntries.AddAsync(logEntry);
                     }
-                    
+
                     if (itemTemplateUpdate.Revision != itemTemplate.Revision)
                     {
                         logEntry = new LogEntry
@@ -138,7 +138,7 @@ namespace Inventory.Services
                         itemTemplate.Revision = itemTemplateUpdate.Revision;
                         await _context.LogEntries.AddAsync(logEntry);
                     }
-                    
+
                     if (itemTemplateUpdate.Description != itemTemplate.Description)
                     {
                         logEntry = new LogEntry
@@ -151,7 +151,7 @@ namespace Inventory.Services
                         itemTemplate.Description = itemTemplateUpdate.Description;
                         await _context.LogEntries.AddAsync(logEntry);
                     }
-                    
+
                     itemTemplate.CreatedById = itemTemplateUpdate.CreatedById;
                     itemTemplate.UpdatedDate = DateTime.Now;
 
