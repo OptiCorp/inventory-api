@@ -7,16 +7,16 @@ public class LogEntry
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
-        
+
     [MaxLength(100)]
     public string? ItemId { get; set; }
-        
+
     [MaxLength(100)]
     public string? ItemTemplateId { get; set; }
-        
+
     [MaxLength(100)]
     public string? CreatedById { get; set; }
-        
+
     [MaxLength(200)]
     public string? Message { get; set; }
 

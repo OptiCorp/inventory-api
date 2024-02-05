@@ -53,25 +53,25 @@ public class UserDeleteHandler(IServiceProvider serviceProvider)
         switch (userBody?.DeleteMode)
         {
             case "Soft":
-            {
-                var user = await scopedService.User.FirstOrDefaultAsync(u => u.UmId == userBody.Id);
-                if (user != null)
                 {
-                    user.Status = UserStatus.Deleted;
-                }
+                    var user = await scopedService.User.FirstOrDefaultAsync(u => u.UmId == userBody.Id);
+                    if (user != null)
+                    {
+                        user.Status = UserStatus.Deleted;
+                    }
 
-                break;
-            }
+                    break;
+                }
             case "Hard":
-            {
-                var user = await scopedService.User.FirstOrDefaultAsync(u => u.UmId == userBody.Id);
-                if (user != null)
                 {
-                    scopedService.User.Remove(user);
-                }
+                    var user = await scopedService.User.FirstOrDefaultAsync(u => u.UmId == userBody.Id);
+                    if (user != null)
+                    {
+                        scopedService.User.Remove(user);
+                    }
 
-                break;
-            }
+                    break;
+                }
         }
 
         await scopedService.SaveChangesAsync();

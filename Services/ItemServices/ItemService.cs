@@ -170,17 +170,17 @@ public class ItemService(InventoryDbContext context) : IItemService
         {
             var createdItemIds = new List<string>();
             foreach (var item in itemsCreate.Select(itemCreate => new Item
-                     {
-                         WpId = itemCreate.WpId,
-                         ParentId = itemCreate.ParentId,
-                         ItemTemplateId = itemCreate.ItemTemplateId,
-                         SerialNumber = itemCreate.SerialNumber,
-                         LocationId = itemCreate.LocationId,
-                         VendorId = itemCreate.VendorId,
-                         CreatedById = itemCreate.CreatedById,
-                         Comment = itemCreate.Comment,
-                         CreatedDate = DateTime.Now
-                     }))
+            {
+                WpId = itemCreate.WpId,
+                ParentId = itemCreate.ParentId,
+                ItemTemplateId = itemCreate.ItemTemplateId,
+                SerialNumber = itemCreate.SerialNumber,
+                LocationId = itemCreate.LocationId,
+                VendorId = itemCreate.VendorId,
+                CreatedById = itemCreate.CreatedById,
+                Comment = itemCreate.Comment,
+                CreatedDate = DateTime.Now
+            }))
             {
                 await context.Items.AddAsync(item);
                 if (item.Id != null)

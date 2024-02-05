@@ -9,7 +9,7 @@ public class PreCheck
     public string? Id { get; set; }
 
     public bool? Check { get; set; }
-        
+
     [MaxLength(1000)]
     public string? Comment { get; set; }
 }

@@ -7,10 +7,10 @@ public class List
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
-        
+
     [MaxLength(100)]
     public string? Title { get; set; }
-        
+
     [MaxLength(100)]
     public string? CreatedById { get; set; }
 

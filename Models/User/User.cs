@@ -17,10 +17,10 @@ public class User
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
-        
+
     [MaxLength(100)]
     public string? UmId { get; set; }
-        
+
     [MaxLength(100)]
     public string? AzureAdUserId { get; set; }
 

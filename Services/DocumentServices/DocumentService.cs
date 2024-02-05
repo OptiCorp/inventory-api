@@ -93,7 +93,7 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
         {
             var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
             if (blobContainerEndpoint == null) return null;
-                
+
             var blobContainerClient =
                 new BlobContainerClient(new Uri(blobContainerEndpoint), new DefaultAzureCredential());
 
@@ -143,7 +143,7 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
         {
             var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
             if (blobContainerEndpoint == null) return null;
-                
+
             var blobContainerClient =
                 new BlobContainerClient(new Uri(blobContainerEndpoint), new DefaultAzureCredential());
 
@@ -225,7 +225,7 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
         {
             var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
             if (blobContainerEndpoint == null) return null;
-                
+
             var blobContainerClient =
                 new BlobContainerClient(new Uri(blobContainerEndpoint), new DefaultAzureCredential());
 

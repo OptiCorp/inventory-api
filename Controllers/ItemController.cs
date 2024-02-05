@@ -65,7 +65,7 @@ public class ItemController(
         {
             var validationResult = await createValidator.ValidateAsync(itemCreate);
             if (validationResult.IsValid) continue;
-                
+
             var modelStateDictionary = new ModelStateDictionary();
             foreach (var failure in validationResult.Errors)
             {
@@ -87,7 +87,7 @@ public class ItemController(
 
             var items = new List<Item>();
             if (itemIds == null) return CreatedAtAction(nameof(GetItem), new { id = itemIds }, items);
-                
+
             foreach (var itemId in itemIds)
             {
                 {

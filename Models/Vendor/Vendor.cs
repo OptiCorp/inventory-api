@@ -7,10 +7,10 @@ public class Vendor
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
-        
+
     [MaxLength(100)]
     public string? Name { get; set; }
-        
+
     [MaxLength(100)]
     public string? CreatedById { get; set; }
 

@@ -7,15 +7,15 @@ public class Size
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
-        
+
     [MaxLength(100)]
     public string? ItemTemplateId { get; set; }
-        
+
     [MaxLength(100)]
     public string? Property { get; set; }
 
     public float? Amount { get; set; }
-        
+
     [MaxLength(100)]
     public string? Unit { get; set; }
 }
