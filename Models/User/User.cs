@@ -17,25 +17,27 @@ namespace Inventory.Models
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
-
+        
+        [MaxLength(100)]
         public string? UmId { get; set; }
-
+        
+        [MaxLength(100)]
         public string? AzureAdUserId { get; set; }
 
-        [StringLength(150)]
+        [MaxLength(100)]
         public string? UserRole { get; set; }
 
-        [StringLength(50)]
+        [MaxLength(100)]
         public string? FirstName { get; set; }
 
-        [StringLength(50)]
+        [MaxLength(100)]
         public string? LastName { get; set; }
 
         [EmailAddress]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string? Email { get; set; }
 
-        [StringLength(50)]
+        [MaxLength(100)]
         public string? Username { get; set; }
 
         [EnumDataType(typeof(UserStatus))]

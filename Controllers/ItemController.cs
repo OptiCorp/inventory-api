@@ -14,14 +14,12 @@ namespace Inventory.Controllers
     public class ItemController : ControllerBase
     {
         private readonly IItemService _itemService;
-        private readonly IListService _listService;
         private readonly IItemCreateValidator _createValidator;
         private readonly IItemUpdateValidator _updateValidator;
 
-        public ItemController(IItemService itemService, IListService listService, IItemCreateValidator createValidator, IItemUpdateValidator updateValidator)
+        public ItemController(IItemService itemService, IItemCreateValidator createValidator, IItemUpdateValidator updateValidator)
         {
             _itemService = itemService;
-            _listService = listService;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }

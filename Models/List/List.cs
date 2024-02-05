@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
@@ -6,9 +7,11 @@ namespace Inventory.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
-
+        
+        [MaxLength(100)]
         public string? Title { get; set; }
-
+        
+        [MaxLength(100)]
         public string? CreatedById { get; set; }
 
         public DateTime? CreatedDate { get; set; }

@@ -93,7 +93,7 @@ namespace Inventory.Controllers
         {
             try
             {
-                var itemTemplate = _itemTemplateService.GetItemTemplateByIdAsync(itemTemplateId);
+                var itemTemplate = await _itemTemplateService.GetItemTemplateByIdAsync(itemTemplateId);
                 if (itemTemplate == null)
                 {
 

@@ -16,7 +16,7 @@ namespace Inventory.Services
 
         public UserDeleteHandler(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
         {
-            _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
+            _appSettings = appSettings.Value ?? throw new ArgumentNullException(nameof(appSettings));
             _serviceProvider = serviceProvider;
         }
 
