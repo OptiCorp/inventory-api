@@ -17,5 +17,6 @@ namespace Inventory.Services
         Task UpdateItemAsync(string updatedById, Item item);
         Task DeleteItemAsync(string id, bool? deleteSubItems);
         Task<bool> IsWpIdUnique(string id);
+        Task<bool> IsSerialNumberUnique(string serialNumber);
     }
 }
