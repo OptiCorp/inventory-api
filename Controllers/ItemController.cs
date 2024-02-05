@@ -291,7 +291,7 @@ namespace Inventory.Controllers
                 return BadRequest($"Something went wrong: {e.Message}");
             }
         }
-        
+
         [HttpGet("IsSerialNumberUnique/{serialNumber}")]
         [SwaggerOperation(Summary = "Unique serial number check", Description = "Checks if serial number is unique.")]
         [SwaggerResponse(200, "Success", typeof(bool))]

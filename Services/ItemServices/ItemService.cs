@@ -416,7 +416,7 @@ namespace Inventory.Services
                 throw;
             }
         }
-        
+
         public async Task<bool> IsSerialNumberUnique(string serialNumber)
         {
             try
