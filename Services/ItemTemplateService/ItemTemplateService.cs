@@ -104,7 +104,7 @@ namespace Inventory.Services
                     {
                         var newCategory =
                             await _context.Categories.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.CategoryId);
-    
+
                         logEntry = new LogEntry
                         {
                             ItemTemplateId = itemTemplate.Id,
