@@ -121,7 +121,7 @@ namespace Inventory.Services
                         {
                             ItemTemplateId = itemTemplate.Id,
                             CreatedById = updatedById,
-                            Message = $"Category changed from {itemTemplate.ProductNumber} to {itemTemplateUpdate.ProductNumber}",
+                            Message = $"Product number changed from {itemTemplate.ProductNumber} to {itemTemplateUpdate.ProductNumber}",
                             CreatedDate = DateTime.Now
                         };
                         itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
