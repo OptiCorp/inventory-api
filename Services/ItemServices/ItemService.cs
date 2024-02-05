@@ -416,5 +416,19 @@ namespace Inventory.Services
                 throw;
             }
         }
+
+        public async Task<bool> IsSerialNumberUnique(string serialNumber)
+        {
+            try
+            {
+                var item = await _context.Items.FirstOrDefaultAsync(c => c.SerialNumber == serialNumber);
+                return item == null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
     }
 }
