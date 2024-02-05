@@ -10,7 +10,6 @@ public class UserServiceTests
     public async void UserService_GetAllUsers_ReturnsUserList()
     {
         //Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("User");
         var userService = new UserService(dbContext);
 
@@ -26,7 +25,6 @@ public class UserServiceTests
     public async void UserService_GetAllUsersAdmin_ReturnsUserList()
     {
         //Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("User");
         var userService = new UserService(dbContext);
 
@@ -42,7 +40,6 @@ public class UserServiceTests
     public async void UserService_GetUserById_ReturnsUser()
     {
         //Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("User");
         var userService = new UserService(dbContext);
 
@@ -59,7 +56,6 @@ public class UserServiceTests
     public async void UserService_GetUserByAzureAdUserId_ReturnsUser()
     {
         //Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("User");
         var userService = new UserService(dbContext);
 
@@ -75,7 +71,6 @@ public class UserServiceTests
     public async void UserService_GetUserByUsername_ReturnsUser()
     {
         //Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("User");
         var userService = new UserService(dbContext);
 

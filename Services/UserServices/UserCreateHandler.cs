@@ -1,23 +1,22 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.Options;
 using Inventory.Models;
 using Inventory.Models.DTO;
+using Inventory.Configuration;
 
 namespace Inventory.Services;
 
-public class UserCreateHandler(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
+public class UserCreateHandler(IServiceProvider serviceProvider)
     : BackgroundService
 {
-    private readonly AppSettings _appSettings = appSettings.Value ?? throw new ArgumentNullException(nameof(appSettings));
     private ServiceBusClient? _client;
     private ServiceBusProcessor? _processor;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // Initialize the Service Bus client and processor.
-        _client = new ServiceBusClient(_appSettings.QueueConnectionString);
-        _processor = _client.CreateProcessor(_appSettings.TopicUserCreated, _appSettings.SubscriptionInventory, new ServiceBusProcessorOptions());
+        _client = new ServiceBusClient(AppSettings.QueueConnectionString);
+        _processor = _client.CreateProcessor(AppSettings.TopicUserCreated, AppSettings.SubscriptionInventory, new ServiceBusProcessorOptions());
 
         // Configure args handler and error handler.
         _processor.ProcessMessageAsync += MessageHandler;

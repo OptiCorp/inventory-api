@@ -3,7 +3,7 @@ using Inventory.Models;
 
 namespace Inventory.Tests.Services;
 
-public class TestUtilities
+public static class TestUtilities
 {
     public static async Task<InventoryDbContext> GetDbContext(string testType)
     {
@@ -16,28 +16,26 @@ public class TestUtilities
 
         if (testType == "User")
         {
-            if (await databaseContext.User.CountAsync() <= 0)
+            if (await databaseContext.User.AnyAsync()) return databaseContext;
+            for (var i = 0; i < 10; i++)
             {
-                for (var i = 0; i < 10; i++)
-                {
-                    await databaseContext.User.AddAsync(
-                        new User
-                        {
-                            Id = $"User {i}",
-                            AzureAdUserId = $"AzureAD{i}@bouvet.no",
-                            FirstName = "name",
-                            LastName = "nameson",
-                            Email = "some email",
-                            Username = $"Username {i}",
-                            Status = i % 5 == 0 ? UserStatus.Deleted : UserStatus.Active,
-                            CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
-                                TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
-                        }
-                    );
-                }
-
-                await databaseContext.SaveChangesAsync();
+                await databaseContext.User.AddAsync(
+                    new User
+                    {
+                        Id = $"User {i}",
+                        AzureAdUserId = $"AzureAD{i}@bouvet.no",
+                        FirstName = "name",
+                        LastName = "nameson",
+                        Email = "some email",
+                        Username = $"Username {i}",
+                        Status = i % 5 == 0 ? UserStatus.Deleted : UserStatus.Active,
+                        CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
+                            TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"))
+                    }
+                );
             }
+
+            await databaseContext.SaveChangesAsync();
 
             return databaseContext;
         }
@@ -83,7 +81,7 @@ public class TestUtilities
 
         if (testType == "Item")
         {
-            if (await databaseContext.Items.CountAsync() <= 0)
+            if (!await databaseContext.Items.AnyAsync())
             {
                 var itemsToAdd = new List<Item>();
                 for (var i = 0; i < 10; i++)

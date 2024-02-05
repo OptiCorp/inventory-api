@@ -11,7 +11,6 @@ public class ItemServiceTests
     public async void ItemService_GetAllItems_ReturnsItemList()
     {
         // Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("Item");
         var itemService = new ItemService(dbContext);
 
@@ -27,7 +26,6 @@ public class ItemServiceTests
     public async void ItemService_GetAllItemsByUserId_ReturnsItemList()
     {
         // Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("Item");
         var itemService = new ItemService(dbContext);
 
@@ -50,7 +48,6 @@ public class ItemServiceTests
     public async Task ItemService_GetAllItemsBySearchString_ReturnsItemList()
     {
         // Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("Item");
         var itemService = new ItemService(dbContext);
 
@@ -68,7 +65,6 @@ public class ItemServiceTests
     public async Task ItemService_GetChildren_ReturnsItemList()
     {
         // Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("Item");
         const string parentId = "parentId 1";
 
@@ -111,7 +107,6 @@ public class ItemServiceTests
     public async void ItemService_GetItemById_ReturnsItem()
     {
         //Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("Item");
         var itemService = new ItemService(dbContext);
 
@@ -127,7 +122,6 @@ public class ItemServiceTests
     public async void ItemService_CreateItem_ReturnsString()
     {
         //Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("Item");
         var itemService = new ItemService(dbContext);
 
@@ -168,7 +162,6 @@ public class ItemServiceTests
     public async void ItemService_UpdateItem_ReturnsVoid()
     {
         // Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("Item");
         var itemService = new ItemService(dbContext);
 
@@ -194,7 +187,6 @@ public class ItemServiceTests
     public async void ItemService_DeleteItem_ReturnsVoid()
     {
         // Arrange
-        var testUtilities = new TestUtilities();
         var dbContext = await TestUtilities.GetDbContext("Item");
         var itemService = new ItemService(dbContext);
 
