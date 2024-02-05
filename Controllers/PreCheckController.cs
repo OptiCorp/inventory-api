@@ -6,168 +6,160 @@ using Inventory.Services;
 using Inventory.Validations.PreCheckValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Inventory.Controllers
+namespace Inventory.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class PreCheckController(
+    IPreCheckService preCheckService,
+    IPreCheckCreateValidator createValidator,
+    IPreCheckUpdateValidator updateValidator)
+    : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PreCheckController : ControllerBase
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get all pre checks", Description = "Retrieves a list of all pre checks.")]
+    [SwaggerResponse(200, "Success", typeof(IEnumerable<PreCheck>))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult<IEnumerable<PreCheck>>> GetAllCategories()
     {
-        private readonly IPreCheckService _preCheckService;
-        private readonly IPreCheckCreateValidator _createValidator;
-        private readonly IPreCheckUpdateValidator _updateValidator;
-
-        public PreCheckController(IPreCheckService preCheckService, IPreCheckCreateValidator createValidator, IPreCheckUpdateValidator updateValidator)
+        try
         {
-            _preCheckService = preCheckService;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
+            return Ok(await preCheckService.GetAllPreChecksAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get pre check", Description = "Retrieves a pre check.")]
+    [SwaggerResponse(200, "Success", typeof(PreCheck))]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "Pre check not found")]
+    public async Task<ActionResult<PreCheck>> GetPreCheck(string id)
+    {
+        try
+        {
+            var preCheck = await preCheckService.GetPreCheckByIdAsync(id);
+            if (preCheck == null)
+            {
+                return NotFound("Pre check not found");
+            }
+
+            return Ok(preCheck);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpPost]
+    [SwaggerOperation(Summary = "Create a new pre check", Description = "Creates a new pre check.")]
+    [SwaggerResponse(201, "Pre check created", typeof(PreCheck))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult<PreCheck>> CreatePreCheck(PreCheckCreateDto preCheckCreate)
+    {
+        var validationResult = await createValidator.ValidateAsync(preCheckCreate);
+        if (!validationResult.IsValid)
+        {
+            var modelStateDictionary = new ModelStateDictionary();
+            foreach (var failure in validationResult.Errors)
+            {
+                modelStateDictionary.AddModelError(
+                    failure.PropertyName,
+                    failure.ErrorMessage
+                );
+            }
+            return ValidationProblem(modelStateDictionary);
         }
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get all pre checks", Description = "Retrieves a list of all pre checks.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<PreCheck>))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<IEnumerable<PreCheck>>> GetAllCategories()
+        try
         {
-            try
+            var preCheckId = await preCheckService.CreatePreCheckAsync(preCheckCreate);
+            if (preCheckId == null)
             {
-                return Ok(await _preCheckService.GetAllPreChecksAsync());
+                return BadRequest("PreCheck creation failed");
             }
-            catch (Exception e)
+
+            var preCheck = await preCheckService.GetPreCheckByIdAsync(preCheckId);
+
+            return CreatedAtAction(nameof(GetPreCheck), new { id = preCheckId }, preCheck);
+
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update pre check", Description = "Updates a pre check.")]
+    [SwaggerResponse(200, "PreCheck updated")]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "PreCheck not found")]
+    public async Task<IActionResult> UpdatePreCheck(string id, PreCheck preCheckUpdate)
+    {
+        var validationResult = await updateValidator.ValidateAsync(preCheckUpdate);
+        if (!validationResult.IsValid)
+        {
+            var modelStateDictionary = new ModelStateDictionary();
+            foreach (var failure in validationResult.Errors)
             {
-                return BadRequest($"Something went wrong: {e.Message}");
+                modelStateDictionary.AddModelError(
+                    failure.PropertyName,
+                    failure.ErrorMessage
+                );
             }
+            return ValidationProblem(modelStateDictionary);
         }
 
-        [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get pre check", Description = "Retrieves a pre check.")]
-        [SwaggerResponse(200, "Success", typeof(PreCheck))]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "Pre check not found")]
-        public async Task<ActionResult<PreCheck>> GetPreCheck(string id)
+        try
         {
-            try
+            if (id != preCheckUpdate.Id)
             {
-                var preCheck = await _preCheckService.GetPreCheckByIdAsync(id);
-                if (preCheck == null)
-                {
-                    return NotFound("Pre check not found");
-                }
+                return BadRequest("Id does not match");
+            }
 
-                return Ok(preCheck);
-            }
-            catch (Exception e)
+            var preCheck = await preCheckService.GetPreCheckByIdAsync(id);
+            if (preCheck == null)
             {
-                return BadRequest($"Something went wrong: {e.Message}");
+                return NotFound("Pre check not found");
             }
+
+            await preCheckService.UpdatePreCheckAsync(preCheckUpdate);
+
+            return NoContent();
         }
-
-        [HttpPost]
-        [SwaggerOperation(Summary = "Create a new pre check", Description = "Creates a new pre check.")]
-        [SwaggerResponse(201, "Pre check created", typeof(PreCheck))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<PreCheck>> CreatePreCheck(PreCheckCreateDto preCheckCreate)
+        catch (Exception e)
         {
-            var validationResult = await _createValidator.ValidateAsync(preCheckCreate);
-            if (!validationResult.IsValid)
-            {
-                var modelStateDictionary = new ModelStateDictionary();
-                foreach (var failure in validationResult.Errors)
-                {
-                    modelStateDictionary.AddModelError(
-                        failure.PropertyName,
-                        failure.ErrorMessage
-                    );
-                }
-                return ValidationProblem(modelStateDictionary);
-            }
-
-            try
-            {
-                var preCheckId = await _preCheckService.CreatePreCheckAsync(preCheckCreate);
-                if (preCheckId == null)
-                {
-                    return BadRequest("PreCheck creation failed");
-                }
-
-                var preCheck = await _preCheckService.GetPreCheckByIdAsync(preCheckId);
-
-                return CreatedAtAction(nameof(GetPreCheck), new { id = preCheckId }, preCheck);
-
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return BadRequest($"Something went wrong: {e.Message}");
         }
+    }
 
-        [HttpPut("{id}")]
-        [SwaggerOperation(Summary = "Update pre check", Description = "Updates a pre check.")]
-        [SwaggerResponse(200, "PreCheck updated")]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "PreCheck not found")]
-        public async Task<IActionResult> UpdatePreCheck(string id, PreCheck preCheckUpdate)
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Delete pre check", Description = "Deletes a pre check.")]
+    [SwaggerResponse(200, "PreCheck deleted")]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "PreCheck not found")]
+    public async Task<IActionResult> DeletePreCheck(string id)
+    {
+        try
         {
-            var validationResult = await _updateValidator.ValidateAsync(preCheckUpdate);
-            if (!validationResult.IsValid)
+            var preCheck = await preCheckService.GetPreCheckByIdAsync(id);
+            if (preCheck == null)
             {
-                var modelStateDictionary = new ModelStateDictionary();
-                foreach (var failure in validationResult.Errors)
-                {
-                    modelStateDictionary.AddModelError(
-                        failure.PropertyName,
-                        failure.ErrorMessage
-                    );
-                }
-                return ValidationProblem(modelStateDictionary);
+                return NotFound("Pre check not found");
             }
 
-            try
-            {
-                if (id != preCheckUpdate.Id)
-                {
-                    return BadRequest("Id does not match");
-                }
+            await preCheckService.DeletePreCheckAsync(id);
 
-                var preCheck = await _preCheckService.GetPreCheckByIdAsync(id);
-                if (preCheck == null)
-                {
-                    return NotFound("Pre check not found");
-                }
-
-                await _preCheckService.UpdatePreCheckAsync(preCheckUpdate);
-
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return NoContent();
         }
-
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Delete pre check", Description = "Deletes a pre check.")]
-        [SwaggerResponse(200, "PreCheck deleted")]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "PreCheck not found")]
-        public async Task<IActionResult> DeletePreCheck(string id)
+        catch (Exception e)
         {
-            try
-            {
-                var preCheck = await _preCheckService.GetPreCheckByIdAsync(id);
-                if (preCheck == null)
-                {
-                    return NotFound("Pre check not found");
-                }
-
-                await _preCheckService.DeletePreCheckAsync(id);
-
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return BadRequest($"Something went wrong: {e.Message}");
         }
     }
 }

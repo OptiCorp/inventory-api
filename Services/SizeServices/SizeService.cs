@@ -2,105 +2,97 @@ using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory.Services
+namespace Inventory.Services;
+
+public class SizeService(InventoryDbContext context) : ISizeService
 {
-    public class SizeService : ISizeService
+    public async Task<IEnumerable<Size>> GetAllSizesAsync()
     {
-        private readonly InventoryDbContext _context;
-
-        public SizeService(InventoryDbContext context)
+        try
         {
-            _context = context;
+            return await context.Sizes.ToListAsync();
         }
-
-        public async Task<IEnumerable<Size>> GetAllSizesAsync()
+        catch (Exception e)
         {
-            try
-            {
-                return await _context.Sizes.ToListAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task<Size?> GetSizeByIdAsync(string id)
+    public async Task<Size?> GetSizeByIdAsync(string id)
+    {
+        try
         {
-            try
-            {
-                return await _context.Sizes.FirstOrDefaultAsync(c => c.Id == id);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return await context.Sizes.FirstOrDefaultAsync(c => c.Id == id);
         }
-
-        public async Task<string?> CreateSizeAsync(SizeCreateDto sizeCreate)
+        catch (Exception e)
         {
-            try
-            {
-                var size = new Size
-                {
-                    ItemTemplateId = sizeCreate.ItemTemplateId,
-                    Property = sizeCreate.Property,
-                    Amount = sizeCreate.Amount,
-                    Unit = sizeCreate.Unit
-                };
-
-                await _context.Sizes.AddAsync(size);
-                await _context.SaveChangesAsync();
-                return size.Id;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task UpdateSizeAsync(Size sizeUpdate)
+    public async Task<string?> CreateSizeAsync(SizeCreateDto sizeCreate)
+    {
+        try
         {
-            try
+            var size = new Size
             {
-                var size = await _context.Sizes.FirstOrDefaultAsync(c => c.Id == sizeUpdate.Id);
+                ItemTemplateId = sizeCreate.ItemTemplateId,
+                Property = sizeCreate.Property,
+                Amount = sizeCreate.Amount,
+                Unit = sizeCreate.Unit
+            };
 
-                if (size != null)
-                {
-                    size.ItemTemplateId = sizeUpdate.ItemTemplateId;
-                    size.Property = sizeUpdate.Property;
-                    size.Amount = sizeUpdate.Amount;
-                    size.Unit = sizeUpdate.Unit;
+            await context.Sizes.AddAsync(size);
+            await context.SaveChangesAsync();
+            return size.Id;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception e)
+    public async Task UpdateSizeAsync(Size sizeUpdate)
+    {
+        try
+        {
+            var size = await context.Sizes.FirstOrDefaultAsync(c => c.Id == sizeUpdate.Id);
+
+            if (size != null)
             {
-                Console.WriteLine(e);
-                throw;
+                size.ItemTemplateId = sizeUpdate.ItemTemplateId;
+                size.Property = sizeUpdate.Property;
+                size.Amount = sizeUpdate.Amount;
+                size.Unit = sizeUpdate.Unit;
+
+                await context.SaveChangesAsync();
             }
         }
-
-        public async Task DeleteSizeAsync(string id)
+        catch (Exception e)
         {
-            try
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task DeleteSizeAsync(string id)
+    {
+        try
+        {
+            var size = await context.Sizes.FirstOrDefaultAsync(c => c.Id == id);
+            if (size != null)
             {
-                var size = await _context.Sizes.FirstOrDefaultAsync(c => c.Id == id);
-                if (size != null)
-                {
-                    _context.Sizes.Remove(size);
-                    await _context.SaveChangesAsync();
-                }
+                context.Sizes.Remove(size);
+                await context.SaveChangesAsync();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

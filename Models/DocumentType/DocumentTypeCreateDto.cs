@@ -1,10 +1,9 @@
 
-namespace Inventory.Models.DTO
-{
-    public class DocumentTypeCreateDto
-    {
-        public string? Name { get; set; }
+namespace Inventory.Models.DTO;
 
-        public string? Description { get; set; }
-    }
+public class DocumentTypeCreateDto(string? name, string? description)
+{
+    public string? Name { get; } = name;
+
+    public string? Description { get; } = description;
 }

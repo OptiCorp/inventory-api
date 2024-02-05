@@ -1,140 +1,132 @@
 using Inventory.Models;
-using Inventory.Models.DocumentDtos;
+using Inventory.Models.DocumentDTOs;
 using Inventory.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Inventory.Controllers
+namespace Inventory.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class DocumentController(
+    IDocumentService documentService,
+    IItemService itemService,
+    IItemTemplateService itemTemplateService)
+    : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DocumentController : ControllerBase
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get a document by its ID", Description = "Retrieves a document with the specified ID")]
+    [SwaggerResponse(200, "Success", typeof(DocumentResponseDto))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult<DocumentResponseDto>> GetDocumentById(string id)
     {
-        private readonly IDocumentService _documentService;
-        private readonly IItemService _itemService;
-        private readonly IItemTemplateService _itemTemplateService;
-
-        public DocumentController(IDocumentService documentService, IItemService itemService, IItemTemplateService itemTemplateService)
+        try
         {
-            _documentService = documentService;
-            _itemService = itemService;
-            _itemTemplateService = itemTemplateService;
+            return Ok(await documentService.GetDocumentByIdAsync(id));
         }
-
-        [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get a document by its ID", Description = "Retrieves a document with the specified ID")]
-        [SwaggerResponse(200, "Success", typeof(DocumentResponseDto))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<DocumentResponseDto>> GetDocumentById(string id)
+        catch (Exception e)
         {
-            try
-            {
-                return Ok(await _documentService.GetDocumentByIdAsync(id));
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return BadRequest($"Something went wrong: {e.Message}");
         }
+    }
 
 
-        [HttpGet("ByItemId/{id}")]
-        [SwaggerOperation(Summary = "Get documents by item ID", Description = "Retrieves all files related to an item")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentResponseDto>))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<IEnumerable<DocumentResponseDto>>> GetDocumentsByItemId(string id)
+    [HttpGet("ByItemId/{id}")]
+    [SwaggerOperation(Summary = "Get documents by item ID", Description = "Retrieves all files related to an item")]
+    [SwaggerResponse(200, "Success", typeof(IEnumerable<DocumentResponseDto>))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult<IEnumerable<DocumentResponseDto>>> GetDocumentsByItemId(string id)
+    {
+        try
         {
-            try
+            var item = await itemService.GetItemByIdAsync(id);
+            if (item == null)
             {
-                var item = await _itemService.GetItemByIdAsync(id);
-                if (item == null)
-                {
-                    return NotFound("Item not found");
-                }
+                return NotFound("Item not found");
+            }
 
-                var response = await _documentService.GetDocumentsByItemIdAsync(id);
-                return Ok(response);
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            var response = await documentService.GetDocumentsByItemIdAsync(id);
+            return Ok(response);
         }
-
-        [HttpPost("AddDocToItem/{itemId}")]
-        [SwaggerOperation(Summary = "Upload documents for an item", Description = "Uploads documents for item")]
-        [SwaggerResponse(201, "Documents uploaded", typeof(Document))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult> AddDocumentToItem([FromForm] DocumentUploadDto document, string itemId)
+        catch (Exception e)
         {
-            try
-            {
-                var item = await _itemService.GetItemByIdAsync(itemId);
-                if (item == null)
-                {
-                    return NotFound("Item not found");
-                }
-
-                await _documentService.AddDocumentToItemAsync(document, itemId);
-
-                return Ok("Document was added to item");
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return BadRequest($"Something went wrong: {e.Message}");
         }
+    }
 
-        [HttpPost("AddDocToItemTemplate/{itemTemplateId}")]
-        [SwaggerOperation(Summary = "Upload documents for aan item template", Description = "Uploads documents for item template")]
-        [SwaggerResponse(201, "Documents uploaded", typeof(Document))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult> AddDocumentToItemTemplate([FromForm] DocumentUploadDto document, string itemTemplateId)
+    [HttpPost("AddDocToItem/{itemId}")]
+    [SwaggerOperation(Summary = "Upload documents for an item", Description = "Uploads documents for item")]
+    [SwaggerResponse(201, "Documents uploaded", typeof(Document))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult> AddDocumentToItem([FromForm] DocumentUploadDto document, string itemId)
+    {
+        try
         {
-            try
+            var item = await itemService.GetItemByIdAsync(itemId);
+            if (item == null)
             {
-                var itemTemplate = await _itemTemplateService.GetItemTemplateByIdAsync(itemTemplateId);
-                if (itemTemplate == null)
-                {
-
-                    return NotFound("Item template not found");
-
-                }
-
-                await _documentService.AddDocumentToItemTemplateAsync(document, itemTemplateId);
-
-                return Ok("Document was added to item template");
-
+                return NotFound("Item not found");
             }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+
+            await documentService.AddDocumentToItemAsync(document, itemId);
+
+            return Ok("Document was added to item");
         }
-
-        [HttpDelete("{documentId}")]
-        [SwaggerOperation(Summary = "Delete a document", Description = "Delete a document")]
-        [SwaggerResponse(200, "Document removed")]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "Item or document not found")]
-        public async Task<IActionResult> DeleteDocument(string documentId)
+        catch (Exception e)
         {
-            try
-            {
-                var document = await _documentService.GetDocumentByIdAsync(documentId);
-                if (document == null)
-                {
-                    return NotFound("Document not found");
-                }
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
 
-                await _documentService.DeleteDocumentAsync(documentId);
-
-                return Ok();
-            }
-            catch (Exception e)
+    [HttpPost("AddDocToItemTemplate/{itemTemplateId}")]
+    [SwaggerOperation(Summary = "Upload documents for aan item template", Description = "Uploads documents for item template")]
+    [SwaggerResponse(201, "Documents uploaded", typeof(Document))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult> AddDocumentToItemTemplate([FromForm] DocumentUploadDto document, string itemTemplateId)
+    {
+        try
+        {
+            var itemTemplate = await itemTemplateService.GetItemTemplateByIdAsync(itemTemplateId);
+            if (itemTemplate == null)
             {
-                return BadRequest($"Something went wrong: {e.Message}");
+
+                return NotFound("Item template not found");
+
             }
+
+            await documentService.AddDocumentToItemTemplateAsync(document, itemTemplateId);
+
+            return Ok("Document was added to item template");
+
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpDelete("{documentId}")]
+    [SwaggerOperation(Summary = "Delete a document", Description = "Delete a document")]
+    [SwaggerResponse(200, "Document removed")]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "Item or document not found")]
+    public async Task<IActionResult> DeleteDocument(string documentId)
+    {
+        try
+        {
+            var document = await documentService.GetDocumentByIdAsync(documentId);
+            if (document == null)
+            {
+                return NotFound("Document not found");
+            }
+
+            await documentService.DeleteDocumentAsync(documentId);
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
         }
     }
 }

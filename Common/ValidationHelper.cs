@@ -1,20 +1,12 @@
 using Inventory.Utilities;
 
-namespace Inventory.Common
+namespace Inventory.Common;
+
+public class ValidationHelper(IUserUtilities userUtilities)
 {
-    public class ValidationHelper
+    public bool BeValidStatus(string status)
     {
-        private readonly IUserUtilities _userUtilities;
-
-        public ValidationHelper(IUserUtilities userUtilities)
-        {
-            _userUtilities = userUtilities;
-        }
-
-        public bool BeValidStatus(string status)
-        {
-            return _userUtilities.IsValidStatus(status);
-        }
-
+        return userUtilities.IsValidStatus(status);
     }
+
 }

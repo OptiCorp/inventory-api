@@ -3,210 +3,209 @@ using Inventory.Models.DTO;
 using Inventory.Services;
 using Xunit;
 
-namespace Inventory.Tests.Services
+namespace Inventory.Tests.Services;
+
+public class ItemServiceTests
 {
-    public class ItemServiceTests
+    [Fact]
+    public async void ItemService_GetAllItems_ReturnsItemList()
     {
-        [Fact]
-        public async void ItemService_GetAllItems_ReturnsItemList()
+        // Arrange
+        var testUtilities = new TestUtilities();
+        var dbContext = await TestUtilities.GetDbContext("Item");
+        var itemService = new ItemService(dbContext);
+
+        // Act
+        var items = await itemService.GetAllItemsAsync();
+
+        // Assert
+        Assert.IsType<List<Item>>(items);
+        Assert.Equal(10, items.Count());
+    }
+
+    [Fact]
+    public async void ItemService_GetAllItemsByUserId_ReturnsItemList()
+    {
+        // Arrange
+        var testUtilities = new TestUtilities();
+        var dbContext = await TestUtilities.GetDbContext("Item");
+        var itemService = new ItemService(dbContext);
+
+        const string userId1 = "User 2";
+        const string userId2 = "User 15";
+        const int page1 = 1;
+        const int page2 = 1;
+
+        // Act
+        var itemsByUserId1 = await itemService.GetAllItemsByUserIdAsync(userId1, page1);
+        var itemsByUserId2 = await itemService.GetAllItemsByUserIdAsync(userId2, page2);
+
+        // Assert 
+        Assert.IsType<List<Item>>(itemsByUserId1);
+        Assert.Single(itemsByUserId1);
+        Assert.Empty(itemsByUserId2);
+    }
+
+    [Fact]
+    public async Task ItemService_GetAllItemsBySearchString_ReturnsItemList()
+    {
+        // Arrange
+        var testUtilities = new TestUtilities();
+        var dbContext = await TestUtilities.GetDbContext("Item");
+        var itemService = new ItemService(dbContext);
+
+        // Act
+        var items = await itemService.GetAllItemsBySearchStringAsync("a", 1);
+
+        //Assert
+        Assert.IsType<List<Item>>(items);
+        Assert.Equal(10, items.Count());
+    }
+
+
+
+    [Fact]
+    public async Task ItemService_GetChildren_ReturnsItemList()
+    {
+        // Arrange
+        var testUtilities = new TestUtilities();
+        var dbContext = await TestUtilities.GetDbContext("Item");
+        const string parentId = "parentId 1";
+
+
+        var expectedItems = new List<Item>
         {
-            // Arrange
-            var testUtilities = new TestUtilities();
-            var dbContext = await testUtilities.GetDbContext("Item");
-            var itemService = new ItemService(dbContext);
-
-            // Act
-            var items = await itemService.GetAllItemsAsync();
-
-            // Assert
-            Assert.IsType<List<Item>>(items);
-            Assert.Equal(10, items.Count());
-        }
-
-        [Fact]
-        public async void ItemService_GetAllItemsByUserId_ReturnsItemList()
-        {
-            // Arrange
-            var testUtilities = new TestUtilities();
-            var dbContext = await testUtilities.GetDbContext("Item");
-            var itemService = new ItemService(dbContext);
-
-            const string userId1 = "User 2";
-            const string userId2 = "User 15";
-            const int page1 = 1;
-            const int page2 = 1;
-
-            // Act
-            var itemsByUserId1 = await itemService.GetAllItemsByUserIdAsync(userId1, page1);
-            var itemsByUserId2 = await itemService.GetAllItemsByUserIdAsync(userId2, page2);
-
-            // Assert 
-            Assert.IsType<List<Item>>(itemsByUserId1);
-            Assert.Single(itemsByUserId1);
-            Assert.Empty(itemsByUserId2);
-        }
-
-        [Fact]
-        public async Task ItemService_GetAllItemsBySearchString_ReturnsItemList()
-        {
-            // Arrange
-            var testUtilities = new TestUtilities();
-            var dbContext = await testUtilities.GetDbContext("Item");
-            var itemService = new ItemService(dbContext);
-
-            // Act
-            var items = await itemService.GetAllItemsBySearchStringAsync("a", 1);
-
-            //Assert
-            Assert.IsType<List<Item>>(items);
-            Assert.Equal(10, items.Count());
-        }
-
-
-
-        [Fact]
-        public async Task ItemService_GetChildren_ReturnsItemList()
-        {
-            // Arrange
-            var testUtilities = new TestUtilities();
-            var dbContext = await testUtilities.GetDbContext("Item");
-            const string parentId = "parentId 1";
-
-
-            var expectedItems = new List<Item>
+            new()
             {
-                new Item
-                {
-                    ParentId = parentId,
-                    Children = new List<Item>(),
-                    CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time")),
-                    SerialNumber = "TestSerialNumber",
-                    VendorId = "TestVendor",
-                    WpId = "TestWpId",
+                ParentId = parentId,
+                Children = new List<Item>(),
+                CreatedDate = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time")),
+                SerialNumber = "TestSerialNumber",
+                VendorId = "TestVendor",
+                WpId = "TestWpId"
 
-                }
-            };
+            }
+        };
 
-            dbContext.Items.AddRange(expectedItems);
-            await dbContext.SaveChangesAsync();
+        dbContext.Items.AddRange(expectedItems);
+        await dbContext.SaveChangesAsync();
 
-            // Act
-            var itemService = new ItemService(dbContext);
-            var result = await itemService.GetChildrenAsync(parentId);
+        // Act
+        var itemService = new ItemService(dbContext);
+        var result = await itemService.GetChildrenAsync(parentId);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsType<List<Item>>(result);
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<List<Item>>(result);
 
-            var enumerable = result as Item[] ?? result.ToArray();
-            Assert.Equal(expectedItems.Count, enumerable.Count());
+        var enumerable = result as Item[] ?? result.ToArray();
+        Assert.Equal(expectedItems.Count, enumerable.Length);
 
-            var firstResultItem = enumerable.FirstOrDefault();
-            Assert.NotNull(firstResultItem);
-        }
+        var firstResultItem = enumerable.FirstOrDefault();
+        Assert.NotNull(firstResultItem);
+    }
 
 
 
-        [Fact]
-        public async void ItemService_GetItemById_ReturnsItem()
+    [Fact]
+    public async void ItemService_GetItemById_ReturnsItem()
+    {
+        //Arrange
+        var testUtilities = new TestUtilities();
+        var dbContext = await TestUtilities.GetDbContext("Item");
+        var itemService = new ItemService(dbContext);
+
+        //Act
+        var item = await itemService.GetItemByIdAsync("Item 1");
+
+        //Assert
+        Assert.IsType<Item>(item);
+        Assert.Equal("Item 1", item.Id);
+    }
+
+    [Fact]
+    public async void ItemService_CreateItem_ReturnsString()
+    {
+        //Arrange
+        var testUtilities = new TestUtilities();
+        var dbContext = await TestUtilities.GetDbContext("Item");
+        var itemService = new ItemService(dbContext);
+
+        var newTestItem1 = new ItemCreateDto
         {
-            //Arrange
-            var testUtilities = new TestUtilities();
-            var dbContext = await testUtilities.GetDbContext("Item");
-            var itemService = new ItemService(dbContext);
+            SerialNumber = "321",
+            WpId = "456",
+            Comment = "AComment",
+            LocationId = "ALocation",
+            ParentId = "789",
+            VendorId = "AVendor",
+            CreatedById = "654"
+        };
 
-            //Act
-            var item = await itemService.GetItemByIdAsync("Item 1");
-
-            //Assert
-            Assert.IsType<Item>(item);
-            Assert.Equal("Item 1", item.Id);
-        }
-
-        [Fact]
-        public async void ItemService_CreateItem_ReturnsString()
+        var newTestItem2 = new ItemCreateDto
         {
-            //Arrange
-            var testUtilities = new TestUtilities();
-            var dbContext = await testUtilities.GetDbContext("Item");
-            var itemService = new ItemService(dbContext);
+            SerialNumber = "321",
+            WpId = "789",
+            Comment = "AComment",
+            LocationId = "ALocation",
+            ParentId = "789",
+            VendorId = "AVendor",
+            CreatedById = "654"
+        };
+        var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
 
-            var newTestItem1 = new ItemCreateDto()
-            {
-                SerialNumber = "321",
-                WpId = "456",
-                Comment = "AComment",
-                LocationId = "ALocation",
-                ParentId = "789",
-                VendorId = "AVendor",
-                CreatedById = "654",
-            };
+        //Act
+        var newItemIds = await itemService.CreateItemAsync(itemsToCreate);
+        var items = await itemService.GetAllItemsAsync();
 
-            var newTestItem2 = new ItemCreateDto()
-            {
-                SerialNumber = "321",
-                WpId = "789",
-                Comment = "AComment",
-                LocationId = "ALocation",
-                ParentId = "789",
-                VendorId = "AVendor",
-                CreatedById = "654",
-            };
-            var itemsToCreate = new List<ItemCreateDto> { newTestItem1, newTestItem2 };
+        //Assert
+        Assert.IsType<List<string>>(newItemIds);
+        Assert.Equal(12, items.Count());
+        Assert.Equal(2, newItemIds.Count);
+    }
 
-            //Act
-            var newItemIds = await itemService.CreateItemAsync(itemsToCreate);
-            var items = await itemService.GetAllItemsAsync();
+    [Fact]
+    public async void ItemService_UpdateItem_ReturnsVoid()
+    {
+        // Arrange
+        var testUtilities = new TestUtilities();
+        var dbContext = await TestUtilities.GetDbContext("Item");
+        var itemService = new ItemService(dbContext);
 
-            //Assert
-            Assert.IsType<List<string>>(newItemIds);
-            Assert.Equal(12, items.Count());
-            Assert.Equal(2, newItemIds.Count);
-        }
-
-        [Fact]
-        public async void ItemService_UpdateItem_ReturnsVoid()
+        var updatedItem = new Item
         {
-            // Arrange
-            var testUtilities = new TestUtilities();
-            var dbContext = await testUtilities.GetDbContext("Item");
-            var itemService = new ItemService(dbContext);
+            Id = "Item 1",
+            WpId = "5",
+            ParentId = "4",
+            CreatedById = "2",
+            Comment = "Item Comment 1",
+            SerialNumber = "456"
+        };
 
-            var updatedItem = new Item()
-            {
-                Id = "Item 1",
-                WpId = "5",
-                ParentId = "4",
-                CreatedById = "2",
-                Comment = "Item Comment 1",
-                SerialNumber = "456",
-            };
+        // Act
+        await itemService.UpdateItemAsync(updatedItem.CreatedById, updatedItem);
+        var item = await itemService.GetItemByIdAsync("Item 1");
 
-            // Act
-            await itemService.UpdateItemAsync(updatedItem.CreatedById, updatedItem);
-            var item = await itemService.GetItemByIdAsync("Item 1");
+        // Assert
+        Assert.Equal("Item Comment 1", item?.Comment);
+    }
 
-            // Assert
-            Assert.Equal("Item Comment 1", item?.Comment);
-        }
+    [Fact]
+    public async void ItemService_DeleteItem_ReturnsVoid()
+    {
+        // Arrange
+        var testUtilities = new TestUtilities();
+        var dbContext = await TestUtilities.GetDbContext("Item");
+        var itemService = new ItemService(dbContext);
 
-        [Fact]
-        public async void ItemService_DeleteItem_ReturnsVoid()
-        {
-            // Arrange
-            var testUtilities = new TestUtilities();
-            var dbContext = await testUtilities.GetDbContext("Item");
-            var itemService = new ItemService(dbContext);
+        const string itemId = "Item 1";
 
-            const string itemId = "Item 1";
+        // Act
+        await itemService.DeleteItemAsync(itemId, false);
+        var allItems = await itemService.GetAllItemsAsync();
 
-            // Act
-            await itemService.DeleteItemAsync(itemId, false);
-            var allItems = await itemService.GetAllItemsAsync();
-
-            // Assert
-            var deletedItem = allItems.FirstOrDefault(i => i.Id == itemId);
-            Assert.Null(deletedItem);
-        }
+        // Assert
+        var deletedItem = allItems.FirstOrDefault(i => i.Id == itemId);
+        Assert.Null(deletedItem);
     }
 }
