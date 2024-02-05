@@ -1,7 +1,7 @@
 namespace Inventory.Models.DocumentDTOs;
 
-public class DocumentUploadDto(string? documentTypeId, IFormFile? file)
+public class DocumentUploadDto
 {
-    public string? DocumentTypeId { get; } = documentTypeId;
-    public IFormFile? File { get; } = file;
+    public string? DocumentTypeId { get; set; }
+    public IFormFile? File { get; set; }
 }
