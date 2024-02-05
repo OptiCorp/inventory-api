@@ -102,17 +102,19 @@ namespace Inventory.Services
 
                     if (itemTemplateUpdate.CategoryId != itemTemplate.CategoryId)
                     {
+                        var newCategory =
+                            await _context.Categories.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.CategoryId);
+    
                         logEntry = new LogEntry
                         {
                             ItemTemplateId = itemTemplate.Id,
                             CreatedById = updatedById,
-                            Message = $"Category changed from {itemTemplate.Category?.Name} to {itemTemplateUpdate.Category?.Name}",
+                            Message = $"Category changed from {itemTemplate.Category?.Name} to {newCategory?.Name}",
                             CreatedDate = DateTime.Now
                         };
                         itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
                         await _context.LogEntries.AddAsync(logEntry);
                     }
-
                     if (itemTemplateUpdate.ProductNumber != itemTemplate.ProductNumber)
                     {
                         logEntry = new LogEntry
