@@ -30,5 +30,7 @@ namespace Inventory.Models
         public ICollection<Document>? Documents { get; set; }
 
         public IEnumerable<Size>? Sizes { get; set; }
+
+        public IEnumerable<LogEntry>? LogEntries { get; set; }
     }
 }

@@ -256,7 +256,7 @@ namespace Inventory.Controllers
         [SwaggerResponse(200, "Item deleted")]
         [SwaggerResponse(400, "Invalid request")]
         [SwaggerResponse(404, "Item not found")]
-        public async Task<IActionResult> DeleteItem(string id)
+        public async Task<IActionResult> DeleteItem(string id, bool? deleteSubItems)
         {
             try
             {
@@ -266,7 +266,7 @@ namespace Inventory.Controllers
                     return NotFound("Item not found");
                 }
 
-                await _itemService.DeleteItemAsync(id);
+                await _itemService.DeleteItemAsync(id, deleteSubItems);
 
                 return NoContent();
             }
