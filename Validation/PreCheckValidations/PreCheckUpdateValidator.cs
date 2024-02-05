@@ -11,7 +11,7 @@ namespace Inventory.Validations.PreCheckValidations
             RuleFor(preCheck => preCheck.Check).Must(check => check == true).WithMessage("Check has to be true.");
 
             RuleFor(preCheck => preCheck.Comment)
-                .MaximumLength(200).WithMessage("Comment cannot exceed 200 characters.");
+                .MaximumLength(1000).WithMessage("Comment cannot exceed 1000 characters.");
 
             RuleFor(preCheck => preCheck.Id).NotEmpty().WithMessage("PreCheck Id is required.")
                 .NotNull().WithMessage("PreCheck Id cannot be null.");

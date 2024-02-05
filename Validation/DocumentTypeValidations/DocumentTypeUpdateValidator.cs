@@ -16,7 +16,7 @@ namespace Inventory.Validations.DocumentTypeValidations
 
             RuleFor(documentType => documentType.Description).NotEmpty().WithMessage("Description is required.")
                 .NotNull().WithMessage("Description cannot be null.")
-                .MaximumLength(200).WithMessage("Description cannot exceed 200 characters.");
+                .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
 
             RuleFor(documentType => documentType.Id).NotEmpty().WithMessage("Document type Id is required.")
                 .NotNull().WithMessage("Document type Id cannot be null.");
