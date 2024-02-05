@@ -280,11 +280,27 @@ namespace Inventory.Controllers
         [SwaggerOperation(Summary = "Unique WellPartner Id check", Description = "Checks if WellPartner Id is unique.")]
         [SwaggerResponse(200, "Success", typeof(bool))]
         [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<bool>> IsIdUnique(string wpId)
+        public async Task<ActionResult<bool>> IsWpIdUnique(string wpId)
         {
             try
             {
                 return await _itemService.IsWpIdUnique(wpId);
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Something went wrong: {e.Message}");
+            }
+        }
+
+        [HttpGet("IsSerialNumberUnique/{serialNumber}")]
+        [SwaggerOperation(Summary = "Unique serial number check", Description = "Checks if serial number is unique.")]
+        [SwaggerResponse(200, "Success", typeof(bool))]
+        [SwaggerResponse(400, "Invalid request")]
+        public async Task<ActionResult<bool>> IsSerialNumberUnique(string serialNumber)
+        {
+            try
+            {
+                return await _itemService.IsSerialNumberUnique(serialNumber);
             }
             catch (Exception e)
             {
