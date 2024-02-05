@@ -95,32 +95,32 @@ public class ItemTemplateService(InventoryDbContext context) : IItemTemplateServ
 
                 if (itemTemplateUpdate.CategoryId != itemTemplate.CategoryId)
                 {
-                        var newCategory =
-                            await _context.Categories.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.CategoryId);
+                    var newCategory =
+                        await context.Categories.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.CategoryId);
 
-                        logEntry = new LogEntry
-                        {
-                            ItemTemplateId = itemTemplate.Id,
-                            CreatedById = updatedById,
-                            Message = $"Category changed from {itemTemplate.Category?.Name} to {newCategory?.Name}",
-                            CreatedDate = DateTime.Now
-                        };
-                        itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
-                        await _context.LogEntries.AddAsync(logEntry);
-                    }
-                    
-                    if (itemTemplateUpdate.ProductNumber != itemTemplate.ProductNumber)
+                    logEntry = new LogEntry
                     {
-                        logEntry = new LogEntry
-                        {
-                            ItemTemplateId = itemTemplate.Id,
-                            CreatedById = updatedById,
-                            Message = $"Product number changed from {itemTemplate.ProductNumber} to {itemTemplateUpdate.ProductNumber}",
-                            CreatedDate = DateTime.Now
-                        };
-                        itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
-                        await _context.LogEntries.AddAsync(logEntry);
-                    }
+                        ItemTemplateId = itemTemplate.Id,
+                        CreatedById = updatedById,
+                        Message = $"Category changed from {itemTemplate.Category?.Name} to {newCategory?.Name}",
+                        CreatedDate = DateTime.Now
+                    };
+                    itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
+                    await context.LogEntries.AddAsync(logEntry);
+                }
+
+                if (itemTemplateUpdate.ProductNumber != itemTemplate.ProductNumber)
+                {
+                    logEntry = new LogEntry
+                    {
+                        ItemTemplateId = itemTemplate.Id,
+                        CreatedById = updatedById,
+                        Message = $"Product number changed from {itemTemplate.ProductNumber} to {itemTemplateUpdate.ProductNumber}",
+                        CreatedDate = DateTime.Now
+                    };
+                    itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
+                    await context.LogEntries.AddAsync(logEntry);
+                }
 
                 if (itemTemplateUpdate.Revision != itemTemplate.Revision)
                 {
