@@ -3,6 +3,4 @@ using Inventory.Models;
 
 namespace Inventory.Validations.DocumentTypeValidations;
 
-public interface IDocumentTypeUpdateValidator : IValidator<DocumentType>
-{
-}
+public interface IDocumentTypeUpdateValidator : IValidator<DocumentType>;

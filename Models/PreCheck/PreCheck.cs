@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
@@ -8,7 +9,8 @@ namespace Inventory.Models
         public string? Id { get; set; }
 
         public bool? Check { get; set; }
-
+        
+        [MaxLength(1000)]
         public string? Comment { get; set; }
     }
 }

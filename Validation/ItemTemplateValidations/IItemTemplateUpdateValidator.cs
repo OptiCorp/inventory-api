@@ -3,6 +3,4 @@ using Inventory.Models;
 
 namespace Inventory.Validations.ItemTemplateValidations;
 
-public interface IItemTemplateUpdateValidator : IValidator<ItemTemplate>
-{
-}
+public interface IItemTemplateUpdateValidator : IValidator<ItemTemplate>;

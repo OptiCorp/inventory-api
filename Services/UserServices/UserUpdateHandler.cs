@@ -16,7 +16,7 @@ namespace Inventory.Services
 
         public UserUpdateHandler(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
         {
-            _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
+            _appSettings = appSettings.Value ?? throw new ArgumentNullException(nameof(appSettings));
             _serviceProvider = serviceProvider;
         }
 
@@ -88,8 +88,6 @@ namespace Inventory.Services
                                 break;
                             case "deleted":
                                 user.Status = UserStatus.Deleted;
-                                break;
-                            default:
                                 break;
                         }
                     }

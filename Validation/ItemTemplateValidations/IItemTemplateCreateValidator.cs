@@ -3,6 +3,4 @@ using Inventory.Models.DTO;
 
 namespace Inventory.Validations.ItemTemplateValidations;
 
-public interface IItemTemplateCreateValidator : IValidator<ItemTemplateCreateDto>
-{
-}
+public interface IItemTemplateCreateValidator : IValidator<ItemTemplateCreateDto>;

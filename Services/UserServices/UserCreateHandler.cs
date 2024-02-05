@@ -15,7 +15,7 @@ namespace Inventory.Services
 
         public UserCreateHandler(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
         {
-            _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
+            _appSettings = appSettings.Value ?? throw new ArgumentNullException(nameof(appSettings));
             _serviceProvider = serviceProvider;
         }
 

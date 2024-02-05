@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Inventory.Models
@@ -6,23 +7,32 @@ namespace Inventory.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
-
+        
+        [MaxLength(100)]
         public string? WpId { get; set; }
-
+        
+        [MaxLength(100)]
         public string? SerialNumber { get; set; }
-
+        
+        [MaxLength(100)]
         public string? ParentId { get; set; }
-
+        
+        [MaxLength(100)]
         public string? VendorId { get; set; }
-
+        
+        [MaxLength(100)]
         public string? LocationId { get; set; }
-
+        
+        [MaxLength(100)]
         public string? CreatedById { get; set; }
-
+        
+        [MaxLength(1000)]
         public string? Comment { get; set; }
-
+        
+        [MaxLength(100)]
         public string? ItemTemplateId { get; set; }
-
+        
+        [MaxLength(100)]
         public string? PreCheckId { get; set; }
 
         public DateTime? CreatedDate { get; set; }
