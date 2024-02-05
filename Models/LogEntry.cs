@@ -9,6 +9,8 @@ namespace Inventory.Models
 
         public string? ItemId { get; set; }
 
+        public string? ItemTemplateId { get; set; }
+
         public string? CreatedById { get; set; }
 
         public string? Message { get; set; }

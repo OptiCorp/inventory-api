@@ -4,6 +4,7 @@ using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace inventoryapi.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240202151350_TemplateLogEntries")]
+    partial class TemplateLogEntries
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -410,13 +413,11 @@ namespace inventoryapi.Migrations
 
                     b.HasOne("Inventory.Models.Item", null)
                         .WithMany("Documents")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ItemId");
 
                     b.HasOne("Inventory.Models.ItemTemplate", null)
                         .WithMany("Documents")
-                        .HasForeignKey("ItemTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ItemTemplateId");
 
                     b.Navigation("DocumentType");
                 });
@@ -514,7 +515,7 @@ namespace inventoryapi.Migrations
                     b.HasOne("Inventory.Models.ItemTemplate", null)
                         .WithMany("Sizes")
                         .HasForeignKey("ItemTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("ItemList", b =>

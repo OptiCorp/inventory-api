@@ -22,6 +22,7 @@ namespace Inventory.Services
                     .Include(c => c.Documents)
                     .Include(c => c.Sizes)
                     .Include(c => c.CreatedBy)
+                    .Include(c => c.LogEntries)
                     .ToListAsync();
             }
             catch (Exception e)
@@ -41,6 +42,7 @@ namespace Inventory.Services
                     .Include(c => c.Documents)
                     .Include(c => c.Sizes)
                     .Include(c => c.CreatedBy)
+                    .Include(c => c.LogEntries)
                     .FirstOrDefaultAsync(c => c.Id == id);
             }
             catch (Exception e)
@@ -76,19 +78,80 @@ namespace Inventory.Services
             }
         }
 
-        public async Task UpdateItemTemplateAsync(ItemTemplate itemTemplateUpdate)
+        public async Task UpdateItemTemplateAsync(ItemTemplate itemTemplateUpdate, string updatedById)
         {
             try
             {
-                var itemTemplate = await _context.ItemTemplates.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.Id);
+                var itemTemplate = await _context.ItemTemplates.Include(itemTemplate => itemTemplate.Category).FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.Id);
 
                 if (itemTemplate != null)
                 {
-                    itemTemplate.Type = itemTemplateUpdate.Type;
-                    itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
-                    itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
-                    itemTemplate.Revision = itemTemplateUpdate.Revision;
-                    itemTemplate.Description = itemTemplateUpdate.Description;
+                    LogEntry logEntry;
+                    if (itemTemplateUpdate.Type != itemTemplate.Type)
+                    {
+                        logEntry = new LogEntry
+                        {
+                            ItemTemplateId = itemTemplate.Id,
+                            CreatedById = updatedById,
+                            Message = $"Type changed from {itemTemplate.Type} to {itemTemplateUpdate.Type}",
+                            CreatedDate = DateTime.Now
+                        };
+                        itemTemplate.Type = itemTemplateUpdate.Type;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+
+                    if (itemTemplateUpdate.CategoryId != itemTemplate.CategoryId)
+                    {
+                        logEntry = new LogEntry
+                        {
+                            ItemTemplateId = itemTemplate.Id,
+                            CreatedById = updatedById,
+                            Message = $"Category changed from {itemTemplate.Category?.Name} to {itemTemplateUpdate.Category?.Name}",
+                            CreatedDate = DateTime.Now
+                        };
+                        itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+
+                    if (itemTemplateUpdate.ProductNumber != itemTemplate.ProductNumber)
+                    {
+                        logEntry = new LogEntry
+                        {
+                            ItemTemplateId = itemTemplate.Id,
+                            CreatedById = updatedById,
+                            Message = $"Category changed from {itemTemplate.ProductNumber} to {itemTemplateUpdate.ProductNumber}",
+                            CreatedDate = DateTime.Now
+                        };
+                        itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+
+                    if (itemTemplateUpdate.Revision != itemTemplate.Revision)
+                    {
+                        logEntry = new LogEntry
+                        {
+                            ItemTemplateId = itemTemplate.Id,
+                            CreatedById = updatedById,
+                            Message = $"Revision changed from {itemTemplate.Revision} to {itemTemplateUpdate.Revision}",
+                            CreatedDate = DateTime.Now
+                        };
+                        itemTemplate.Revision = itemTemplateUpdate.Revision;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+
+                    if (itemTemplateUpdate.Description != itemTemplate.Description)
+                    {
+                        logEntry = new LogEntry
+                        {
+                            ItemTemplateId = itemTemplate.Id,
+                            CreatedById = updatedById,
+                            Message = "Description updated",
+                            CreatedDate = DateTime.Now
+                        };
+                        itemTemplate.Description = itemTemplateUpdate.Description;
+                        await _context.LogEntries.AddAsync(logEntry);
+                    }
+
                     itemTemplate.CreatedById = itemTemplateUpdate.CreatedById;
                     itemTemplate.UpdatedDate = DateTime.Now;
 

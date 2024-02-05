@@ -15,7 +15,7 @@ namespace Inventory.Services
         Task AddChildItemToParentAsync(string parentItemId, string childItemId);
         Task RemoveParentIdAsync(string itemId);
         Task UpdateItemAsync(string updatedById, Item item);
-        Task DeleteItemAsync(string id);
+        Task DeleteItemAsync(string id, bool? deleteSubItems);
         Task<bool> IsWpIdUnique(string id);
     }
 }

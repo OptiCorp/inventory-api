@@ -37,6 +37,8 @@ namespace Inventory.Services
                 var result = await _context.Items
                     .Where(c => c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)))
                     .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c!.LogEntries)
+                    .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
@@ -64,6 +66,8 @@ namespace Inventory.Services
 
                 var items = await _context.Items
                     .Where(c => templateIds.Contains(c.ItemTemplateId))
+                    .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c!.LogEntries)
                     .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
@@ -94,6 +98,8 @@ namespace Inventory.Services
             {
                 return await _context.Items.Where(c => c.CreatedById == id)
                     .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c!.LogEntries)
+                    .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
@@ -120,6 +126,8 @@ namespace Inventory.Services
             {
                 return await _context.Items.Where(c => c.ParentId == parentId)
                     .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c!.LogEntries)
+                    .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
                     .Include(c => c.Children)
@@ -142,6 +150,8 @@ namespace Inventory.Services
             try
             {
                 return await _context.Items
+                    .Include(c => c.ItemTemplate)
+                    .ThenInclude(c => c!.LogEntries)
                     .Include(c => c.ItemTemplate)
                     .ThenInclude(c => c!.Category)
                     .Include(c => c.Parent)
@@ -367,7 +377,7 @@ namespace Inventory.Services
             }
         }
 
-        public async Task DeleteItemAsync(string id)
+        public async Task DeleteItemAsync(string id, bool? deleteSubItems)
         {
             try
             {
@@ -378,6 +388,8 @@ namespace Inventory.Services
                         foreach (var child in item.Children)
                         {
                             child.ParentId = null;
+                            if (deleteSubItems != true) continue;
+                            if (child.Id != null) await DeleteItemAsync(child.Id, deleteSubItems);
                         }
 
                     _context.Items.Remove(item);

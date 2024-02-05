@@ -4,6 +4,7 @@ using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace inventoryapi.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240202140400_Cascade")]
+    partial class Cascade
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,9 +261,6 @@ namespace inventoryapi.Migrations
                     b.Property<string>("ItemId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ItemTemplateId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
@@ -269,8 +269,6 @@ namespace inventoryapi.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("ItemId");
-
-                    b.HasIndex("ItemTemplateId");
 
                     b.ToTable("LogEntries");
                 });
@@ -502,10 +500,6 @@ namespace inventoryapi.Migrations
                         .WithMany("LogEntries")
                         .HasForeignKey("ItemId");
 
-                    b.HasOne("Inventory.Models.ItemTemplate", null)
-                        .WithMany("LogEntries")
-                        .HasForeignKey("ItemTemplateId");
-
                     b.Navigation("CreatedBy");
                 });
 
@@ -544,8 +538,6 @@ namespace inventoryapi.Migrations
             modelBuilder.Entity("Inventory.Models.ItemTemplate", b =>
                 {
                     b.Navigation("Documents");
-
-                    b.Navigation("LogEntries");
 
                     b.Navigation("Sizes");
                 });
