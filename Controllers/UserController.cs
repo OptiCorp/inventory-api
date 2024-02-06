@@ -3,105 +3,97 @@ using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Models;
 using Inventory.Services;
 
-namespace Inventory.Controllers
+namespace Inventory.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class UserController(IUserService userService) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get all users", Description = "Retrieves a list of all users.")]
+    [SwaggerResponse(200, "Success", typeof(IEnumerable<User>))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<IActionResult> GetAllUsers()
     {
-        private readonly IUserService _userService;
-
-        public UserController(IUserService userService)
+        try
         {
-            _userService = userService;
+            return Ok(await userService.GetAllUsersAsync());
         }
-
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get all users", Description = "Retrieves a list of all users.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<User>))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<IActionResult> GetAllUsers()
+        catch (Exception e)
         {
-            try
-            {
-                return Ok(await _userService.GetAllUsersAsync());
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return BadRequest($"Something went wrong: {e.Message}");
         }
+    }
 
-        [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get user by ID", Description = "Retrieves a user by their ID.")]
-        [SwaggerResponse(200, "Success", typeof(User))]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "User not found")]
-        public async Task<IActionResult> GetUserById(string id)
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get user by ID", Description = "Retrieves a user by their ID.")]
+    [SwaggerResponse(200, "Success", typeof(User))]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "User not found")]
+    public async Task<IActionResult> GetUserById(string id)
+    {
+        try
         {
-            try
-            {
-                var user = await _userService.GetUserByIdAsync(id);
+            var user = await userService.GetUserByIdAsync(id);
 
-                if (user == null)
-                {
-                    return NotFound("User not found");
-                }
-
-                return Ok(user);
-            }
-            catch (Exception e)
+            if (user == null)
             {
-                return BadRequest($"Something went wrong: {e.Message}");
+                return NotFound("User not found");
             }
+
+            return Ok(user);
         }
-
-        [HttpGet("ByAzureAdUserId/{azureAdUserId}")]
-        [SwaggerOperation(Summary = "Get Azure AD user by ID", Description = "Retrieves a Azure AD user by their ID.")]
-        [SwaggerResponse(200, "Success", typeof(User))]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "Azure AD user not found")]
-        public async Task<IActionResult> GetUserByAzureAdUserId(string azureAdUserId)
+        catch (Exception e)
         {
-            try
-            {
-                var user = await _userService.GetUserByAzureAdUserIdAsync(azureAdUserId);
-
-                if (user == null)
-                {
-                    return NotFound("User not found");
-                }
-
-                return Ok(user);
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return BadRequest($"Something went wrong: {e.Message}");
         }
+    }
 
-        [HttpGet("ByUserName/{username}")]
-        [SwaggerOperation(Summary = "Get user by username", Description = "Retrieves a user by their username.")]
-        [SwaggerResponse(200, "Success", typeof(User))]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "User not found")]
-        public async Task<IActionResult> GetUserByUsername(string username)
+    [HttpGet("ByAzureAdUserId/{azureAdUserId}")]
+    [SwaggerOperation(Summary = "Get Azure AD user by ID", Description = "Retrieves a Azure AD user by their ID.")]
+    [SwaggerResponse(200, "Success", typeof(User))]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "Azure AD user not found")]
+    public async Task<IActionResult> GetUserByAzureAdUserId(string azureAdUserId)
+    {
+        try
         {
-            try
-            {
-                var user = await _userService.GetUserByUsernameAsync(username);
+            var user = await userService.GetUserByAzureAdUserIdAsync(azureAdUserId);
 
-                if (user == null)
-                {
-                    return NotFound("User not found");
-                }
-
-                return Ok(user);
-            }
-            catch (Exception e)
+            if (user == null)
             {
-                return BadRequest($"Something went wrong: {e.Message}");
+                return NotFound("User not found");
             }
+
+            return Ok(user);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpGet("ByUserName/{username}")]
+    [SwaggerOperation(Summary = "Get user by username", Description = "Retrieves a user by their username.")]
+    [SwaggerResponse(200, "Success", typeof(User))]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "User not found")]
+    public async Task<IActionResult> GetUserByUsername(string username)
+    {
+        try
+        {
+            var user = await userService.GetUserByUsernameAsync(username);
+
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            return Ok(user);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
         }
     }
 }

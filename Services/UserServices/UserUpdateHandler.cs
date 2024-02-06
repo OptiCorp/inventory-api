@@ -1,113 +1,94 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Inventory.Models;
 using Inventory.Models.DTO;
+using Inventory.Configuration;
 
-namespace Inventory.Services
+namespace Inventory.Services;
+
+public class UserUpdateHandler(IServiceProvider serviceProvider)
+    : BackgroundService
 {
-    public class UserUpdateHandler : BackgroundService
+    private ServiceBusClient? _client;
+    private ServiceBusProcessor? _processor;
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        private readonly AppSettings _appSettings;
-        private ServiceBusClient? _client;
-        private ServiceBusProcessor? _processor;
-        private readonly IServiceProvider _serviceProvider;
+        // Initialize the Service Bus client and processor.
+        _client = new ServiceBusClient(AppSettings.QueueConnectionString);
+        _processor = _client.CreateProcessor(AppSettings.TopicUserUpdated, AppSettings.SubscriptionInventory, new ServiceBusProcessorOptions());
 
-        public UserUpdateHandler(IOptions<AppSettings> appSettings, IServiceProvider serviceProvider)
+        // Configure args handler and error handler.
+        _processor.ProcessMessageAsync += MessageHandler;
+        _processor.ProcessErrorAsync += ErrorHandler;
+
+        // Start processing messages.
+        await _processor.StartProcessingAsync(stoppingToken);
+
+        Console.WriteLine($"{nameof(UserUpdateHandler)} service has started.");
+
+        // Wait for a cancellation signal (e.g., Ctrl + C) or another stopping condition.
+        await Task.Delay(Timeout.Infinite, stoppingToken);
+
+        Console.WriteLine($"{nameof(UserUpdateHandler)} service has stopped.");
+
+        // Stop processing messages and clean up resources.
+        await _processor.StopProcessingAsync(stoppingToken);
+        await _processor.DisposeAsync();
+        await _client.DisposeAsync();
+    }
+
+    private async Task MessageHandler(ProcessMessageEventArgs args)
+    {
+        using var scope = serviceProvider.CreateScope();
+        ArgumentNullException.ThrowIfNull(args);
+
+        var body = args.Message.Body.ToString();
+        var updatedUserDto = JsonSerializer.Deserialize<UserBusUpdateDto>(body);
+
+        Console.WriteLine(updatedUserDto?.Username);
+
+        var scopedService = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+
+        var user = await scopedService.User.FirstOrDefaultAsync(u => updatedUserDto != null && u.UmId == updatedUserDto.Id);
+        if (user != null)
         {
-            _appSettings = appSettings?.Value ?? throw new ArgumentNullException(nameof(appSettings));
-            _serviceProvider = serviceProvider;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            // Initialize the Service Bus client and processor.
-            _client = new ServiceBusClient(_appSettings.QueueConnectionString);
-            _processor = _client.CreateProcessor(_appSettings.TopicUserUpdated, _appSettings.SubscriptionInventory, new ServiceBusProcessorOptions());
-
-            // Configure args handler and error handler.
-            _processor.ProcessMessageAsync += MessageHandler;
-            _processor.ProcessErrorAsync += ErrorHandler;
-
-            // Start processing messages.
-            await _processor.StartProcessingAsync(stoppingToken);
-
-            Console.WriteLine($"{nameof(UserUpdateHandler)} service has started.");
-
-            // Wait for a cancellation signal (e.g., Ctrl + C) or another stopping condition.
-            await Task.Delay(Timeout.Infinite, stoppingToken);
-
-            Console.WriteLine($"{nameof(UserUpdateHandler)} service has stopped.");
-
-            // Stop processing messages and clean up resources.
-            await _processor.StopProcessingAsync(stoppingToken);
-            await _processor.DisposeAsync();
-            await _client.DisposeAsync();
-        }
-
-        private async Task MessageHandler(ProcessMessageEventArgs args)
-        {
-            using (var scope = _serviceProvider.CreateScope())
+            if (updatedUserDto?.Username != null)
+                user.Username = updatedUserDto.Username;
+            if (updatedUserDto?.FirstName != null)
+                user.FirstName = updatedUserDto.FirstName;
+            if (updatedUserDto?.LastName != null)
+                user.LastName = updatedUserDto.LastName;
+            if (updatedUserDto?.Email != null)
+                user.Email = updatedUserDto.Email;
+            if (updatedUserDto?.UserRole != null)
+                user.UserRole = updatedUserDto.UserRole;
+            if (updatedUserDto?.AzureAdUserId != null)
+                user.AzureAdUserId = updatedUserDto.AzureAdUserId;
+            if (updatedUserDto?.Status != null)
             {
-                if (args == null)
-                    throw new ArgumentNullException(nameof(args));
-
-                string body = args.Message.Body.ToString();
-                UserBusUpdateDto? updatedUserDto = JsonSerializer.Deserialize<UserBusUpdateDto>(body);
-
-                Console.WriteLine(updatedUserDto?.Username);
-
-                var scopedService = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
-
-                var user = await scopedService.User.FirstOrDefaultAsync(u => updatedUserDto != null && u.UmId == updatedUserDto.Id);
-                if (user != null)
+                var status = updatedUserDto.Status.ToLower();
+                user.Status = status switch
                 {
-                    if (updatedUserDto?.Username != null)
-                        user.Username = updatedUserDto.Username;
-                    if (updatedUserDto?.FirstName != null)
-                        user.FirstName = updatedUserDto.FirstName;
-                    if (updatedUserDto?.LastName != null)
-                        user.LastName = updatedUserDto.LastName;
-                    if (updatedUserDto?.Email != null)
-                        user.Email = updatedUserDto.Email;
-                    if (updatedUserDto?.UserRole != null)
-                        user.UserRole = updatedUserDto.UserRole;
-                    if (updatedUserDto?.AzureAdUserId != null)
-                        user.AzureAdUserId = updatedUserDto.AzureAdUserId;
-                    if (updatedUserDto?.Status != null)
-                    {
-                        string status = updatedUserDto.Status.ToLower();
-                        switch (status)
-                        {
-                            case "active":
-                                user.Status = UserStatus.Active;
-                                break;
-                            case "disabled":
-                                user.Status = UserStatus.Disabled;
-                                break;
-                            case "deleted":
-                                user.Status = UserStatus.Deleted;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-
-                if (user != null)
-                    user.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
-                        TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
-                await scopedService.SaveChangesAsync();
-                await args.CompleteMessageAsync(args.Message);
+                    "active" => UserStatus.Active,
+                    "disabled" => UserStatus.Disabled,
+                    "deleted" => UserStatus.Deleted,
+                    _ => user.Status
+                };
             }
         }
 
-        private Task ErrorHandler(ProcessErrorEventArgs args)
-        {
-            if (args == null)
-                throw new ArgumentNullException(nameof(args));
-            return Task.CompletedTask;
-        }
+        if (user != null)
+            user.UpdatedDate = TimeZoneInfo.ConvertTime(DateTime.Now,
+                TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"));
+        await scopedService.SaveChangesAsync();
+        await args.CompleteMessageAsync(args.Message);
+    }
+
+    private static Task ErrorHandler(ProcessErrorEventArgs args)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+        return Task.CompletedTask;
     }
 }

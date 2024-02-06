@@ -1,18 +1,20 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Inventory.Models
+namespace Inventory.Models;
+
+public class Vendor
 {
-    public class Vendor
-    {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string? Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string? Id { get; set; }
 
-        public string? Name { get; set; }
+    [MaxLength(100)]
+    public string? Name { get; set; }
 
-        public string? CreatedById { get; set; }
+    [MaxLength(100)]
+    public string? CreatedById { get; set; }
 
-        public DateTime? CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
 
-        public DateTime? UpdatedDate { get; set; }
-    }
+    public DateTime? UpdatedDate { get; set; }
 }

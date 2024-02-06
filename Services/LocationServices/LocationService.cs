@@ -2,116 +2,108 @@ using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory.Services
+namespace Inventory.Services;
+
+public class LocationService(InventoryDbContext context) : ILocationService
 {
-    public class LocationService : ILocationService
+    public async Task<IEnumerable<Location>> GetAllLocationsAsync()
     {
-        private readonly InventoryDbContext _context;
-
-        public LocationService(InventoryDbContext context)
+        try
         {
-            _context = context;
+            return await context.Locations.ToListAsync();
         }
-
-        public async Task<IEnumerable<Location>> GetAllLocationsAsync()
+        catch (Exception e)
         {
-            try
-            {
-                return await _context.Locations.ToListAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task<IEnumerable<Location>> GetAllLocationsBySearchStringAsync(string searchString)
+    public async Task<IEnumerable<Location>> GetAllLocationsBySearchStringAsync(string searchString)
+    {
+        try
         {
-            try
-            {
-                return await _context.Locations.Where(location => location.Name != null && location.Name.Contains(searchString))
-                    .ToListAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return await context.Locations.Where(location => location.Name != null && location.Name.Contains(searchString))
+                .ToListAsync();
         }
-
-        public async Task<Location?> GetLocationByIdAsync(string id)
+        catch (Exception e)
         {
-            try
-            {
-                return await _context.Locations.FirstOrDefaultAsync(c => c.Id == id);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task<string?> CreateLocationAsync(LocationCreateDto locationCreate)
+    public async Task<Location?> GetLocationByIdAsync(string id)
+    {
+        try
         {
-            try
-            {
-                var location = new Location
-                {
-                    Name = locationCreate.Name,
-                    CreatedById = locationCreate.CreatedById,
-                    CreatedDate = DateTime.Now
-                };
-
-                await _context.Locations.AddAsync(location);
-                await _context.SaveChangesAsync();
-                return location.Id;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return await context.Locations.FirstOrDefaultAsync(c => c.Id == id);
         }
-
-        public async Task UpdateLocationAsync(Location locationUpdate)
+        catch (Exception e)
         {
-            try
-            {
-                var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == locationUpdate.Id);
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 
-                if (location != null)
-                {
-                    location.Name = locationUpdate.Name;
-                    location.UpdatedDate = DateTime.Now;
-
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception e)
+    public async Task<string?> CreateLocationAsync(LocationCreateDto locationCreate)
+    {
+        try
+        {
+            var location = new Location
             {
-                Console.WriteLine(e);
-                throw;
+                Name = locationCreate.Name,
+                CreatedById = locationCreate.CreatedById,
+                CreatedDate = DateTime.Now
+            };
+
+            await context.Locations.AddAsync(location);
+            await context.SaveChangesAsync();
+            return location.Id;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task UpdateLocationAsync(Location locationUpdate)
+    {
+        try
+        {
+            var location = await context.Locations.FirstOrDefaultAsync(c => c.Id == locationUpdate.Id);
+
+            if (location != null)
+            {
+                location.Name = locationUpdate.Name;
+                location.UpdatedDate = DateTime.Now;
+
+                await context.SaveChangesAsync();
             }
         }
-
-        public async Task DeleteLocationAsync(string id)
+        catch (Exception e)
         {
-            try
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task DeleteLocationAsync(string id)
+    {
+        try
+        {
+            var location = await context.Locations.FirstOrDefaultAsync(c => c.Id == id);
+            if (location != null)
             {
-                var location = await _context.Locations.FirstOrDefaultAsync(c => c.Id == id);
-                if (location != null)
-                {
-                    _context.Locations.Remove(location);
-                    await _context.SaveChangesAsync();
-                }
+                context.Locations.Remove(location);
+                await context.SaveChangesAsync();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

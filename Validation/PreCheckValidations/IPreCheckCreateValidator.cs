@@ -3,6 +3,4 @@ using Inventory.Models.DTO;
 
 namespace Inventory.Validations.PreCheckValidations;
 
-public interface IPreCheckCreateValidator : IValidator<PreCheckCreateDto>
-{
-}
+public interface IPreCheckCreateValidator : IValidator<PreCheckCreateDto>;

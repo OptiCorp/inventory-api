@@ -2,101 +2,93 @@ using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventory.Services
+namespace Inventory.Services;
+
+public class PreCheckService(InventoryDbContext context) : IPreCheckService
 {
-    public class PreCheckService : IPreCheckService
+    public async Task<IEnumerable<PreCheck>> GetAllPreChecksAsync()
     {
-        private readonly InventoryDbContext _context;
-
-        public PreCheckService(InventoryDbContext context)
+        try
         {
-            _context = context;
+            return await context.PreChecks.ToListAsync();
         }
-
-        public async Task<IEnumerable<PreCheck>> GetAllPreChecksAsync()
+        catch (Exception e)
         {
-            try
-            {
-                return await _context.PreChecks.ToListAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task<PreCheck?> GetPreCheckByIdAsync(string id)
+    public async Task<PreCheck?> GetPreCheckByIdAsync(string id)
+    {
+        try
         {
-            try
-            {
-                return await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == id);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return await context.PreChecks.FirstOrDefaultAsync(c => c.Id == id);
         }
-
-        public async Task<string?> CreatePreCheckAsync(PreCheckCreateDto preCheckCreate)
+        catch (Exception e)
         {
-            try
-            {
-                var preCheck = new PreCheck()
-                {
-                    Check = preCheckCreate.Check,
-                    Comment = preCheckCreate.Comment
-                };
-
-                await _context.PreChecks.AddAsync(preCheck);
-                await _context.SaveChangesAsync();
-                return preCheck.Id;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task UpdatePreCheckAsync(PreCheck preCheckUpdate)
+    public async Task<string?> CreatePreCheckAsync(PreCheckCreateDto preCheckCreate)
+    {
+        try
         {
-            try
+            var preCheck = new PreCheck
             {
-                var preCheck = await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == preCheckUpdate.Id);
+                Check = preCheckCreate.Check,
+                Comment = preCheckCreate.Comment
+            };
 
-                if (preCheck != null)
-                {
-                    preCheck.Check = preCheckUpdate.Check;
-                    preCheck.Comment = preCheckUpdate.Comment;
+            await context.PreChecks.AddAsync(preCheck);
+            await context.SaveChangesAsync();
+            return preCheck.Id;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception e)
+    public async Task UpdatePreCheckAsync(PreCheck preCheckUpdate)
+    {
+        try
+        {
+            var preCheck = await context.PreChecks.FirstOrDefaultAsync(c => c.Id == preCheckUpdate.Id);
+
+            if (preCheck != null)
             {
-                Console.WriteLine(e);
-                throw;
+                preCheck.Check = preCheckUpdate.Check;
+                preCheck.Comment = preCheckUpdate.Comment;
+
+                await context.SaveChangesAsync();
             }
         }
-
-        public async Task DeletePreCheckAsync(string id)
+        catch (Exception e)
         {
-            try
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task DeletePreCheckAsync(string id)
+    {
+        try
+        {
+            var preCheck = await context.PreChecks.FirstOrDefaultAsync(c => c.Id == id);
+            if (preCheck != null)
             {
-                var preCheck = await _context.PreChecks.FirstOrDefaultAsync(c => c.Id == id);
-                if (preCheck != null)
-                {
-                    _context.PreChecks.Remove(preCheck);
-                    await _context.SaveChangesAsync();
-                }
+                context.PreChecks.Remove(preCheck);
+                await context.SaveChangesAsync();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

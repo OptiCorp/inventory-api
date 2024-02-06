@@ -3,6 +3,4 @@ using Inventory.Models;
 
 namespace Inventory.Validations.PreCheckValidations;
 
-public interface IPreCheckUpdateValidator : IValidator<PreCheck>
-{
-}
+public interface IPreCheckUpdateValidator : IValidator<PreCheck>;

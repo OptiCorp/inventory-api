@@ -1,8 +1,7 @@
-namespace Inventory.Models.DTO
+namespace Inventory.Models.DTO;
+
+public class UserBusDeleteDto
 {
-    public class UserBusDeleteDto
-    {
-        public string? Id { get; set; }
-        public string? DeleteMode { get; set; }
-    }
+    public string? Id { get; set; }
+    public string? DeleteMode { get; set; }
 }

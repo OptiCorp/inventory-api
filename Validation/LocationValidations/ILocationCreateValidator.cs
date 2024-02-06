@@ -3,6 +3,4 @@ using Inventory.Models.DTO;
 
 namespace Inventory.Validations.LocationValidations;
 
-public interface ILocationCreateValidator : IValidator<LocationCreateDto>
-{
-}
+public interface ILocationCreateValidator : IValidator<LocationCreateDto>;
