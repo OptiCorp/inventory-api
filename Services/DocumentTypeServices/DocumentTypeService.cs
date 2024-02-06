@@ -10,7 +10,10 @@ public class DocumentTypeService(InventoryDbContext context) : IDocumentTypeServ
     {
         try
         {
-            return await context.DocumentTypes.ToListAsync();
+            return await context.DocumentTypes
+                .OrderBy(c => c.Name == "other" ? int.MaxValue : (int?)null)
+                .ThenBy(c => c.Name)
+                .ToListAsync();
         }
         catch (Exception e)
         {
