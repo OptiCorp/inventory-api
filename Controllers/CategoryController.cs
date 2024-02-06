@@ -10,19 +10,12 @@ namespace Inventory.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CategoryController : ControllerBase
+public class CategoryController(
+    ICategoryService categoryService,
+    ICategoryCreateValidator createValidator,
+    ICategoryUpdateValidator updateValidator)
+    : ControllerBase
 {
-    private readonly ICategoryService _categoryService;
-    private readonly ICategoryCreateValidator _createValidator;
-    private readonly ICategoryUpdateValidator _updateValidator;
-
-    public CategoryController(ICategoryService categoryService, ICategoryCreateValidator createValidator, ICategoryUpdateValidator updateValidator)
-    {
-        _categoryService = categoryService;
-        _createValidator = createValidator;
-        _updateValidator = updateValidator;
-    }
-
     [HttpGet]
     [SwaggerOperation(Summary = "Get all categories", Description = "Retrieves a list of all categories.")]
     [SwaggerResponse(200, "Success", typeof(IEnumerable<Category>))]
@@ -31,7 +24,7 @@ public class CategoryController : ControllerBase
     {
         try
         {
-            return Ok(await _categoryService.GetAllCategoriesAsync());
+            return Ok(await categoryService.GetAllCategoriesAsync());
         }
         catch (Exception e)
         {
@@ -48,7 +41,7 @@ public class CategoryController : ControllerBase
     {
         try
         {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
+            var category = await categoryService.GetCategoryByIdAsync(id);
             if (category == null)
             {
                 return NotFound("Category not found");
@@ -69,7 +62,7 @@ public class CategoryController : ControllerBase
     {
         try
         {
-            return Ok(await _categoryService.GetAllCategoriesBySearchStringAsync(searchString));
+            return Ok(await categoryService.GetAllCategoriesBySearchStringAsync(searchString));
         }
         catch (Exception e)
         {
@@ -83,7 +76,7 @@ public class CategoryController : ControllerBase
     [SwaggerResponse(400, "Invalid request")]
     public async Task<ActionResult<Category>> CreateCategory(CategoryCreateDto categoryCreate)
     {
-        var validationResult = await _createValidator.ValidateAsync(categoryCreate);
+        var validationResult = await createValidator.ValidateAsync(categoryCreate);
         if (!validationResult.IsValid)
         {
             var modelStateDictionary = new ModelStateDictionary();
@@ -99,8 +92,8 @@ public class CategoryController : ControllerBase
 
         try
         {
-            var categoryId = await _categoryService.CreateCategoryAsync(categoryCreate);
-            var category = await _categoryService.GetCategoryByIdAsync(categoryId!);
+            var categoryId = await categoryService.CreateCategoryAsync(categoryCreate);
+            var category = await categoryService.GetCategoryByIdAsync(categoryId!);
 
             return CreatedAtAction(nameof(GetCategory), new { id = categoryId }, category);
         }
@@ -117,7 +110,7 @@ public class CategoryController : ControllerBase
     [SwaggerResponse(404, "Category not found")]
     public async Task<IActionResult> UpdateCategory(string id, Category categoryUpdate)
     {
-        var validationResult = await _updateValidator.ValidateAsync(categoryUpdate);
+        var validationResult = await updateValidator.ValidateAsync(categoryUpdate);
         if (!validationResult.IsValid)
         {
             var modelStateDictionary = new ModelStateDictionary();
@@ -138,13 +131,13 @@ public class CategoryController : ControllerBase
 
         try
         {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
+            var category = await categoryService.GetCategoryByIdAsync(id);
             if (category == null)
             {
                 return NotFound("Category not found");
             }
 
-            await _categoryService.UpdateCategoryAsync(categoryUpdate);
+            await categoryService.UpdateCategoryAsync(categoryUpdate);
 
             return NoContent();
 
@@ -165,13 +158,13 @@ public class CategoryController : ControllerBase
     {
         try
         {
-            var category = await _categoryService.GetCategoryByIdAsync(id);
+            var category = await categoryService.GetCategoryByIdAsync(id);
             if (category == null)
             {
                 return NotFound("Category not found");
             }
 
-            await _categoryService.DeleteCategoryAsync(id);
+            await categoryService.DeleteCategoryAsync(id);
 
             return NoContent();
 
