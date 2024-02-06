@@ -1,7 +1,9 @@
 using Inventory.Models;
 using Inventory.Models.DTO;
 using Inventory.Services;
+using Inventory.Validations.DocumentValidations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Inventory.Controllers;
@@ -11,7 +13,8 @@ namespace Inventory.Controllers;
 public class DocumentController(
     IDocumentService documentService,
     IItemService itemService,
-    IItemTemplateService itemTemplateService)
+    IItemTemplateService itemTemplateService,
+    IDocumentUploadValidator documentUploadValidator)
     : ControllerBase
 {
     [HttpGet("{id}")]
@@ -60,6 +63,20 @@ public class DocumentController(
     [SwaggerResponse(400, "Invalid request")]
     public async Task<ActionResult> AddDocumentToItem([FromForm] DocumentUploadDto document, string itemId)
     {
+        var validationResult = await documentUploadValidator.ValidateAsync(document);
+        if (!validationResult.IsValid)
+        {
+            var modelStateDictionary = new ModelStateDictionary();
+            foreach (var failure in validationResult.Errors)
+            {
+                modelStateDictionary.AddModelError(
+                    failure.PropertyName,
+                    failure.ErrorMessage
+                );
+            }
+            return ValidationProblem(modelStateDictionary);
+        }
+
         try
         {
             var item = await itemService.GetItemByIdAsync(itemId);
@@ -84,6 +101,20 @@ public class DocumentController(
     [SwaggerResponse(400, "Invalid request")]
     public async Task<ActionResult> AddDocumentToItemTemplate([FromForm] DocumentUploadDto document, string itemTemplateId)
     {
+        var validationResult = await documentUploadValidator.ValidateAsync(document);
+        if (!validationResult.IsValid)
+        {
+            var modelStateDictionary = new ModelStateDictionary();
+            foreach (var failure in validationResult.Errors)
+            {
+                modelStateDictionary.AddModelError(
+                    failure.PropertyName,
+                    failure.ErrorMessage
+                );
+            }
+            return ValidationProblem(modelStateDictionary);
+        }
+
         try
         {
             var itemTemplate = await itemTemplateService.GetItemTemplateByIdAsync(itemTemplateId);
