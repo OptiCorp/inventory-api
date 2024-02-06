@@ -1,10 +1,9 @@
 
-namespace Inventory.Models.DTO
-{
-    public class CategoryCreateDto
-    {
-        public string? Name { get; set; }
+namespace Inventory.Models.DTO;
 
-        public string? CreatedById { get; set; }
-    }
+public class CategoryCreateDto
+{
+    public string? Name { get; set; }
+
+    public string? CreatedById { get; set; }
 }

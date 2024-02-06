@@ -60,9 +60,6 @@
     <None Remove="Validation\ChecklistTaskValidations\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Validation\DocumentationValidations\" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 </Project>

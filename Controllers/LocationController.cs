@@ -6,184 +6,176 @@ using Inventory.Services;
 using Inventory.Validations.LocationValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Inventory.Controllers
+namespace Inventory.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class LocationController(
+    ILocationService locationService,
+    ILocationCreateValidator createValidator,
+    ILocationUpdateValidator updateValidator)
+    : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class LocationController : ControllerBase
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get all locations", Description = "Retrieves a list of all locations.")]
+    [SwaggerResponse(200, "Success", typeof(IEnumerable<Location>))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult<IEnumerable<Location>>> GetAllLocations()
     {
-        private readonly ILocationService _locationService;
-        private readonly ILocationCreateValidator _createValidator;
-        private readonly ILocationUpdateValidator _updateValidator;
-
-        public LocationController(ILocationService locationService, ILocationCreateValidator createValidator, ILocationUpdateValidator updateValidator)
+        try
         {
-            _locationService = locationService;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
+            return Ok(await locationService.GetAllLocationsAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get location", Description = "Retrieves a location.")]
+    [SwaggerResponse(200, "Success", typeof(Location))]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "Location not found")]
+    public async Task<ActionResult<Location>> GetLocation(string id)
+    {
+        try
+        {
+            var location = await locationService.GetLocationByIdAsync(id);
+            if (location == null)
+            {
+                return NotFound("Location not found");
+            }
+
+            return Ok(location);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+
+    [HttpGet("BySearchString/{searchString}")]
+    [SwaggerOperation(Summary = "Get locations containing search string", Description = "Retrieves locations containing search string in name.")]
+    [SwaggerResponse(200, "Success", typeof(IEnumerable<Location>))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult<IEnumerable<Location>>> GetLocationsBySearchString(string searchString)
+    {
+        try
+        {
+            return Ok(await locationService.GetAllLocationsBySearchStringAsync(searchString));
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpPost]
+    [SwaggerOperation(Summary = "Create a new location", Description = "Creates a new location.")]
+    [SwaggerResponse(201, "Location created", typeof(Location))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult<Location>> CreateLocation(LocationCreateDto locationCreate)
+    {
+        var validationResult = await createValidator.ValidateAsync(locationCreate);
+        if (!validationResult.IsValid)
+        {
+            var modelStateDictionary = new ModelStateDictionary();
+            foreach (var failure in validationResult.Errors)
+            {
+                modelStateDictionary.AddModelError(
+                    failure.PropertyName,
+                    failure.ErrorMessage
+                );
+            }
+            return ValidationProblem(modelStateDictionary);
         }
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get all locations", Description = "Retrieves a list of all locations.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<Location>))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<IEnumerable<Location>>> GetAllLocations()
+        try
         {
-            try
+            var locationId = await locationService.CreateLocationAsync(locationCreate);
+            if (locationId == null)
             {
-                return Ok(await _locationService.GetAllLocationsAsync());
+                return BadRequest("Location creation failed");
             }
-            catch (Exception e)
+
+            var location = await locationService.GetLocationByIdAsync(locationId);
+
+            return CreatedAtAction(nameof(GetLocation), new { id = locationId }, location);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update location", Description = "Updates a location.")]
+    [SwaggerResponse(200, "Location updated")]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "Location not found")]
+    public async Task<IActionResult> UpdateLocation(string id, Location locationUpdate)
+    {
+        var validationResult = await updateValidator.ValidateAsync(locationUpdate);
+        if (!validationResult.IsValid)
+        {
+            var modelStateDictionary = new ModelStateDictionary();
+            foreach (var failure in validationResult.Errors)
             {
-                return BadRequest($"Something went wrong: {e.Message}");
+                modelStateDictionary.AddModelError(
+                    failure.PropertyName,
+                    failure.ErrorMessage
+                );
             }
+            return ValidationProblem(modelStateDictionary);
         }
 
-        [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get location", Description = "Retrieves a location.")]
-        [SwaggerResponse(200, "Success", typeof(Location))]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "Location not found")]
-        public async Task<ActionResult<Location>> GetLocation(string id)
+        try
         {
-            try
+            if (id != locationUpdate.Id)
             {
-                var location = await _locationService.GetLocationByIdAsync(id);
-                if (location == null)
-                {
-                    return NotFound("Location not found");
-                }
+                return BadRequest("Id does not match");
+            }
 
-                return Ok(location);
-            }
-            catch (Exception e)
+            var location = await locationService.GetLocationByIdAsync(id);
+            if (location == null)
             {
-                return BadRequest($"Something went wrong: {e.Message}");
+                return NotFound("Location not found");
             }
+
+            await locationService.UpdateLocationAsync(locationUpdate);
+
+            return NoContent();
         }
-
-
-        [HttpGet("BySearchString/{searchString}")]
-        [SwaggerOperation(Summary = "Get locations containing search string", Description = "Retrieves locations containing search string in name.")]
-        [SwaggerResponse(200, "Success", typeof(IEnumerable<Location>))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<IEnumerable<Location>>> GetLocationsBySearchString(string searchString)
+        catch (Exception e)
         {
-            try
-            {
-                return Ok(await _locationService.GetAllLocationsBySearchStringAsync(searchString));
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return BadRequest($"Something went wrong: {e.Message}");
         }
+    }
 
-        [HttpPost]
-        [SwaggerOperation(Summary = "Create a new location", Description = "Creates a new location.")]
-        [SwaggerResponse(201, "Location created", typeof(Location))]
-        [SwaggerResponse(400, "Invalid request")]
-        public async Task<ActionResult<Location>> CreateLocation(LocationCreateDto locationCreate)
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Delete location", Description = "Deletes a location.")]
+    [SwaggerResponse(200, "Location deleted")]
+    [SwaggerResponse(400, "Invalid request")]
+    [SwaggerResponse(404, "Location not found")]
+    public async Task<IActionResult> DeleteLocation(string id)
+    {
+        try
         {
-            var validationResult = await _createValidator.ValidateAsync(locationCreate);
-            if (!validationResult.IsValid)
+            var location = await locationService.GetLocationByIdAsync(id);
+            if (location == null)
             {
-                var modelStateDictionary = new ModelStateDictionary();
-                foreach (var failure in validationResult.Errors)
-                {
-                    modelStateDictionary.AddModelError(
-                        failure.PropertyName,
-                        failure.ErrorMessage
-                    );
-                }
-                return ValidationProblem(modelStateDictionary);
+                return NotFound("Location not found");
             }
 
-            try
-            {
-                var locationId = await _locationService.CreateLocationAsync(locationCreate);
-                if (locationId == null)
-                {
-                    return BadRequest("Location creation failed");
-                }
+            await locationService.DeleteLocationAsync(id);
 
-                var location = await _locationService.GetLocationByIdAsync(locationId);
-
-                return CreatedAtAction(nameof(GetLocation), new { id = locationId }, location);
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return NoContent();
         }
-
-        [HttpPut("{id}")]
-        [SwaggerOperation(Summary = "Update location", Description = "Updates a location.")]
-        [SwaggerResponse(200, "Location updated")]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "Location not found")]
-        public async Task<IActionResult> UpdateLocation(string id, Location locationUpdate)
+        catch (Exception e)
         {
-            var validationResult = await _updateValidator.ValidateAsync(locationUpdate);
-            if (!validationResult.IsValid)
-            {
-                var modelStateDictionary = new ModelStateDictionary();
-                foreach (var failure in validationResult.Errors)
-                {
-                    modelStateDictionary.AddModelError(
-                        failure.PropertyName,
-                        failure.ErrorMessage
-                    );
-                }
-                return ValidationProblem(modelStateDictionary);
-            }
-
-            try
-            {
-                if (id != locationUpdate.Id)
-                {
-                    return BadRequest("Id does not match");
-                }
-
-                var location = await _locationService.GetLocationByIdAsync(id);
-                if (location == null)
-                {
-                    return NotFound("Location not found");
-                }
-
-                await _locationService.UpdateLocationAsync(locationUpdate);
-
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
-        }
-
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Delete location", Description = "Deletes a location.")]
-        [SwaggerResponse(200, "Location deleted")]
-        [SwaggerResponse(400, "Invalid request")]
-        [SwaggerResponse(404, "Location not found")]
-        public async Task<IActionResult> DeleteLocation(string id)
-        {
-            try
-            {
-                var location = await _locationService.GetLocationByIdAsync(id);
-                if (location == null)
-                {
-                    return NotFound("Location not found");
-                }
-
-                await _locationService.DeleteLocationAsync(id);
-
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Something went wrong: {e.Message}");
-            }
+            return BadRequest($"Something went wrong: {e.Message}");
         }
     }
 }

@@ -1,18 +1,17 @@
 
-namespace Inventory.Models.DTO
+namespace Inventory.Models.DTO;
+
+public class ItemTemplateCreateDto
 {
-    public class ItemTemplateCreateDto
-    {
-        public string? ProductNumber { get; set; }
+    public string? ProductNumber { get; set; }
 
-        public string? Type { get; set; }
+    public string? Type { get; set; }
 
-        public string? CategoryId { get; set; }
+    public string? CategoryId { get; set; }
 
-        public string? Revision { get; set; }
+    public string? Revision { get; set; }
 
-        public string? CreatedById { get; set; }
+    public string? CreatedById { get; set; }
 
-        public string? Description { get; set; }
-    }
+    public string? Description { get; set; }
 }

@@ -1,22 +1,26 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Inventory.Models
+namespace Inventory.Models;
+
+public class LogEntry
 {
-    public class LogEntry
-    {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string? Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string? Id { get; set; }
 
-        public string? ItemId { get; set; }
+    [MaxLength(100)]
+    public string? ItemId { get; set; }
 
-        public string? ItemTemplateId { get; set; }
+    [MaxLength(100)]
+    public string? ItemTemplateId { get; set; }
 
-        public string? CreatedById { get; set; }
+    [MaxLength(100)]
+    public string? CreatedById { get; set; }
 
-        public string? Message { get; set; }
+    [MaxLength(200)]
+    public string? Message { get; set; }
 
-        public DateTime? CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
 
-        public User? CreatedBy { get; set; }
-    }
+    public User? CreatedBy { get; set; }
 }

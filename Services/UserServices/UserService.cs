@@ -1,110 +1,102 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
 
-namespace Inventory.Services
+namespace Inventory.Services;
+
+public class UserService(InventoryDbContext context) : IUserService
 {
-    public class UserService : IUserService
+    public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
-        private readonly InventoryDbContext _context;
-
-        public UserService(InventoryDbContext context)
+        try
         {
-            _context = context;
+            return await context.User
+                .Where(s => s.Status == UserStatus.Active)
+                .ToListAsync();
         }
-
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        catch (Exception e)
         {
-            try
-            {
-                return await _context.User
-                            .Where(s => s.Status == UserStatus.Active)
-                            .ToListAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task<IEnumerable<User>> GetAllUsersAdminAsync()
+    public async Task<IEnumerable<User>> GetAllUsersAdminAsync()
+    {
+        try
         {
-            try
-            {
-                return await _context.User.ToListAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return await context.User.ToListAsync();
         }
-
-        public async Task<User?> GetUserByIdAsync(string id)
+        catch (Exception e)
         {
-            try
-            {
-                return await _context.User.FirstOrDefaultAsync(u => u.Id == id);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task<User?> GetUserByAzureAdUserIdAsync(string azureAdUserId)
+    public async Task<User?> GetUserByIdAsync(string id)
+    {
+        try
         {
-            try
-            {
-                return await _context.User.FirstOrDefaultAsync(u => u.AzureAdUserId == azureAdUserId);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return await context.User.FirstOrDefaultAsync(u => u.Id == id);
         }
-
-        public async Task<User?> GetUserByUsernameAsync(string username)
+        catch (Exception e)
         {
-            try
-            {
-                return await _context.User.FirstOrDefaultAsync(u => u.Username == username);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
         }
+    }
 
-        public async Task<bool> IsUsernameTaken(string userName)
+    public async Task<User?> GetUserByAzureAdUserIdAsync(string azureAdUserId)
+    {
+        try
         {
-            try
-            {
-                var users = await _context.User.ToListAsync();
-                return users.Any(user => user.Username == userName);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return await context.User.FirstOrDefaultAsync(u => u.AzureAdUserId == azureAdUserId);
         }
-
-        public async Task<bool> IsEmailTaken(string userEmail)
+        catch (Exception e)
         {
-            try
-            {
-                var users = await _context.User.ToListAsync();
-                return users.Any(user => user.Email == userEmail);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<User?> GetUserByUsernameAsync(string username)
+    {
+        try
+        {
+            return await context.User.FirstOrDefaultAsync(u => u.Username == username);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<bool> IsUsernameTaken(string userName)
+    {
+        try
+        {
+            var users = await context.User.ToListAsync();
+            return users.Any(user => user.Username == userName);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<bool> IsEmailTaken(string userEmail)
+    {
+        try
+        {
+            var users = await context.User.ToListAsync();
+            return users.Any(user => user.Email == userEmail);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }
