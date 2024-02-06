@@ -18,7 +18,7 @@ using Inventory.Validations.PreCheckValidations;
 using Inventory.Validations.SizeValidations;
 using Inventory.Validations.VendorValidations;
 
-namespace inventory;
+namespace Inventory;
 
 public class Startup(IConfiguration configuration)
 {

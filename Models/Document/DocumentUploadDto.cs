@@ -1,4 +1,4 @@
-namespace Inventory.Models.DocumentDTOs;
+namespace Inventory.Models.DTO;
 
 public class DocumentUploadDto
 {

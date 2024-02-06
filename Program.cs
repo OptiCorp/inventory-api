@@ -1,6 +1,6 @@
 using Serilog;
 
-namespace inventory.Controllers;
+namespace Inventory;
 
 public abstract class Program
 {

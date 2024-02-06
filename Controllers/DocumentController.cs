@@ -1,5 +1,5 @@
 using Inventory.Models;
-using Inventory.Models.DocumentDTOs;
+using Inventory.Models.DTO;
 using Inventory.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
