@@ -10,6 +10,7 @@ using Inventory.Services;
 using Inventory.Utilities;
 using Inventory.Validations.CategoryValidations;
 using Inventory.Validations.DocumentTypeValidations;
+using Inventory.Validations.DocumentValidations;
 using Inventory.Validations.ItemTemplateValidations;
 using Inventory.Validations.ItemValidations;
 using Inventory.Validations.ListValidations;
@@ -82,6 +83,7 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<ISizeUpdateValidator, SizeUpdateValidator>();
         services.AddScoped<IDocumentTypeCreateValidator, DocumentTypeCreateValidator>();
         services.AddScoped<IDocumentTypeUpdateValidator, DocumentTypeUpdateValidator>();
+        services.AddScoped<IDocumentUploadValidator, DocumentUploadValidator>();
 
         services.AddHostedService<UserCreateHandler>();
         services.AddHostedService<UserUpdateHandler>();

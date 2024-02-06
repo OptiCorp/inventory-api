@@ -186,16 +186,8 @@ public class ItemService(InventoryDbContext context) : IItemService
                 if (item.Id != null)
                 {
                     createdItemIds.Add(item.Id);
-
-                    var logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = item.CreatedById,
-                        Message = "Item added",
-                        CreatedDate = item.CreatedDate
-                    };
-
-                    await context.LogEntries.AddAsync(logEntry);
+                    if (item.CreatedById != null)
+                        await CreateLogEntryAsync(item.Id, item.CreatedById, "Item added");
                 }
 
                 await context.SaveChangesAsync();
@@ -218,47 +210,25 @@ public class ItemService(InventoryDbContext context) : IItemService
                 .Include(item => item.Vendor)
                 .FirstOrDefaultAsync(c => c.Id == updatedItem.Id);
 
-            if (item != null)
+            if (item?.Id != null)
             {
-                LogEntry logEntry;
                 if (updatedItem.WpId != item.WpId)
                 {
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = $"WellPartner ID changed from {item.WpId} to {updatedItem.WpId}",
-                        CreatedDate = DateTime.Now
-                    };
                     item.WpId = updatedItem.WpId;
-                    await context.LogEntries.AddAsync(logEntry);
+                    await CreateLogEntryAsync(item.Id, updatedById, $"WellPartner ID changed from {item.WpId} to {updatedItem.WpId}");
                 }
 
                 if (updatedItem.SerialNumber != item.SerialNumber)
                 {
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = $"Serial number changed from {item.SerialNumber} to {updatedItem.SerialNumber}",
-                        CreatedDate = DateTime.Now
-                    };
                     item.SerialNumber = updatedItem.SerialNumber;
-                    await context.LogEntries.AddAsync(logEntry);
+                    await CreateLogEntryAsync(item.Id, updatedById, $"Serial number changed from {item.SerialNumber} to {updatedItem.SerialNumber}");
                 }
 
                 if (updatedItem.LocationId != item.LocationId && updatedItem.LocationId != null)
                 {
                     var location = await context.Locations.FirstOrDefaultAsync(c => c.Id == updatedItem.LocationId);
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = $"Location changed from {item.Location?.Name} to {location?.Name}",
-                        CreatedDate = DateTime.Now
-                    };
                     item.LocationId = updatedItem.LocationId;
-                    await context.LogEntries.AddAsync(logEntry);
+                    await CreateLogEntryAsync(item.Id, updatedById, $"Location changed from {item.Location?.Name} to {location?.Name}");
                 }
 
                 if (updatedItem.ParentId != item.ParentId)
@@ -266,50 +236,23 @@ public class ItemService(InventoryDbContext context) : IItemService
                     var oldParent = await context.Items.FirstOrDefaultAsync(c => c.Id == item.ParentId);
                     var newParent = await context.Items.FirstOrDefaultAsync(c => c.Id == updatedItem.ParentId);
 
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = $"Parent ID changed from {oldParent?.WpId} to {newParent?.WpId}",
-                        CreatedDate = DateTime.Now
-                    };
-
                     item.ParentId = updatedItem.ParentId;
-                    await context.LogEntries.AddAsync(logEntry);
+                    await CreateLogEntryAsync(item.Id, updatedById, $"Parent ID changed from {oldParent?.WpId} to {newParent?.WpId}");
 
-                    logEntry = new LogEntry
-                    {
-                        ItemId = oldParent?.Id,
-                        CreatedById = updatedById,
-                        Message = $"Item {updatedItem.Id} removed from parent {oldParent?.Id}",
-                        CreatedDate = DateTime.Now
-                    };
+                    if (oldParent?.Id != null)
+                        await CreateLogEntryAsync(oldParent.Id, updatedById,
+                            $"Item {updatedItem.Id} removed from parent");
 
-                    await context.LogEntries.AddAsync(logEntry);
-
-                    logEntry = new LogEntry
-                    {
-                        ItemId = newParent?.Id,
-                        CreatedById = updatedById,
-                        Message = $"Item {updatedItem.Id} added to parent {newParent?.Id}",
-                        CreatedDate = DateTime.Now
-                    };
-
-                    await context.LogEntries.AddAsync(logEntry);
+                    if (newParent?.Id != null)
+                        await CreateLogEntryAsync(newParent.Id, updatedById,
+                            $"Item {updatedItem.Id} added to parent");
                 }
 
                 if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
                 {
                     var vendor = await context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedItem.VendorId);
-                    logEntry = new LogEntry
-                    {
-                        ItemId = item.Id,
-                        CreatedById = updatedById,
-                        Message = $"Vendor changed from {item.Vendor?.Name} to {vendor?.Name}",
-                        CreatedDate = DateTime.Now
-                    };
                     item.VendorId = updatedItem.VendorId;
-                    await context.LogEntries.AddAsync(logEntry);
+                    await CreateLogEntryAsync(item.Id, updatedById, $"Vendor changed from {item.Vendor?.Name} to {vendor?.Name}");
                 }
 
                 item.CreatedById = updatedItem.CreatedById;
@@ -412,6 +355,28 @@ public class ItemService(InventoryDbContext context) : IItemService
         {
             var item = await context.Items.FirstOrDefaultAsync(c => c.SerialNumber == serialNumber);
             return item == null;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private async Task CreateLogEntryAsync(string itemId, string createdById, string message)
+    {
+        try
+        {
+            var logEntry = new LogEntry
+            {
+                ItemId = itemId,
+                CreatedById = createdById,
+                Message = message,
+                CreatedDate = DateTime.Now
+            };
+
+            await context.LogEntries.AddAsync(logEntry);
+            await context.SaveChangesAsync();
         }
         catch (Exception e)
         {
