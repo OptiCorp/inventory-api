@@ -1,7 +1,7 @@
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Inventory.Models;
-using Inventory.Models.DocumentDTOs;
+using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Services;
