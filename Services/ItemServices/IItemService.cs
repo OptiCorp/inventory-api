@@ -18,4 +18,7 @@ public interface IItemService
     Task DeleteItemAsync(string id, bool? deleteSubItems);
     Task<bool> IsWpIdUnique(string id);
     Task<bool> IsSerialNumberUnique(string serialNumber);
+    Task ItemCreated(string id);
+    Task ItemUpdated(string id);
+    Task ItemDeleted(string id, bool? deleteSubItems);
 }
