@@ -76,7 +76,10 @@ public class ListService(InventoryDbContext context) : IListService
             return await context.Lists
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Items)!
+                .ThenInclude(c => c.Vendor)
+                .Include(c => c.Items)!
                 .ThenInclude(c => c.ItemTemplate)
+                .ThenInclude(c => c!.Category)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
         catch (Exception e)
