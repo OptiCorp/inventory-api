@@ -80,19 +80,18 @@ public class ItemController(
         try
         {
             var itemIds = await itemService.CreateItemAsync(itemCreateList);
-            if (itemIds is { Count: 0 })
+            if (itemIds is { Count: 0 } or null)
             {
                 return BadRequest("Item creation failed");
             }
 
             var items = new List<Item>();
-            if (itemIds == null) return CreatedAtAction(nameof(GetItem), new { id = itemIds }, items);
-
             foreach (var itemId in itemIds)
             {
                 {
                     var item = await itemService.GetItemByIdAsync(itemId);
                     if (item != null) items.Add(item);
+                    await itemService.ItemCreated(itemId);
                 }
             }
             return CreatedAtAction(nameof(GetItem), new { id = itemIds }, items);
@@ -130,6 +129,7 @@ public class ItemController(
             }
 
             await itemService.AddChildItemToParentAsync(itemId, childItemId);
+            await itemService.ItemUpdated(childItemId);
 
             return NoContent();
         }
@@ -206,6 +206,7 @@ public class ItemController(
             }
 
             await itemService.UpdateItemAsync(updatedById, itemUpdate);
+            await itemService.ItemUpdated(id);
 
             return NoContent();
         }
@@ -230,6 +231,7 @@ public class ItemController(
             }
 
             await itemService.RemoveParentIdAsync(itemId);
+            await itemService.ItemUpdated(itemId);
 
             return NoContent();
         }
@@ -255,6 +257,7 @@ public class ItemController(
             }
 
             await itemService.DeleteItemAsync(id, deleteSubItems);
+            await itemService.ItemDeleted(id, deleteSubItems);
 
             return NoContent();
         }
