@@ -128,16 +128,12 @@ public class ItemService(InventoryDbContext context) : IItemService
         {
             return await context.Items
                 .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c!.LogEntries)
-                .Include(c => c.ItemTemplate)
                 .ThenInclude(c => c!.Category)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
         }
