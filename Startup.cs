@@ -62,6 +62,7 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<ISizeService, SizeService>();
         services.AddScoped<IPreCheckService, PreCheckService>();
         services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+        services.AddScoped<ILogEntryService, LogEntryService>();
 
         services.AddScoped<IUserUtilities, UserUtilities>();
 
