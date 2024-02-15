@@ -1,6 +1,7 @@
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 namespace Inventory.Services;
+
 public class LogEntryService(InventoryDbContext context) : ILogEntryService
 {
     public async Task<IEnumerable<LogEntry?>> GetLogEntriesByItemIdAsync(string id, int page, bool? includeTemplateEntries)
@@ -8,14 +9,11 @@ public class LogEntryService(InventoryDbContext context) : ILogEntryService
         try
         {
             var item = await context.Items.FirstOrDefaultAsync(c => c.Id == id);
-            if (item == null)
-            {
-                throw new InvalidOperationException("Item not found");
-            }
             var itemLogEntries = await context.LogEntries.Where(c => c.ItemId == id).ToListAsync();
+
             if (includeTemplateEntries == true)
             {
-                var itemTemplateLogEntries = await context.LogEntries.Where(c => c.ItemTemplateId == item.ItemTemplateId).ToListAsync();
+                var itemTemplateLogEntries = await context.LogEntries.Where(c => item != null && c.ItemTemplateId == item.ItemTemplateId).ToListAsync();
                 itemLogEntries.AddRange(itemTemplateLogEntries);
             }
 
@@ -28,7 +26,7 @@ public class LogEntryService(InventoryDbContext context) : ILogEntryService
         }
     }
 
-    public async Task<IEnumerable<LogEntry>> GetLogEntriesByItemTemplateIdAsync(string id, int page)
+    public async Task<IEnumerable<LogEntry?>> GetLogEntriesByItemTemplateIdAsync(string id, int page)
     {
         try
         {

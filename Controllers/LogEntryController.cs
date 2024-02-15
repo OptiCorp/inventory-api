@@ -8,7 +8,7 @@ namespace Inventory.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class LogEntryController(ILogEntryService logEntryService) : ControllerBase
+public class LogEntryController(ILogEntryService logEntryService, IItemService itemService, IItemTemplateService itemTemplateService) : ControllerBase
 {
     [HttpGet("GetLogEntriesByItemId/{id}")]
     [SwaggerOperation(Summary = "Get log entries from item", Description = "Retrieves log entries from item.")]
@@ -19,6 +19,12 @@ public class LogEntryController(ILogEntryService logEntryService) : ControllerBa
     {
         try
         {
+            var item = await itemService.GetItemByIdAsync(id);
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
             return Ok(await logEntryService.GetLogEntriesByItemIdAsync(id, page, includeTemplateEntries));
         }
         catch (Exception e)
@@ -32,17 +38,17 @@ public class LogEntryController(ILogEntryService logEntryService) : ControllerBa
     [SwaggerResponse(200, "Success", typeof(LogEntry))]
     [SwaggerResponse(400, "Invalid request")]
     [SwaggerResponse(404, "Item template not found")]
-    public async Task<IActionResult> GetLogEntriesByItemTemplateId(string templateId, [Required] int page)
+    public async Task<IActionResult> GetLogEntriesByItemTemplateId(string id, [Required] int page)
     {
         try
         {
-            var logEntries = await logEntryService.GetLogEntriesByItemTemplateIdAsync(templateId, page);
-            if (!logEntries.Any())
+            var itemTemplate = await itemTemplateService.GetItemTemplateByIdAsync(id);
+            if (itemTemplate == null)
             {
                 return NotFound("Item template not found");
             }
 
-            return Ok(logEntries);
+            return Ok(await logEntryService.GetLogEntriesByItemTemplateIdAsync(id, page));
         }
         catch (Exception e)
         {
