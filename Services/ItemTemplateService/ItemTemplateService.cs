@@ -15,7 +15,6 @@ public class ItemTemplateService(InventoryDbContext context) : IItemTemplateServ
                 .Include(c => c.Documents)
                 .Include(c => c.Sizes)
                 .Include(c => c.CreatedBy)
-                .Include(c => c.LogEntries)
                 .ToListAsync();
         }
         catch (Exception e)
@@ -35,7 +34,6 @@ public class ItemTemplateService(InventoryDbContext context) : IItemTemplateServ
                 .Include(c => c.Documents)
                 .Include(c => c.Sizes)
                 .Include(c => c.CreatedBy)
-                .Include(c => c.LogEntries)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
         catch (Exception e)
