@@ -14,11 +14,11 @@ public class LogEntryService(InventoryDbContext context) : ILogEntryService
             }
             var itemLogEntries = await context.LogEntries.Where(c => c.ItemId == id).ToListAsync();
             if (includeTemplateEntries == true)
-            { 
+            {
                 var itemTemplateLogEntries = await context.LogEntries.Where(c => c.ItemTemplateId == item.ItemTemplateId).ToListAsync();
                 itemLogEntries.AddRange(itemTemplateLogEntries);
             }
-            
+
             return itemLogEntries.OrderByDescending(c => c.CreatedDate).Skip(page == 0 ? 0 : (page - 1) * 10).Take(10);
         }
         catch (Exception e)
