@@ -14,8 +14,6 @@ public class ItemService(InventoryDbContext context) : IItemService
         try
         {
             return await context.Items
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
                 .ToListAsync();
         }
         catch (Exception e)
@@ -32,16 +30,12 @@ public class ItemService(InventoryDbContext context) : IItemService
             var result = await context.Items
                 .Where(c => c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)))
                 .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c!.LogEntries)
-                .Include(c => c.ItemTemplate)
                 .ThenInclude(c => c!.Category)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
                 .OrderBy(c => c.Id)
                 .Take(page * 10)
                 .ToListAsync();
@@ -62,16 +56,12 @@ public class ItemService(InventoryDbContext context) : IItemService
             var items = await context.Items
                 .Where(c => templateIds.Contains(c.ItemTemplateId))
                 .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c!.LogEntries)
-                .Include(c => c.ItemTemplate)
                 .ThenInclude(c => c!.Category)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
                 .OrderBy(c => c.Id)
                 .Take(remainingItemsCount)
                 .ToListAsync();
@@ -93,16 +83,12 @@ public class ItemService(InventoryDbContext context) : IItemService
         {
             return await context.Items.Where(c => c.CreatedById == id)
                 .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c!.LogEntries)
-                .Include(c => c.ItemTemplate)
                 .ThenInclude(c => c!.Category)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
                 .OrderByDescending(c => c.CreatedDate)
                 .Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10)
@@ -121,16 +107,12 @@ public class ItemService(InventoryDbContext context) : IItemService
         {
             return await context.Items.Where(c => c.ParentId == parentId)
                 .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c!.LogEntries)
-                .Include(c => c.ItemTemplate)
                 .ThenInclude(c => c!.Category)
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.CreatedBy)
                 .Include(c => c.Vendor)
                 .Include(c => c.Location)
-                .Include(c => c.LogEntries)!
-                .ThenInclude(c => c.CreatedBy)
                 .ToListAsync();
         }
         catch (Exception e)
@@ -157,6 +139,7 @@ public class ItemService(InventoryDbContext context) : IItemService
                 .Include(c => c.LogEntries)!
                 .ThenInclude(c => c.CreatedBy)
                 .FirstOrDefaultAsync(c => c.Id == id);
+
         }
         catch (Exception e)
         {
