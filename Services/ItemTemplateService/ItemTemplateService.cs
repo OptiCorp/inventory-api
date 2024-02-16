@@ -79,9 +79,9 @@ public class ItemTemplateService(InventoryDbContext context) : IItemTemplateServ
             {
                 if (itemTemplateUpdate.Type != itemTemplate.Type)
                 {
-                    itemTemplate.Type = itemTemplateUpdate.Type;
                     await CreateLogEntryAsync(itemTemplate.Id, updatedById,
                         $"Type changed from {itemTemplate.Type} to {itemTemplateUpdate.Type}");
+                    itemTemplate.Type = itemTemplateUpdate.Type;
                 }
 
                 if (itemTemplateUpdate.CategoryId != itemTemplate.CategoryId)
@@ -89,30 +89,30 @@ public class ItemTemplateService(InventoryDbContext context) : IItemTemplateServ
                     var newCategory =
                         await context.Categories.FirstOrDefaultAsync(c => c.Id == itemTemplateUpdate.CategoryId);
 
-                    itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
                     await CreateLogEntryAsync(itemTemplate.Id, updatedById,
                         $"Category changed from {itemTemplate.Category?.Name} to {newCategory?.Name}");
+                    itemTemplate.CategoryId = itemTemplateUpdate.CategoryId;
                 }
 
                 if (itemTemplateUpdate.ProductNumber != itemTemplate.ProductNumber)
                 {
-                    itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
                     await CreateLogEntryAsync(itemTemplate.Id, updatedById,
                         $"Product number changed from {itemTemplate.ProductNumber} to {itemTemplateUpdate.ProductNumber}");
+                    itemTemplate.ProductNumber = itemTemplateUpdate.ProductNumber;
                 }
 
                 if (itemTemplateUpdate.Revision != itemTemplate.Revision)
                 {
-                    itemTemplate.Revision = itemTemplateUpdate.Revision;
                     await CreateLogEntryAsync(itemTemplate.Id, updatedById,
                         $"Revision changed from {itemTemplate.Revision} to {itemTemplateUpdate.Revision}");
+                    itemTemplate.Revision = itemTemplateUpdate.Revision;
                 }
 
                 if (itemTemplateUpdate.Description != itemTemplate.Description)
                 {
-                    itemTemplate.Description = itemTemplateUpdate.Description;
                     await CreateLogEntryAsync(itemTemplate.Id, updatedById,
                         "Description updated");
+                    itemTemplate.Description = itemTemplateUpdate.Description;
                 }
 
                 itemTemplate.CreatedById = itemTemplateUpdate.CreatedById;

@@ -195,21 +195,21 @@ public class ItemService(InventoryDbContext context) : IItemService
             {
                 if (updatedItem.WpId != item.WpId)
                 {
-                    item.WpId = updatedItem.WpId;
                     await CreateLogEntryAsync(item.Id, updatedById, $"WellPartner ID changed from {item.WpId} to {updatedItem.WpId}");
+                    item.WpId = updatedItem.WpId;
                 }
 
                 if (updatedItem.SerialNumber != item.SerialNumber)
                 {
-                    item.SerialNumber = updatedItem.SerialNumber;
                     await CreateLogEntryAsync(item.Id, updatedById, $"Serial number changed from {item.SerialNumber} to {updatedItem.SerialNumber}");
+                    item.SerialNumber = updatedItem.SerialNumber;
                 }
 
                 if (updatedItem.LocationId != item.LocationId && updatedItem.LocationId != null)
                 {
                     var location = await context.Locations.FirstOrDefaultAsync(c => c.Id == updatedItem.LocationId);
-                    item.LocationId = updatedItem.LocationId;
                     await CreateLogEntryAsync(item.Id, updatedById, $"Location changed from {item.Location?.Name} to {location?.Name}");
+                    item.LocationId = updatedItem.LocationId;
                 }
 
                 if (updatedItem.ParentId != item.ParentId)
@@ -232,8 +232,8 @@ public class ItemService(InventoryDbContext context) : IItemService
                 if (updatedItem.VendorId != item.VendorId && updatedItem.VendorId != null)
                 {
                     var vendor = await context.Vendors.FirstOrDefaultAsync(c => c.Id == updatedItem.VendorId);
-                    item.VendorId = updatedItem.VendorId;
                     await CreateLogEntryAsync(item.Id, updatedById, $"Vendor changed from {item.Vendor?.Name} to {vendor?.Name}");
+                    item.VendorId = updatedItem.VendorId;
                 }
 
                 item.CreatedById = updatedItem.CreatedById;
