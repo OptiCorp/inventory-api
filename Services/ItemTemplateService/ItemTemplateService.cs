@@ -43,6 +43,30 @@ public class ItemTemplateService(InventoryDbContext context) : IItemTemplateServ
         }
     }
 
+    public async Task<IEnumerable<ItemTemplate>> GetItemTemplateBySearchStringAsync(string searchString, int page)
+    {
+        try
+        {
+            var result = await context.ItemTemplates
+                .Where(c => c.Type != null && c.Description != null &&
+                            (c.Type.Contains(searchString) || c.Description.Contains(searchString))).Include(c => c.Category).OrderBy(c => c.Id)
+                .Take(page * 10).ToListAsync();
+            if (result.Count >= page * 10)
+            {
+                return result;
+            }
+
+            var remainingItemTemplateCount = page * 10 - result.Count;
+            return result;
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     public async Task<string?> CreateItemTemplateAsync(ItemTemplateCreateDto itemTemplateCreate)
     {
         try
