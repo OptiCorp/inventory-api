@@ -51,10 +51,6 @@ public class ItemTemplateService(InventoryDbContext context) : IItemTemplateServ
                 .Where(c => c.Type != null && c.Description != null &&
                             (c.Type.Contains(searchString) || c.Description.Contains(searchString))).Include(c => c.Category).OrderBy(c => c.Id)
                 .Take(page * 10).ToListAsync();
-            if (result.Count >= page * 10)
-            {
-                return result;
-            }
 
             return result;
 
