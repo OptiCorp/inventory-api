@@ -56,7 +56,6 @@ public class ItemTemplateService(InventoryDbContext context) : IItemTemplateServ
                 return result;
             }
 
-            var remainingItemTemplateCount = page * 10 - result.Count;
             return result;
 
         }
