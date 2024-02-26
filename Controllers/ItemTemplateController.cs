@@ -73,7 +73,7 @@ public class ItemTemplateController(
             return BadRequest($"Something went wrong: {e.Message}");
         }
     }
-    
+
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new item template", Description = "Creates a new item template.")]
     [SwaggerResponse(201, "Item template created", typeof(ItemTemplate))]
