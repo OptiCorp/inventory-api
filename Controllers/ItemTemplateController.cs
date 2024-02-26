@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,24 @@ public class ItemTemplateController(
             }
 
             return Ok(itemTemplate);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
+    [HttpGet("BySearchString/{searchString}")]
+    [SwaggerOperation(Summary = "Get item templates containing search string",
+        Description = "Retrieves item templates containing search string in type or description.")]
+    [SwaggerResponse(200, "Success", typeof(IEnumerable<ItemTemplate>))]
+    [SwaggerResponse(400, "Invalid request")]
+    public async Task<ActionResult<IEnumerable<ItemTemplate>>> GetItemTemplateBySearchString(string searchString,
+        [Required] int page)
+    {
+        try
+        {
+            return Ok(await itemTemplateService.GetItemTemplateBySearchStringAsync(searchString, page));
         }
         catch (Exception e)
         {
