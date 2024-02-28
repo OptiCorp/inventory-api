@@ -16,7 +16,7 @@ public class UserUpdateHandler(IServiceProvider serviceProvider)
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // Initialize the Service Bus client and processor.
-        _client = new ServiceBusClient(AppSettings.QueueConnectionString);
+        _client = new ServiceBusClient(Environment.GetEnvironmentVariable("serviceBusConnectionString"));
         _processor = _client.CreateProcessor(AppSettings.TopicUserUpdated, AppSettings.SubscriptionInventory, new ServiceBusProcessorOptions());
 
         // Configure args handler and error handler.
