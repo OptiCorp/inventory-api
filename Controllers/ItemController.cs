@@ -55,6 +55,28 @@ public class ItemController(
         }
     }
 
+    [HttpGet("GetItemsChecklist")]
+    [SwaggerOperation(Summary = "Get items for the Checklist app", Description = "Retrieves items for the Checklist app.")]
+    [SwaggerResponse(200, "Success", typeof(Item))]
+    [SwaggerResponse(404, "Item not found")]
+    public async Task<ActionResult<Item>> GetItemsChecklist([Required] List<string> ids)
+    {
+        try
+        {
+            var items = await itemService.GetItemsByIdChecklistAsync(ids);
+            if (items == null || items.Count == 0)
+            {
+                return NotFound("Item not found");
+            }
+
+            return Ok(items);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
     [SwaggerResponse(201, "Item created", typeof(Item))]
@@ -91,9 +113,9 @@ public class ItemController(
                 {
                     var item = await itemService.GetItemByIdAsync(itemId);
                     if (item != null) items.Add(item);
-                    await itemService.ItemCreated(itemId);
                 }
             }
+            await itemService.ItemsCreated(itemIds);
             return CreatedAtAction(nameof(GetItem), new { id = itemIds }, items);
         }
         catch (Exception e)
@@ -129,7 +151,6 @@ public class ItemController(
             }
 
             await itemService.AddChildItemToParentAsync(itemId, childItemId);
-            await itemService.ItemUpdated(childItemId);
 
             return NoContent();
         }
@@ -206,7 +227,6 @@ public class ItemController(
             }
 
             await itemService.UpdateItemAsync(updatedById, itemUpdate);
-            await itemService.ItemUpdated(id);
 
             return NoContent();
         }
@@ -231,7 +251,6 @@ public class ItemController(
             }
 
             await itemService.RemoveParentIdAsync(itemId);
-            await itemService.ItemUpdated(itemId);
 
             return NoContent();
         }
@@ -256,8 +275,8 @@ public class ItemController(
                 return NotFound("Item not found");
             }
 
-            await itemService.DeleteItemAsync(id, deleteSubItems);
-            await itemService.ItemDeleted(id, deleteSubItems);
+            var deletedItems = await itemService.DeleteItemAsync(id, deleteSubItems);
+            await itemService.ItemsDeleted(deletedItems);
 
             return NoContent();
         }

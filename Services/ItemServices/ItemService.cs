@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
-using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
+using Inventory.Utilities;
 
 namespace Inventory.Services;
 
-public class ItemService(InventoryDbContext context) : IItemService
+public class ItemService(InventoryDbContext context, IGeneralUtilities generalUtilities) : IItemService
 {
     public async Task<IEnumerable<Item>> GetAllItemsAsync()
     {
@@ -142,7 +142,29 @@ public class ItemService(InventoryDbContext context) : IItemService
             Console.WriteLine(e);
             throw;
         }
+    }
 
+    public async Task<List<Item>?> GetItemsByIdChecklistAsync(List<string> ids)
+    {
+        try
+        {
+            return await context.Items
+                .Include(c => c.ItemTemplate)
+                .ThenInclude(c => c!.Category)
+                .Include(c => c.Parent)
+                .Include(c => c.Children)
+                .Include(c => c.CreatedBy)
+                .Include(c => c.Vendor)
+                .Include(c => c.Location)
+                .Where(c => c.Id != null && ids.Contains(c.Id))
+                .ToListAsync();
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<List<string>?> CreateItemAsync(IEnumerable<ItemCreateDto> itemsCreate)
@@ -290,10 +312,11 @@ public class ItemService(InventoryDbContext context) : IItemService
         }
     }
 
-    public async Task DeleteItemAsync(string id, bool? deleteSubItems)
+    public async Task<List<string>> DeleteItemAsync(string id, bool? deleteSubItems)
     {
         try
         {
+            var itemIds = new List<string>();
             var item = await context.Items.Include(c => c.Children).FirstOrDefaultAsync(c => c.Id == id);
             if (item != null)
             {
@@ -305,9 +328,12 @@ public class ItemService(InventoryDbContext context) : IItemService
                         if (child.Id != null) await DeleteItemAsync(child.Id, deleteSubItems);
                     }
 
+                if (item.Id != null) itemIds.Add(item.Id);
                 context.Items.Remove(item);
                 await context.SaveChangesAsync();
             }
+
+            return itemIds;
         }
         catch (Exception e)
         {
@@ -366,72 +392,19 @@ public class ItemService(InventoryDbContext context) : IItemService
         }
     }
 
-    public async Task ItemCreated(string id)
+    public async Task ItemsCreated(List<string> ids)
     {
-        var connectionString = Environment.GetEnvironmentVariable("serviceBusConnectionString");
-        var sbClient = new ServiceBusClient(connectionString);
-
-        var item = await context.Items.Include(item => item.ItemTemplate)
-            .ThenInclude(itemTemplate => itemTemplate!.Category).FirstOrDefaultAsync(u => u.Id == id);
-
-        if (item != null)
-        {
-            var itemCreatedBusDto = new ItemBusCreateDto
-            {
-                Id = item.Id,
-                WpId = item.WpId,
-                SerialNumber = item.SerialNumber,
-                Category = item.ItemTemplate?.Category?.Name,
-                ParentId = item.ParentId
-            };
-
-            var sender = sbClient.CreateSender("item-created");
-            var body = JsonSerializer.Serialize(itemCreatedBusDto);
-            var sbMessage = new ServiceBusMessage(body);
-            await sender.SendMessageAsync(sbMessage);
-        }
+        var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("Sb-connection-string"));
+        var sender = sbClient.CreateSender("item-created");
+        var sbMessage = new ServiceBusMessage(ids.ToString());
+        await sender.SendMessageAsync(sbMessage);
     }
 
-    public async Task ItemUpdated(string id)
+    public async Task ItemsDeleted(List<string> ids)
     {
-        var connectionString = Environment.GetEnvironmentVariable("serviceBusConnectionString");
-        var sbClient = new ServiceBusClient(connectionString);
-
-        var item = await context.Items.Include(item => item.ItemTemplate)
-            .ThenInclude(itemTemplate => itemTemplate!.Category).FirstOrDefaultAsync(u => u.Id == id);
-
-        if (item != null)
-        {
-            var itemUpdatedBusDto = new ItemBusUpdateDto
-            {
-                Id = item.Id,
-                WpId = item.WpId,
-                SerialNumber = item.SerialNumber,
-                Category = item.ItemTemplate?.Category?.Name,
-                ParentId = item.ParentId
-            };
-
-            var sender = sbClient.CreateSender("item-updated");
-            var body = JsonSerializer.Serialize(itemUpdatedBusDto);
-            var sbMessage = new ServiceBusMessage(body);
-            await sender.SendMessageAsync(sbMessage);
-        }
-    }
-
-    public async Task ItemDeleted(string id, bool? deleteSubItems)
-    {
-        var connectionString = Environment.GetEnvironmentVariable("serviceBusConnectionString");
-        var sbClient = new ServiceBusClient(connectionString);
-
-        var itemDeleteBusDto = new ItemBusDeleteDto
-        {
-            Id = id,
-            DeleteSubItems = deleteSubItems
-        };
-
+        var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("Sb-connection-string"));
         var sender = sbClient.CreateSender("item-deleted");
-        var body = JsonSerializer.Serialize(itemDeleteBusDto);
-        var sbMessage = new ServiceBusMessage(body);
+        var sbMessage = new ServiceBusMessage(ids.ToString());
         await sender.SendMessageAsync(sbMessage);
     }
 }

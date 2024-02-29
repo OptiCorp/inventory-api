@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Inventory.Models;
 using Inventory.Models.DTO;
 using Inventory.Configuration;
+using Inventory.Utilities;
 
 namespace Inventory.Services;
 
@@ -15,8 +16,11 @@ public class UserUpdateHandler(IServiceProvider serviceProvider)
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        using var scope = serviceProvider.CreateScope();
+        var scopedService = scope.ServiceProvider.GetRequiredService<IGeneralUtilities>();
+
         // Initialize the Service Bus client and processor.
-        _client = new ServiceBusClient(Environment.GetEnvironmentVariable("serviceBusConnectionString"));
+        _client = new ServiceBusClient(scopedService.GetSecretValueFromKeyVault("Sb-connection-string"));
         _processor = _client.CreateProcessor(AppSettings.TopicUserUpdated, AppSettings.SubscriptionInventory, new ServiceBusProcessorOptions());
 
         // Configure args handler and error handler.
