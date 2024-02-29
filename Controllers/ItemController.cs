@@ -55,6 +55,28 @@ public class ItemController(
         }
     }
 
+    [HttpGet("GetItemsChecklist")]
+    [SwaggerOperation(Summary = "Get items for the Checklist app", Description = "Retrieves items for the Checklist app.")]
+    [SwaggerResponse(200, "Success", typeof(Item))]
+    [SwaggerResponse(404, "Item not found")]
+    public async Task<ActionResult<Item>> GetItemsChecklist([Required] List<string> ids)
+    {
+        try
+        {
+            var items = await itemService.GetItemsByIdChecklistAsync(ids);
+            if (items == null || items.Count == 0)
+            {
+                return NotFound("Item not found");
+            }
+
+            return Ok(items);
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Something went wrong: {e.Message}");
+        }
+    }
+
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new item", Description = "Creates a new item.")]
     [SwaggerResponse(201, "Item created", typeof(Item))]
