@@ -10,6 +10,7 @@ public interface IItemService
     Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page);
     Task<IEnumerable<Item>> GetAllItemsByUserIdAsync(string id, int page);
     Task<Item?> GetItemByIdAsync(string id);
+    Task<List<Item>?> GetItemsByIdChecklistAsync(List<string> ids);
     Task<IEnumerable<Item>> GetChildrenAsync(string id);
     Task<List<string>?> CreateItemAsync(IEnumerable<ItemCreateDto> item);
     Task AddChildItemToParentAsync(string parentItemId, string childItemId);

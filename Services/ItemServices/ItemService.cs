@@ -142,7 +142,29 @@ public class ItemService(InventoryDbContext context) : IItemService
             Console.WriteLine(e);
             throw;
         }
+    }
+    
+    public async Task<List<Item>?> GetItemsByIdChecklistAsync(List<string> ids)
+    {
+        try
+        {
+            return await context.Items
+                .Include(c => c.ItemTemplate)
+                .ThenInclude(c => c!.Category)
+                .Include(c => c.Parent)
+                .Include(c => c.Children)
+                .Include(c => c.CreatedBy)
+                .Include(c => c.Vendor)
+                .Include(c => c.Location)
+                .Where(c => c.Id != null && ids.Contains(c.Id))
+                .ToListAsync();
 
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<List<string>?> CreateItemAsync(IEnumerable<ItemCreateDto> itemsCreate)
