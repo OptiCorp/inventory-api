@@ -15,10 +15,9 @@ public interface IItemService
     Task AddChildItemToParentAsync(string parentItemId, string childItemId);
     Task RemoveParentIdAsync(string itemId);
     Task UpdateItemAsync(string updatedById, Item item);
-    Task DeleteItemAsync(string id, bool? deleteSubItems);
+    Task<List<string>> DeleteItemAsync(string id, bool? deleteSubItems);
     Task<bool> IsWpIdUnique(string id);
     Task<bool> IsSerialNumberUnique(string serialNumber);
-    Task ItemCreated(string id);
-    Task ItemUpdated(string id);
-    Task ItemDeleted(string id, bool? deleteSubItems);
+    Task ItemsCreated(List<string> ids);
+    Task ItemsDeleted(List<string> ids);
 }
