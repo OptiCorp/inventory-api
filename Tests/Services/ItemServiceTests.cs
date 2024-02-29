@@ -2,6 +2,7 @@ using Inventory.Models;
 using Inventory.Models.DTO;
 using Inventory.Services;
 using Xunit;
+using Inventory.Utilities;
 
 namespace Inventory.Tests.Services;
 
@@ -12,7 +13,8 @@ public class ItemServiceTests
     {
         // Arrange
         var dbContext = await TestUtilities.GetDbContext("Item");
-        var itemService = new ItemService(dbContext);
+        var generalUtilities = new GeneralUtilities();
+        var itemService = new ItemService(dbContext, generalUtilities);
 
         // Act
         var items = await itemService.GetAllItemsAsync();
@@ -27,7 +29,8 @@ public class ItemServiceTests
     {
         // Arrange
         var dbContext = await TestUtilities.GetDbContext("Item");
-        var itemService = new ItemService(dbContext);
+        var generalUtilities = new GeneralUtilities();
+        var itemService = new ItemService(dbContext, generalUtilities);
 
         const string userId1 = "User 2";
         const string userId2 = "User 15";
@@ -49,7 +52,8 @@ public class ItemServiceTests
     {
         // Arrange
         var dbContext = await TestUtilities.GetDbContext("Item");
-        var itemService = new ItemService(dbContext);
+        var generalUtilities = new GeneralUtilities();
+        var itemService = new ItemService(dbContext, generalUtilities);
 
         // Act
         var items = await itemService.GetAllItemsBySearchStringAsync("a", 1);
@@ -87,7 +91,8 @@ public class ItemServiceTests
         await dbContext.SaveChangesAsync();
 
         // Act
-        var itemService = new ItemService(dbContext);
+        var generalUtilities = new GeneralUtilities();
+        var itemService = new ItemService(dbContext, generalUtilities);
         var result = await itemService.GetChildrenAsync(parentId);
 
         // Assert
@@ -108,7 +113,8 @@ public class ItemServiceTests
     {
         //Arrange
         var dbContext = await TestUtilities.GetDbContext("Item");
-        var itemService = new ItemService(dbContext);
+        var generalUtilities = new GeneralUtilities();
+        var itemService = new ItemService(dbContext, generalUtilities);
 
         //Act
         var item = await itemService.GetItemByIdAsync("Item 1");
@@ -123,7 +129,8 @@ public class ItemServiceTests
     {
         //Arrange
         var dbContext = await TestUtilities.GetDbContext("Item");
-        var itemService = new ItemService(dbContext);
+        var generalUtilities = new GeneralUtilities();
+        var itemService = new ItemService(dbContext, generalUtilities);
 
         var newTestItem1 = new ItemCreateDto
         {
@@ -163,7 +170,8 @@ public class ItemServiceTests
     {
         // Arrange
         var dbContext = await TestUtilities.GetDbContext("Item");
-        var itemService = new ItemService(dbContext);
+        var generalUtilities = new GeneralUtilities();
+        var itemService = new ItemService(dbContext, generalUtilities);
 
         var updatedItem = new Item
         {
@@ -188,7 +196,8 @@ public class ItemServiceTests
     {
         // Arrange
         var dbContext = await TestUtilities.GetDbContext("Item");
-        var itemService = new ItemService(dbContext);
+        var generalUtilities = new GeneralUtilities();
+        var itemService = new ItemService(dbContext, generalUtilities);
 
         const string itemId = "Item 1";
 

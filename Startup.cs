@@ -65,6 +65,7 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<ILogEntryService, LogEntryService>();
 
         services.AddScoped<IUserUtilities, UserUtilities>();
+        services.AddScoped<IGeneralUtilities, GeneralUtilities>();
 
         services.AddScoped<ICategoryCreateValidator, CategoryCreateValidator>();
         services.AddScoped<ICategoryUpdateValidator, CategoryUpdateValidator>();
