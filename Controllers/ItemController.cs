@@ -91,9 +91,9 @@ public class ItemController(
                 {
                     var item = await itemService.GetItemByIdAsync(itemId);
                     if (item != null) items.Add(item);
-                    await itemService.ItemCreated(itemId);
                 }
             }
+            await itemService.ItemsCreated(itemIds);
             return CreatedAtAction(nameof(GetItem), new { id = itemIds }, items);
         }
         catch (Exception e)
@@ -129,7 +129,6 @@ public class ItemController(
             }
 
             await itemService.AddChildItemToParentAsync(itemId, childItemId);
-            await itemService.ItemUpdated(childItemId);
 
             return NoContent();
         }
@@ -206,7 +205,6 @@ public class ItemController(
             }
 
             await itemService.UpdateItemAsync(updatedById, itemUpdate);
-            await itemService.ItemUpdated(id);
 
             return NoContent();
         }
@@ -231,7 +229,6 @@ public class ItemController(
             }
 
             await itemService.RemoveParentIdAsync(itemId);
-            await itemService.ItemUpdated(itemId);
 
             return NoContent();
         }
@@ -256,8 +253,8 @@ public class ItemController(
                 return NotFound("Item not found");
             }
 
-            await itemService.DeleteItemAsync(id, deleteSubItems);
-            await itemService.ItemDeleted(id, deleteSubItems);
+            var deletedItems = await itemService.DeleteItemAsync(id, deleteSubItems);
+            await itemService.ItemsDeleted(deletedItems);
 
             return NoContent();
         }
