@@ -8,6 +8,9 @@ namespace Inventory.Services;
 
 public class DocumentService(InventoryDbContext context) : IDocumentService
 {
+    private const string BlobContainerEndpoint =
+        "https://storageaccountinventory.blob.core.windows.net/item-documentation";
+
     public async Task<IEnumerable<DocumentResponseDto>> GetDocumentsByItemIdAsync(string id)
     {
         try
@@ -91,11 +94,8 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
     {
         try
         {
-            var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
-            if (blobContainerEndpoint == null) return null;
-
             var blobContainerClient =
-                new BlobContainerClient(new Uri(blobContainerEndpoint), new DefaultAzureCredential());
+                new BlobContainerClient(new Uri(BlobContainerEndpoint), new DefaultAzureCredential());
 
             var blobId = Guid.NewGuid().ToString();
             var blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
@@ -141,11 +141,8 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
     {
         try
         {
-            var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
-            if (blobContainerEndpoint == null) return null;
-
             var blobContainerClient =
-                new BlobContainerClient(new Uri(blobContainerEndpoint), new DefaultAzureCredential());
+                new BlobContainerClient(new Uri(BlobContainerEndpoint), new DefaultAzureCredential());
 
             var blobId = Guid.NewGuid().ToString();
             var blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
@@ -194,18 +191,14 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
         {
             var document = await context.Documents.FirstOrDefaultAsync(doc => doc.Id == documentId);
 
-            var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
-            if (blobContainerEndpoint != null)
-            {
-                var blobContainerClient =
-                    new BlobContainerClient(new Uri(blobContainerEndpoint), new DefaultAzureCredential());
+            var blobContainerClient =
+                new BlobContainerClient(new Uri(BlobContainerEndpoint), new DefaultAzureCredential());
 
-                var blobClient = blobContainerClient.GetBlobClient(document?.BlobId);
+            var blobClient = blobContainerClient.GetBlobClient(document?.BlobId);
 
-                var response = await blobClient.DeleteAsync();
+            var response = await blobClient.DeleteAsync();
 
-                if (response.Status != 202) return;
-            }
+            if (response.Status != 202) return;
 
             if (document != null) context.Documents.Remove(document);
             await context.SaveChangesAsync();
@@ -223,11 +216,8 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
     {
         try
         {
-            var blobContainerEndpoint = Environment.GetEnvironmentVariable("blobContainerEndpoint");
-            if (blobContainerEndpoint == null) return null;
-
             var blobContainerClient =
-                new BlobContainerClient(new Uri(blobContainerEndpoint), new DefaultAzureCredential());
+                new BlobContainerClient(new Uri(BlobContainerEndpoint), new DefaultAzureCredential());
 
             using MemoryStream documentStream = new();
 

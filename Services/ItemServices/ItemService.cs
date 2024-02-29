@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
-using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
+using Inventory.Utilities;
 
 namespace Inventory.Services;
 
-public class ItemService(InventoryDbContext context) : IItemService
+public class ItemService(InventoryDbContext context, IGeneralUtilities generalUtilities) : IItemService
 {
     public async Task<IEnumerable<Item>> GetAllItemsAsync()
     {
@@ -394,8 +394,7 @@ public class ItemService(InventoryDbContext context) : IItemService
 
     public async Task ItemsCreated(List<string> ids)
     {
-        var connectionString = Environment.GetEnvironmentVariable("serviceBusConnectionString");
-        var sbClient = new ServiceBusClient(connectionString);
+        var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("Sb-connection-string"));
         var sender = sbClient.CreateSender("item-created");
         var sbMessage = new ServiceBusMessage(ids.ToString());
         await sender.SendMessageAsync(sbMessage);
@@ -403,8 +402,7 @@ public class ItemService(InventoryDbContext context) : IItemService
 
     public async Task ItemsDeleted(List<string> ids)
     {
-        var connectionString = Environment.GetEnvironmentVariable("serviceBusConnectionString");
-        var sbClient = new ServiceBusClient(connectionString);
+        var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("Sb-connection-string"));
         var sender = sbClient.CreateSender("item-deleted");
         var sbMessage = new ServiceBusMessage(ids.ToString());
         await sender.SendMessageAsync(sbMessage);
