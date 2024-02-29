@@ -143,7 +143,7 @@ public class ItemService(InventoryDbContext context) : IItemService
             throw;
         }
     }
-    
+
     public async Task<List<Item>?> GetItemsByIdChecklistAsync(List<string> ids)
     {
         try

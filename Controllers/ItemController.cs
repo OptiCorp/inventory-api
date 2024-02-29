@@ -54,7 +54,7 @@ public class ItemController(
             return BadRequest($"Something went wrong: {e.Message}");
         }
     }
-    
+
     [HttpGet("GetItemsChecklist")]
     [SwaggerOperation(Summary = "Get items for the Checklist app", Description = "Retrieves items for the Checklist app.")]
     [SwaggerResponse(200, "Success", typeof(Item))]
