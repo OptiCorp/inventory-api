@@ -107,7 +107,7 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
                 blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
             }
 
-            
+
 
             if (document.File == null) return null;
             var newDocument = new Document
