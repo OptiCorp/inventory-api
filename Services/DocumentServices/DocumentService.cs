@@ -45,7 +45,8 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
                     Name = await context.DocumentTypes.Where(doc => doc.Id == document.DocumentTypeId)
                         .Select(doc => doc.Name).FirstOrDefaultAsync(),
                     ContentType = document.ContentType,
-                    Bytes = fileBytes
+                    Bytes = fileBytes,
+                    FileName = document.FileName,
                 };
 
                 documentResponseList.Add(documentResponse);
