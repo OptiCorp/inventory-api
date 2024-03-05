@@ -24,5 +24,6 @@ public class Document
     public string? ItemTemplateId { get; set; }
 
     public DocumentType? DocumentType { get; set; }
-
+    
+    public string? FileName { get; set; } 
 }

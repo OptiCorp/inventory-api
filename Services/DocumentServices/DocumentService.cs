@@ -77,7 +77,8 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
                 Id = document.Id,
                 Name = document.DocumentType?.Name,
                 ContentType = document.ContentType,
-                Bytes = fileBytes
+                Bytes = fileBytes,
+                FileName = document.FileName,
             };
 
             return documentResponse;
@@ -106,13 +107,16 @@ public class DocumentService(InventoryDbContext context) : IDocumentService
                 blobExists = await blobContainerClient.GetBlobClient(blobId).ExistsAsync();
             }
 
+            
+
             if (document.File == null) return null;
             var newDocument = new Document
             {
                 DocumentTypeId = document.DocumentTypeId,
                 BlobId = blobId,
                 ContentType = document.File.ContentType,
-                ItemId = itemId
+                ItemId = itemId,
+                FileName = document.File.FileName,
             };
 
             await blobContainerClient.CreateIfNotExistsAsync();
