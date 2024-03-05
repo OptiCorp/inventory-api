@@ -25,4 +25,5 @@ public class Document
 
     public DocumentType? DocumentType { get; set; }
 
+    public string? FileName { get; set; }
 }
