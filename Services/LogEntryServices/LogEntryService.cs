@@ -9,11 +9,11 @@ public class LogEntryService(InventoryDbContext context) : ILogEntryService
         try
         {
             var item = await context.Items.FirstOrDefaultAsync(c => c.Id == id);
-            var itemLogEntries = await context.LogEntries.Where(c => c.ItemId == id).ToListAsync();
+            var itemLogEntries = await context.LogEntries.Where(c => c.ItemId == id).Include(c => c.CreatedBy).ToListAsync();
 
             if (includeTemplateEntries == true)
             {
-                var itemTemplateLogEntries = await context.LogEntries.Where(c => item != null && c.ItemTemplateId == item.ItemTemplateId).ToListAsync();
+                var itemTemplateLogEntries = await context.LogEntries.Where(c => item != null && c.ItemTemplateId == item.ItemTemplateId).Include(c => c.CreatedBy).ToListAsync();
                 itemLogEntries.AddRange(itemTemplateLogEntries);
             }
 
@@ -30,7 +30,7 @@ public class LogEntryService(InventoryDbContext context) : ILogEntryService
     {
         try
         {
-            return await context.LogEntries.Where(c => c.ItemTemplateId == id).OrderByDescending(c => c.CreatedDate).Skip(page == 0 ? 0 : (page - 1) * 10)
+            return await context.LogEntries.Where(c => c.ItemTemplateId == id).Include(c => c.CreatedBy).OrderByDescending(c => c.CreatedDate).Skip(page == 0 ? 0 : (page - 1) * 10)
                 .Take(10).ToListAsync();
         }
         catch (Exception e)
