@@ -14,7 +14,7 @@ public enum UserStatus
 }
 public class User
 {
-
+    [MaxLength(100)]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
 

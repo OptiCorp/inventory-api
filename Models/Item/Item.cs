@@ -5,6 +5,7 @@ namespace Inventory.Models;
 
 public class Item
 {
+    [MaxLength(100)]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
 

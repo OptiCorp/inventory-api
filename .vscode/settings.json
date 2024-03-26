@@ -1,5 +1,5 @@
 {
     "appService.preDeployTask": "publish",
-    "appService.deploySubpath": "bin/Release/net7.0/publish",
+    "appService.deploySubpath": "bin/Release/net8.0/publish",
     "appService.defaultWebAppToDeploy": "/subscriptions/fec0b71a-afb9-42f1-ae23-ec71a837692d/resourceGroups/RG-Inventory-prod/providers/Microsoft.Web/sites/app-inventory-prod"
 }

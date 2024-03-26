@@ -87,9 +87,9 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<IDocumentTypeUpdateValidator, DocumentTypeUpdateValidator>();
         services.AddScoped<IDocumentUploadValidator, DocumentUploadValidator>();
 
-        services.AddHostedService<UserCreateHandler>();
-        services.AddHostedService<UserUpdateHandler>();
-        services.AddHostedService<UserDeleteHandler>();
+        // services.AddHostedService<UserCreateHandler>();
+        // services.AddHostedService<UserUpdateHandler>();
+        // services.AddHostedService<UserDeleteHandler>();
 
         services.AddControllers();
 

@@ -26,7 +26,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CreatedById")
                         .HasMaxLength(100)
@@ -51,7 +52,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("BlobId")
                         .HasMaxLength(100)
@@ -91,7 +93,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -110,7 +113,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Comment")
                         .HasMaxLength(1000)
@@ -179,7 +183,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CategoryId")
                         .HasMaxLength(100)
@@ -224,7 +229,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CreatedById")
                         .HasMaxLength(100)
@@ -253,7 +259,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CreatedById")
                         .HasMaxLength(100)
@@ -278,7 +285,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CreatedById")
                         .HasMaxLength(100)
@@ -314,7 +322,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool?>("Check")
                         .HasColumnType("bit");
@@ -332,7 +341,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<float?>("Amount")
                         .HasColumnType("real");
@@ -360,7 +370,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("AzureAdUserId")
                         .HasMaxLength(100)
@@ -408,7 +419,8 @@ namespace inventoryapi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CreatedById")
                         .HasMaxLength(100)
@@ -432,10 +444,10 @@ namespace inventoryapi.Migrations
             modelBuilder.Entity("ItemList", b =>
                 {
                     b.Property<string>("ItemsId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ListId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("ItemsId", "ListId");
 

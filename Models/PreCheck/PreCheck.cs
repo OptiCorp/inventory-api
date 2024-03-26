@@ -5,6 +5,8 @@ namespace Inventory.Models;
 
 public class PreCheck
 {
+    [MaxLength(100)]
+
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
 

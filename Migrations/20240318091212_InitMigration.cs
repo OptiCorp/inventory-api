@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace inventoryapi.Migrations
 {
     /// <inheritdoc />
-    public partial class refactorTest : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,9 +15,9 @@ namespace inventoryapi.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedById = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -30,9 +30,9 @@ namespace inventoryapi.Migrations
                 name: "DocumentTypes",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -43,9 +43,9 @@ namespace inventoryapi.Migrations
                 name: "Locations",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedById = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -58,9 +58,9 @@ namespace inventoryapi.Migrations
                 name: "PreChecks",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Check = table.Column<bool>(type: "bit", nullable: true),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -68,12 +68,33 @@ namespace inventoryapi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UmId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    AzureAdUserId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    UserRole = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Vendors",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedById = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -83,41 +104,28 @@ namespace inventoryapi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Documents",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DocumentTypeId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    BlobId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Documents", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Documents_DocumentTypes_DocumentTypeId",
-                        column: x => x.DocumentTypeId,
-                        principalTable: "DocumentTypes",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ItemTemplates",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProductNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Revision = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CategoryId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ProductNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Revision = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    CreatedById = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItemTemplates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemTemplates_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_ItemTemplates_User_CreatedById",
                         column: x => x.CreatedById,
@@ -129,9 +137,9 @@ namespace inventoryapi.Migrations
                 name: "Lists",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedById = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -146,56 +154,25 @@ namespace inventoryapi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DocumentItemTemplate",
-                columns: table => new
-                {
-                    DocumentsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ItemTemplateId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DocumentItemTemplate", x => new { x.DocumentsId, x.ItemTemplateId });
-                    table.ForeignKey(
-                        name: "FK_DocumentItemTemplate_Documents_DocumentsId",
-                        column: x => x.DocumentsId,
-                        principalTable: "Documents",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DocumentItemTemplate_ItemTemplates_ItemTemplateId",
-                        column: x => x.ItemTemplateId,
-                        principalTable: "ItemTemplates",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Items",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    WpId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    SerialNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CategoryId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ParentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    VendorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    LocationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ListId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemTemplateId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    PreCheckId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    WpId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ParentId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    VendorId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LocationId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedById = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    ItemTemplateId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    PreCheckId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Items", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Items_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Items_ItemTemplates_ItemTemplateId",
                         column: x => x.ItemTemplateId,
@@ -211,12 +188,14 @@ namespace inventoryapi.Migrations
                         name: "FK_Items_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Items_PreChecks_PreCheckId",
                         column: x => x.PreCheckId,
                         principalTable: "PreChecks",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Items_User_CreatedById",
                         column: x => x.CreatedById,
@@ -227,18 +206,19 @@ namespace inventoryapi.Migrations
                         name: "FK_Items_Vendors_VendorId",
                         column: x => x.VendorId,
                         principalTable: "Vendors",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Sizes",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ItemTemplateId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Property = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ItemTemplateId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Property = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Amount = table.Column<float>(type: "real", nullable: true),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Unit = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -247,27 +227,39 @@ namespace inventoryapi.Migrations
                         name: "FK_Sizes_ItemTemplates_ItemTemplateId",
                         column: x => x.ItemTemplateId,
                         principalTable: "ItemTemplates",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "DocumentItem",
+                name: "Documents",
                 columns: table => new
                 {
-                    DocumentsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DocumentTypeId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    BlobId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ContentType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ItemId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ItemTemplateId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DocumentItem", x => new { x.DocumentsId, x.ItemId });
+                    table.PrimaryKey("PK_Documents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DocumentItem_Documents_DocumentsId",
-                        column: x => x.DocumentsId,
-                        principalTable: "Documents",
+                        name: "FK_Documents_DocumentTypes_DocumentTypeId",
+                        column: x => x.DocumentTypeId,
+                        principalTable: "DocumentTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Documents_ItemTemplates_ItemTemplateId",
+                        column: x => x.ItemTemplateId,
+                        principalTable: "ItemTemplates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DocumentItem_Items_ItemId",
+                        name: "FK_Documents_Items_ItemId",
                         column: x => x.ItemId,
                         principalTable: "Items",
                         principalColumn: "Id",
@@ -278,8 +270,8 @@ namespace inventoryapi.Migrations
                 name: "ItemList",
                 columns: table => new
                 {
-                    ItemsId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ListId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    ItemsId = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    ListId = table.Column<string>(type: "nvarchar(100)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -302,15 +294,21 @@ namespace inventoryapi.Migrations
                 name: "LogEntries",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ItemId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ItemTemplateId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedById = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Message = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LogEntries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LogEntries_ItemTemplates_ItemTemplateId",
+                        column: x => x.ItemTemplateId,
+                        principalTable: "ItemTemplates",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_LogEntries_Items_ItemId",
                         column: x => x.ItemId,
@@ -324,29 +322,24 @@ namespace inventoryapi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DocumentItem_ItemId",
-                table: "DocumentItem",
-                column: "ItemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DocumentItemTemplate_ItemTemplateId",
-                table: "DocumentItemTemplate",
-                column: "ItemTemplateId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Documents_DocumentTypeId",
                 table: "Documents",
                 column: "DocumentTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Documents_ItemId",
+                table: "Documents",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_ItemTemplateId",
+                table: "Documents",
+                column: "ItemTemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ItemList_ListId",
                 table: "ItemList",
                 column: "ListId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Items_CategoryId",
-                table: "Items",
-                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Items_CreatedById",
@@ -389,6 +382,11 @@ namespace inventoryapi.Migrations
                 column: "WpId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ItemTemplates_CategoryId",
+                table: "ItemTemplates",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ItemTemplates_CreatedById",
                 table: "ItemTemplates",
                 column: "CreatedById");
@@ -414,6 +412,11 @@ namespace inventoryapi.Migrations
                 column: "ItemId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LogEntries_ItemTemplateId",
+                table: "LogEntries",
+                column: "ItemTemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sizes_ItemTemplateId",
                 table: "Sizes",
                 column: "ItemTemplateId");
@@ -423,10 +426,7 @@ namespace inventoryapi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DocumentItem");
-
-            migrationBuilder.DropTable(
-                name: "DocumentItemTemplate");
+                name: "Documents");
 
             migrationBuilder.DropTable(
                 name: "ItemList");
@@ -438,19 +438,13 @@ namespace inventoryapi.Migrations
                 name: "Sizes");
 
             migrationBuilder.DropTable(
-                name: "Documents");
+                name: "DocumentTypes");
 
             migrationBuilder.DropTable(
                 name: "Lists");
 
             migrationBuilder.DropTable(
                 name: "Items");
-
-            migrationBuilder.DropTable(
-                name: "DocumentTypes");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "ItemTemplates");
@@ -463,6 +457,9 @@ namespace inventoryapi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Vendors");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "User");
