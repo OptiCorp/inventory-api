@@ -394,17 +394,39 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
 
     public async Task ItemsCreated(List<string> ids)
     {
-        var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("Sb-connection-string"));
+        var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
+
         var sender = sbClient.CreateSender("item-created");
-        var sbMessage = new ServiceBusMessage(ids.ToString());
-        await sender.SendMessageAsync(sbMessage);
+        using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
+
+        foreach (var id in ids)
+        {
+            if (!messageBatch.TryAddMessage(new ServiceBusMessage(id)))
+            {
+                throw new Exception($"The message {id} is too large to fit in the batch.");
+            }
+        }
+
+        //var sbMessage = new ServiceBusMessage(ids.ToString());
+        await sender.SendMessagesAsync(messageBatch);
     }
 
     public async Task ItemsDeleted(List<string> ids)
     {
-        var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("Sb-connection-string"));
+        var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
+
         var sender = sbClient.CreateSender("item-deleted");
-        var sbMessage = new ServiceBusMessage(ids.ToString());
-        await sender.SendMessageAsync(sbMessage);
+        using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
+
+        foreach (var id in ids)
+        {
+            if (!messageBatch.TryAddMessage(new ServiceBusMessage(id)))
+            {
+                throw new Exception($"The message {id} is too large to fit in the batch.");
+            }
+        }
+
+        //var sbMessage = new ServiceBusMessage(ids.ToString());
+        await sender.SendMessagesAsync(messageBatch);
     }
 }
