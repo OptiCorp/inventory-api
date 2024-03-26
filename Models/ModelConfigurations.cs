@@ -9,6 +9,7 @@ public static class UserConfigurations
     {
         modelBuilder.Entity<User>()
             .HasKey(u => u.Id);
+
     }
 }
 

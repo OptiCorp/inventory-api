@@ -7,7 +7,7 @@ public class GeneralUtilities : IGeneralUtilities
 {
     public string? GetSecretValueFromKeyVault(string secretName)
     {
-        const string keyVaultUrl = "https://kvv2-turbinsikker-prod.vault.azure.net/";
+        const string keyVaultUrl = "https://wellpartner-keyvault.vault.azure.net/";
         var credential = new DefaultAzureCredential();
         var client = new SecretClient(new Uri(keyVaultUrl), credential);
         var secret = client.GetSecret(secretName);
