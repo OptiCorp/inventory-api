@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Inventory.Utilities;
 using checklist_inventory_contracts.Items;
 using System.Text.Json;
+using Inventory.Configuration;
 
 namespace Inventory.Services;
 
@@ -397,7 +398,7 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
     public async Task ItemsCreated(ICollection<Item> itemsCreated) 
     {
         var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
-        var sender = sbClient.CreateSender("item-created");
+        var sender = sbClient.CreateSender(AppSettings.TopicItemCreated);
         using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
         var itemsCreatedContracts = itemsCreated
@@ -419,7 +420,7 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
     {
         var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
 
-        var sender = sbClient.CreateSender("item-deleted");
+        var sender = sbClient.CreateSender(AppSettings.TopicItemDeleted);
         using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
         var itemsDeletedContracts = itemsDeletedIds
