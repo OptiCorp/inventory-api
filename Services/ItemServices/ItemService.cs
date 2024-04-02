@@ -4,6 +4,9 @@ using Inventory.Models;
 using Inventory.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 using Inventory.Utilities;
+using checklist_inventory_contracts.Items;
+using System.Text.Json;
+using Inventory.Configuration;
 
 namespace Inventory.Services;
 
@@ -12,7 +15,7 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
     public async Task<IEnumerable<Item>> GetAllItemsAsync()
     {
         try
-        {
+        { 
             return await context.Items
                 .ToListAsync();
         }
@@ -171,7 +174,7 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
     {
         try
         {
-            var createdItemIds = new List<string>();
+            var createdItemsIds = new List<string>();
             foreach (var item in itemsCreate.Select(itemCreate => new Item
             {
                 WpId = itemCreate.WpId,
@@ -188,14 +191,14 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
                 await context.Items.AddAsync(item);
                 if (item.Id != null)
                 {
-                    createdItemIds.Add(item.Id);
+                    createdItemsIds.Add(item.Id);
                     if (item.CreatedById != null)
                         await CreateLogEntryAsync(item.Id, item.CreatedById, "Item added");
                 }
 
                 await context.SaveChangesAsync();
             }
-            return createdItemIds;
+            return createdItemsIds;
         }
         catch (Exception e)
         {
@@ -392,18 +395,20 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
         }
     }
 
-    public async Task ItemsCreated(List<string> ids)
+    public async Task ItemsCreated(ICollection<Item> itemsCreated) 
     {
         var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
-
-        var sender = sbClient.CreateSender("item-created");
+        var sender = sbClient.CreateSender(AppSettings.TopicItemCreated);
         using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
-        foreach (var id in ids)
+        var itemsCreatedContracts = itemsCreated
+            .Select(ic => new ItemCreatedContract{itemId = ic.Id ?? throw new Exception("Empty item id"), itemTemplateId = ic.ItemTemplateId ?? throw new Exception("Empty item id")});
+
+        foreach (var itemCreated in itemsCreatedContracts)
         {
-            if (!messageBatch.TryAddMessage(new ServiceBusMessage(id)))
+            if (!messageBatch.TryAddMessage(new ServiceBusMessage(JsonSerializer.Serialize(itemCreated))))
             {
-                throw new Exception($"The message {id} is too large to fit in the batch.");
+                throw new Exception($"The message {itemCreated} is too large to fit in the batch.");
             }
         }
 
@@ -411,18 +416,21 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
         await sender.SendMessagesAsync(messageBatch);
     }
 
-    public async Task ItemsDeleted(List<string> ids)
+    public async Task ItemsDeleted(ICollection<string> itemsDeletedIds)
     {
         var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
 
-        var sender = sbClient.CreateSender("item-deleted");
+        var sender = sbClient.CreateSender(AppSettings.TopicItemDeleted);
         using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
-        foreach (var id in ids)
+        var itemsDeletedContracts = itemsDeletedIds
+            .Select(ic => new ItemDeletedContract{itemId = ic ?? throw new Exception("Empty item id")});
+
+        foreach (var itemDeleted in itemsDeletedContracts)
         {
-            if (!messageBatch.TryAddMessage(new ServiceBusMessage(id)))
+            if (!messageBatch.TryAddMessage(new ServiceBusMessage(JsonSerializer.Serialize(itemDeleted))))
             {
-                throw new Exception($"The message {id} is too large to fit in the batch.");
+                throw new Exception($"The message {itemDeleted} is too large to fit in the batch.");
             }
         }
 

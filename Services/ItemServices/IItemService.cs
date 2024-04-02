@@ -1,3 +1,4 @@
+using checklist_inventory_contracts.Items;
 using Inventory.Models;
 using Inventory.Models.DTO;
 
@@ -19,6 +20,6 @@ public interface IItemService
     Task<List<string>> DeleteItemAsync(string id, bool? deleteSubItems);
     Task<bool> IsWpIdUnique(string id);
     Task<bool> IsSerialNumberUnique(string serialNumber);
-    Task ItemsCreated(List<string> ids);
-    Task ItemsDeleted(List<string> ids);
+    Task ItemsCreated(ICollection<Item> ids);
+    Task ItemsDeleted(ICollection<string> ids);
 }

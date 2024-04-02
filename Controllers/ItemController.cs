@@ -115,7 +115,7 @@ public class ItemController(
                     if (item != null) items.Add(item);
                 }
             }
-            await itemService.ItemsCreated(itemIds);
+            await itemService.ItemsCreated(items);
             return CreatedAtAction(nameof(GetItem), new { id = itemIds }, items);
         }
         catch (Exception e)

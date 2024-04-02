@@ -61,6 +61,12 @@ public static class ItemConfigurations
             .WithMany()
             .HasForeignKey(c => c.LocationId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Item>()
+            .HasMany(i => i.LogEntries)
+            .WithOne()
+            .HasForeignKey(l => l.ItemId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
 
@@ -152,6 +158,12 @@ public static class ItemTemplateConfigurations
             .WithMany()
             .HasForeignKey(c => c.CategoryId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<ItemTemplate>()
+        .HasMany(i => i.LogEntries)
+        .WithOne()
+        .HasForeignKey(l => l.ItemTemplateId)
+        .OnDelete(DeleteBehavior.SetNull);
     }
 }
 
