@@ -18,6 +18,7 @@ using Inventory.Validations.LocationValidations;
 using Inventory.Validations.PreCheckValidations;
 using Inventory.Validations.SizeValidations;
 using Inventory.Validations.VendorValidations;
+using Microsoft.OpenApi.Models;
 
 namespace Inventory;
 
@@ -46,9 +47,45 @@ public class Startup(IConfiguration configuration)
 
         });
 
+        //enable OAuth security in swagger
+
+
+
         services.AddSwaggerGen(c =>
         {
             c.EnableAnnotations();
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement() {
+                 {
+                    new OpenApiSecurityScheme {
+                        Reference = new OpenApiReference {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "oauth2"
+                        },
+                        Scheme = "oauth2",
+                        Name = "oauth2",
+                        In = ParameterLocation.Header,
+                    },
+                    new List <string> ()
+                }
+            });
+            c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Name = "oauth2",
+                Description = "OAuth2.0 auth code with implicit grant",
+                Flows = new OpenApiOAuthFlows
+                {
+                    Implicit = new OpenApiOAuthFlow
+                    {
+                        AuthorizationUrl = new Uri("https://login.microsoftonline.com/91020923-529b-458c-8796-98af46bf6003/oauth2/v2.0/authorize"),
+                        TokenUrl = new Uri("https://login.microsoftonline.com/91020923-529b-458c-8796-98af46bf6003/oauth2/v2.0/token"),
+                        Scopes = new Dictionary<string, string>{
+                            { "api://a053137b-4efd-46a8-bf41-7ed3fc49f3be/Inventory.ReadAll", "access inventory api" }
+                        }
+                    }
+                },
+
+            });
         });
 
         services.AddScoped<IUserService, UserService>();
@@ -104,7 +141,6 @@ public class Startup(IConfiguration configuration)
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
     }
 
     private void ConfigureAuthenticationAndAuthorization(IServiceCollection services)
@@ -136,8 +172,8 @@ public class Startup(IConfiguration configuration)
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            // app.UseSwagger();
+            // app.UseSwaggerUI();
         }
         else
         {
@@ -148,7 +184,14 @@ public class Startup(IConfiguration configuration)
         app.UseSerilogRequestLogging();
 
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "swagger");
+            options.OAuthAppName("Swagger Client");
+            options.OAuthClientId("a053137b-4efd-46a8-bf41-7ed3fc49f3be");
+            options.OAuthClientSecret(Configuration["AzureAd:ClientSecret"]);
+            options.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+        });
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Warning)

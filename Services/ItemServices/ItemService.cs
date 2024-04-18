@@ -398,11 +398,11 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
     public async Task ItemsCreated(ICollection<Item> itemsCreated) 
     {
         var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
-        var sender = sbClient.CreateSender(AppSettings.TopicItemCreated);
+        var sender = sbClient.CreateSender(AppSettings.TopicItemEvent);
         using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
         var itemsCreatedContracts = itemsCreated
-            .Select(ic => new ItemCreatedContract{itemId = ic.Id ?? throw new Exception("Empty item id"), itemTemplateId = ic.ItemTemplateId ?? throw new Exception("Empty item id")});
+            .Select(ic => new ItemEventContract{ItemId = ic.Id ?? throw new Exception("Empty item id"), ItemTemplateId = ic.ItemTemplateId ?? throw new Exception("Empty item id"), ParentItemId = ic.ParentId, ItemEvent = checklist_inventory_contracts.Items.Enums.ItemEvent.ItemCreated});
 
         foreach (var itemCreated in itemsCreatedContracts)
         {
@@ -420,11 +420,11 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
     {
         var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
 
-        var sender = sbClient.CreateSender(AppSettings.TopicItemDeleted);
+        var sender = sbClient.CreateSender(AppSettings.TopicItemEvent);
         using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
         var itemsDeletedContracts = itemsDeletedIds
-            .Select(ic => new ItemDeletedContract{itemId = ic ?? throw new Exception("Empty item id")});
+            .Select(ic => new ItemEventContract{ItemId = ic ?? throw new Exception("Empty item id"), ItemEvent = checklist_inventory_contracts.Items.Enums.ItemEvent.ItemDeleted});
 
         foreach (var itemDeleted in itemsDeletedContracts)
         {

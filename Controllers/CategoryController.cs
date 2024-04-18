@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
 using Inventory.Validations.CategoryValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inventory.Controllers;
 
@@ -16,6 +17,9 @@ public class CategoryController(
     ICategoryUpdateValidator updateValidator)
     : ControllerBase
 {
+    // [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(Policy = "AuthZPolicy")] 
+
     [HttpGet]
     [SwaggerOperation(Summary = "Get all categories", Description = "Retrieves a list of all categories.")]
     [SwaggerResponse(200, "Success", typeof(IEnumerable<Category>))]
