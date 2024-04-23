@@ -15,7 +15,7 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
     public async Task<IEnumerable<Item>> GetAllItemsAsync()
     {
         try
-        { 
+        {
             return await context.Items
                 .ToListAsync();
         }
@@ -26,12 +26,19 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
         }
     }
 
-    public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string searchString, int page)
+    public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string? searchString, int page)
     {
         try
         {
-            var result = await context.Items
-                .Where(c => c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString) || c.SerialNumber.Contains(searchString)))
+            var query = context.Items.AsQueryable();
+            var searchStringIsOrEmpty = string.IsNullOrEmpty(searchString);
+
+            if (!searchStringIsOrEmpty)
+            {
+                query = query.Where(c => c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString!) || c.SerialNumber.Contains(searchString!)));
+            }
+
+            var result = await query
                 .Include(c => c.ItemTemplate)
                 .ThenInclude(c => c!.Category)
                 .Include(c => c.Parent)
@@ -50,8 +57,15 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
 
             var remainingItemsCount = page * 10 - result.Count;
 
-            var templateIds = await context.ItemTemplates
-                .Where(c => c.Description != null && c.Description.Contains(searchString))
+            var templateIdQuery = context.ItemTemplates.AsQueryable();
+
+            if (!searchStringIsOrEmpty)
+            {
+                templateIdQuery = templateIdQuery.Where(c => c.Description != null && c.Description.Contains(searchString!));
+            }
+
+
+            var templateIds = await templateIdQuery
                 .OrderBy(c => c.Id)
                 .Select(c => c.Id)
                 .ToListAsync();
@@ -395,14 +409,14 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
         }
     }
 
-    public async Task ItemsCreated(ICollection<Item> itemsCreated) 
+    public async Task ItemsCreated(ICollection<Item> itemsCreated)
     {
         var sbClient = new ServiceBusClient(generalUtilities.GetSecretValueFromKeyVault("inventory-send-sas"));
         var sender = sbClient.CreateSender(AppSettings.TopicItemEvent);
         using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
         var itemsCreatedContracts = itemsCreated
-            .Select(ic => new ItemEventContract{ItemId = ic.Id ?? throw new Exception("Empty item id"), ItemTemplateId = ic.ItemTemplateId ?? throw new Exception("Empty item id"), ParentItemId = ic.ParentId, ItemEvent = checklist_inventory_contracts.Items.Enums.ItemEvent.ItemCreated});
+            .Select(ic => new ItemEventContract { ItemId = ic.Id ?? throw new Exception("Empty item id"), ItemTemplateId = ic.ItemTemplateId ?? throw new Exception("Empty item id"), ParentItemId = ic.ParentId, ItemEvent = checklist_inventory_contracts.Items.Enums.ItemEvent.ItemCreated });
 
         foreach (var itemCreated in itemsCreatedContracts)
         {
@@ -424,7 +438,7 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
         using ServiceBusMessageBatch messageBatch = await sender.CreateMessageBatchAsync();
 
         var itemsDeletedContracts = itemsDeletedIds
-            .Select(ic => new ItemEventContract{ItemId = ic ?? throw new Exception("Empty item id"), ItemEvent = checklist_inventory_contracts.Items.Enums.ItemEvent.ItemDeleted});
+            .Select(ic => new ItemEventContract { ItemId = ic ?? throw new Exception("Empty item id"), ItemEvent = checklist_inventory_contracts.Items.Enums.ItemEvent.ItemDeleted });
 
         foreach (var itemDeleted in itemsDeletedContracts)
         {
