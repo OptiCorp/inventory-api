@@ -1,4 +1,5 @@
 using checklist_inventory_contracts.Items;
+using Inventory.Common.Models;
 using Inventory.Models;
 using Inventory.Models.DTO;
 
@@ -8,7 +9,7 @@ namespace Inventory.Services;
 public interface IItemService
 {
     Task<IEnumerable<Item>> GetAllItemsAsync();
-    Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string? searchString, int page);
+    Task<PaginatedList<Item>> GetAllItemsBySearchStringAsync(string? searchString, int pageSize, int pageNumber);
     Task<IEnumerable<Item>> GetAllItemsByUserIdAsync(string id, int page);
     Task<Item?> GetItemByIdAsync(string id);
     Task<List<Item>?> GetItemsByIdChecklistAsync(List<string> ids);

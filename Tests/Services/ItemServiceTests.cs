@@ -3,6 +3,7 @@ using Inventory.Models.DTO;
 using Inventory.Services;
 using Xunit;
 using Inventory.Utilities;
+using Inventory.Common.Models;
 
 namespace Inventory.Tests.Services;
 
@@ -56,11 +57,11 @@ public class ItemServiceTests
         var itemService = new ItemService(dbContext, generalUtilities);
 
         // Act
-        var items = await itemService.GetAllItemsBySearchStringAsync("a", 1);
+        var paginatedItems = await itemService.GetAllItemsBySearchStringAsync("a", 1, 10);  
 
         //Assert
-        Assert.IsType<List<Item>>(items);
-        Assert.Equal(10, items.Count());
+        Assert.IsType<PaginatedList<Item>>(paginatedItems);
+        Assert.Equal(10, paginatedItems.Items.Count());
     }
 
 
