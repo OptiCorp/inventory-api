@@ -6,6 +6,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using Inventory.Services;
 using Inventory.Validations.ItemValidations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Inventory.Common.Models;
 
 namespace Inventory.Controllers;
 
@@ -164,11 +165,11 @@ public class ItemController(
     [SwaggerOperation(Summary = "Get items containing search string", Description = "Retrieves items containing search string in WpId, serial number or description.")]
     [SwaggerResponse(200, "Success", typeof(IEnumerable<Item>))]
     [SwaggerResponse(400, "Invalid request")]
-    public async Task<ActionResult<IEnumerable<Item>>> GetItemsBySearchString(string? searchString, [Required] int page)
+    public async Task<ActionResult<PaginatedList<Item>>> GetItemsBySearchString(string? searchString, int pageNumber = 1, int pageSize = 10)
     {
         try
         {
-            return Ok(await itemService.GetAllItemsBySearchStringAsync(searchString, page));
+            return Ok(await itemService.GetAllItemsBySearchStringAsync(searchString, pageNumber, pageSize));
         }
         catch (Exception e)
         {

@@ -7,6 +7,8 @@ using Inventory.Utilities;
 using checklist_inventory_contracts.Items;
 using System.Text.Json;
 using Inventory.Configuration;
+using Inventory.Common.Models;
+using Application.Common.Mappings;
 
 namespace Inventory.Services;
 
@@ -26,66 +28,29 @@ public class ItemService(InventoryDbContext context, IGeneralUtilities generalUt
         }
     }
 
-    public async Task<IEnumerable<Item>> GetAllItemsBySearchStringAsync(string? searchString, int page)
+    public async Task<PaginatedList<Item>> GetAllItemsBySearchStringAsync(string? searchString, int pageNumber, int pageSize)
     {
         try
         {
-            var query = context.Items.AsQueryable();
-            var searchStringIsOrEmpty = string.IsNullOrEmpty(searchString);
+            var query = context.Items
+                .OrderBy(c => c.Id)
+                .Include(c => c.ItemTemplate)
+                .ThenInclude(c => c!.Category) 
+                .Include(c => c.Parent)
+                .Include(c => c.Children) 
+                .Include(c => c.CreatedBy)
+                .Include(c => c.Vendor)
+                .Include(c => c.Location)
+                .AsQueryable();
 
-            if (!searchStringIsOrEmpty)
+
+            var searchStringIsNullOrEmpty = string.IsNullOrEmpty(searchString);
+
+            if (!searchStringIsNullOrEmpty)
             {
                 query = query.Where(c => c.SerialNumber != null && c.WpId != null && (c.WpId.Contains(searchString!) || c.SerialNumber.Contains(searchString!)));
             }
-
-            var result = await query
-                .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c!.Category)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
-                .Include(c => c.CreatedBy)
-                .Include(c => c.Vendor)
-                .Include(c => c.Location)
-                .OrderBy(c => c.Id)
-                .Take(page * 10)
-                .ToListAsync();
-
-            if (result.Count >= page * 10)
-            {
-                return result;
-            }
-
-            var remainingItemsCount = page * 10 - result.Count;
-
-            var templateIdQuery = context.ItemTemplates.AsQueryable();
-
-            if (!searchStringIsOrEmpty)
-            {
-                templateIdQuery = templateIdQuery.Where(c => c.Description != null && c.Description.Contains(searchString!));
-            }
-
-
-            var templateIds = await templateIdQuery
-                .OrderBy(c => c.Id)
-                .Select(c => c.Id)
-                .ToListAsync();
-
-            var items = await context.Items
-                .Where(c => templateIds.Contains(c.ItemTemplateId))
-                .Include(c => c.ItemTemplate)
-                .ThenInclude(c => c!.Category)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
-                .Include(c => c.CreatedBy)
-                .Include(c => c.Vendor)
-                .Include(c => c.Location)
-                .OrderBy(c => c.Id)
-                .Take(remainingItemsCount)
-                .ToListAsync();
-
-            result.AddRange(items);
-
-            return result;
+            return await query.PaginatedListAsync(pageNumber, pageSize);
         }
         catch (Exception e)
         {
