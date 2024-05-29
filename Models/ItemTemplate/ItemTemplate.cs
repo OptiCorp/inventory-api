@@ -5,8 +5,10 @@ namespace Inventory.Models;
 
 public class ItemTemplate
 {
-    [MaxLength(100)]
 
+    public Guid? ChecklistTemplateId { get; set; }
+
+    [MaxLength(100)]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string? Id { get; set; }
 
