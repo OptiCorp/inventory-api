@@ -7,16 +7,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.ServiceBus
 {
+    // e14be254-62f7-4492-a344-b4dac4a6736a
     public class ServiceBusChecklistTemplateProcessor : BackgroundService
     {
         private readonly ILogger<ServiceBusChecklistTemplateProcessor> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ServiceBusProcessor _processor;
-        private readonly InventoryDbContext _inventoryDbContext;
 
-        public ServiceBusChecklistTemplateProcessor(ServiceBusClient serviceBusClient, IServiceScopeFactory serviceScopeFactory, ILogger<ServiceBusChecklistTemplateProcessor> logger, IConfiguration configuration, InventoryDbContext inventoryDbContext)
+        public ServiceBusChecklistTemplateProcessor(ServiceBusClient serviceBusClient, IServiceScopeFactory serviceScopeFactory, ILogger<ServiceBusChecklistTemplateProcessor> logger, IConfiguration configuration)
         {
-            _inventoryDbContext = inventoryDbContext;
             var topicName = configuration["ServiceBus:TopicChecklistEvent"] ?? throw new Exception("Missing topic name in configuration");
             var subscriptionName = configuration["ServiceBus:SubscriptionName"] ?? throw new Exception("Missing subscription name in configuration");
 
@@ -34,42 +33,52 @@ namespace Infrastructure.Persistence.ServiceBus
 
         private async Task MessageHandler(ProcessMessageEventArgs args)
         {
-            try
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
-                var checklistTemplateEvent = JsonSerializer.Deserialize<ChecklistTemplateEvent>(args.Message.Body);
-                if (checklistTemplateEvent == null)
+                var serviceProvider = scope.ServiceProvider;
+                var dbContext = serviceProvider.GetRequiredService<InventoryDbContext>();
+
+                if (dbContext != null)
                 {
-                    throw new Exception("Failed to deserialize checklistTemplateEvent");
+                    _logger.LogInformation("InventoryDbContext initialized");
+                }
+                else
+                {
+                    _logger.LogError("Failed to instantiate InventoryDbContext.");
                 }
 
-                _logger.LogInformation($"Received ChecklistTemplateEvent with ChecklistTemplateId: {checklistTemplateEvent.ChecklistTemplateId}, ItemTemplateId: {checklistTemplateEvent.ItemTemplateId}");
-
-
-                using (var scope = _serviceScopeFactory.CreateScope())
+                try
                 {
-                    var itemTemplate = await _inventoryDbContext.ItemTemplates.FirstOrDefaultAsync(it => it.Id == checklistTemplateEvent.ItemTemplateId);
+                    var checklistTemplateEvent = JsonSerializer.Deserialize<ChecklistTemplateEvent>(args.Message.Body);
+                    if (checklistTemplateEvent == null)
+                    {
+                        throw new Exception("Failed to deserialize checklistTemplateEvent");
+                    }
+
+                    _logger.LogInformation($"Received ChecklistTemplateEvent with ChecklistTemplateId: {checklistTemplateEvent.ChecklistTemplateId}, ItemTemplateId: {checklistTemplateEvent.ItemTemplateId}");
+
+                    var itemTemplate = await dbContext.ItemTemplates.FirstOrDefaultAsync(it => it.Id == checklistTemplateEvent.ItemTemplateId);
 
                     if (itemTemplate != null)
                     {
-                        // TODO: fix
                         itemTemplate.ChecklistTemplateId = checklistTemplateEvent.ChecklistTemplateId;
-                        await _inventoryDbContext.SaveChangesAsync();
+                        await dbContext.SaveChangesAsync();
+                        _logger.LogInformation($"Successfully updated ItemTemplate with Id: {itemTemplate.Id}");
                     }
                     else
                     {
                         _logger.LogWarning($"ID {checklistTemplateEvent.ItemTemplateId} not found");
                     }
-                }
 
-                await args.CompleteMessageAsync(args.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"failed to update {ex.Message}");
-                await args.AbandonMessageAsync(args.Message);
+                    await args.CompleteMessageAsync(args.Message);
+                }
+                catch (Exception ex)
+                {
+                     _logger.LogError($"failed to update {ex.Message}");
+                    await args.AbandonMessageAsync(args.Message);
+                }
             }
         }
-
 
         private Task ErrorHandler(ProcessErrorEventArgs args)
         {
