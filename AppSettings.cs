@@ -11,4 +11,5 @@ public abstract class AppSettings
     // public static string TopicItemDeleted => "item-deleted";
 
     public static string SubscriptionInventory => "inventory";
+    public static string TopicChecklistTemplateEvent => "checklisttemplate-event";
 }

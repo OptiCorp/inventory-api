@@ -19,6 +19,8 @@ using Inventory.Validations.PreCheckValidations;
 using Inventory.Validations.SizeValidations;
 using Inventory.Validations.VendorValidations;
 using Microsoft.OpenApi.Models;
+using Infrastructure.Persistence.ServiceBus;
+using Azure.Messaging.ServiceBus;
 
 namespace Inventory;
 
@@ -47,9 +49,13 @@ public class Startup(IConfiguration configuration)
 
         });
 
-        //enable OAuth security in swagger
+        var azureCredentials = new DefaultAzureCredential();
 
-
+        services.AddSingleton<ServiceBusClient>(serviceProvider =>
+        {
+            string serviceBusNamespace = Configuration["ServiceBus:Namespace"] ?? throw new Exception("Missing namespace in configuration");
+            return new ServiceBusClient($"{serviceBusNamespace}.servicebus.windows.net", azureCredentials);
+        });
 
         services.AddSwaggerGen(c =>
         {
@@ -100,10 +106,8 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<IPreCheckService, PreCheckService>();
         services.AddScoped<IDocumentTypeService, DocumentTypeService>();
         services.AddScoped<ILogEntryService, LogEntryService>();
-
         services.AddScoped<IUserUtilities, UserUtilities>();
         services.AddScoped<IGeneralUtilities, GeneralUtilities>();
-
         services.AddScoped<ICategoryCreateValidator, CategoryCreateValidator>();
         services.AddScoped<ICategoryUpdateValidator, CategoryUpdateValidator>();
         services.AddScoped<IItemCreateValidator, ItemCreateValidator>();
@@ -127,6 +131,7 @@ public class Startup(IConfiguration configuration)
         // services.AddHostedService<UserCreateHandler>();
         // services.AddHostedService<UserUpdateHandler>();
         // services.AddHostedService<UserDeleteHandler>();
+        services.AddHostedService<ServiceBusChecklistTemplateProcessor>();
 
         services.AddControllers();
 
